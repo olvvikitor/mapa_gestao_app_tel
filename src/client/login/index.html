@@ -1,1 +1,86 @@
-<h1>OI MUNDO</h1>
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIPA</title>
+
+
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link href="./src/assets/css/fontsgoogleapiscom.css" rel="stylesheet">
+     <link rel="shortcut icon" type="imagex/png" href="./src/assets/img/icone-cipa.png" />
+     <link rel="stylesheet" href="login.css">
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="first-colum">
+      <div class="capa-div">
+        <img src="./src/assets/img/capa.gif" alt="">
+      </div>
+    </div>
+
+    <div class="second-colum">
+      <div class="icone">
+        <img src="./src/assets/img/icone-cipa.png">
+      </div>
+
+      <form  onsubmit="enviarRequisicaoLogin(event)"  method="post">
+
+        <div class="box-login">
+
+          <div class="regional">
+            <select class="select-regional" name="regional" id="regional" required>
+              <option value="1">Escolha uma opção</option>
+              <option value="FSA">FSABA</option>
+              <option value="FSA2">FSABA_NOVO</option>
+              <option value="ITB">ITB</option>
+              <option value="SP">SP</option>
+              <option value="SSA">SSA</option>
+            </select>
+          </div>
+
+          <div class="usuario">
+            <input name="Usuario" id="Usuario" type="text" placeholder="Usuario" required>
+          </div>
+          <div class="inputs">
+            <input class="senhaUsuario" name="Senha" id="Senha" type="password" placeholder="Senha" required>
+            <i onclick="mostrarSenha()" class="bi bi-eye-slash-fill"></i>
+          </div>
+          <button type="submit" class="btn-acessar">
+            Acessar
+          </button>
+        </div>
+      </form>
+
+      <div class="box-problema">
+        <p>Problemas com o acesso?</p>
+        <div class="box-link">
+          <p><a href="http://10.71.201.251/apps/suporte_mis_v2/" target="_blank">Acionar o Suporte Mis</a></p>
+        </div>
+      </div>
+    </div>
+    </form>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <!-- Script da pagina -->
+    <script src="./src/views/login/login.js"></script>
+    <!-- global -->
+    <script defer src="./src/assets/js/global.js"></script>
+     <!-- Jquery -->
+     <script src="./src/assets/js/jquery/jquery-3.7.1.js"></script>
+     <!-- alert -->
+     <script src="./src/assets/js/sweetAlert.js"></script>
+
+
+</body>
+
+</html>
