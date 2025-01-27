@@ -10,7 +10,7 @@ export class AppController{
     @Get()
     async getOperadores(@Req() req: any){
         const supervisor = req.user.dados.SUPERVISOR
-        const query = `SELECT * FROM dbo.operador WHERE supervisor = '${supervisor}'`;
+        const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE supervisor = 'LUIS CAVALCANTE COSTA'`;
         const operadores = await this.databaseService.query(query);
         return operadores; // Retorna os operadores encontrados na tabela
     }

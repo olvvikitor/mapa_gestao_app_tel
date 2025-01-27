@@ -25,7 +25,7 @@ export class DatabaseService implements OnModuleDestroy {
             },
           },
           options: {
-            database: 'MAPA_GESTAO_CHAT',
+            database: 'MERCANTIL',
             encrypt: false, // Desabilita o uso de SSL
             trustServerCertificate: true, // Ignora o certificado SSL se o banco não tiver um válido
           },
