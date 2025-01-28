@@ -161,19 +161,19 @@ export class AppController {
     }
     else if( atributo === 'tma'){
         const obj = {
-            primeiro: [primeiro_quartil, await this.mediaQuartil(primeiro_quartil, atributo)],
-            segundo: [segundo_quartil, await this.mediaQuartil(segundo_quartil, atributo)],
-            terceiro: [terceiro_quartil, await this.mediaQuartil(terceiro_quartil, atributo)],
-            quarto: [quarto_quartil, await this.mediaQuartil(quarto_quartil, atributo)],
+            primeiro: [primeiro_quartil, await this.mediaQuartilTma(primeiro_quartil, atributo)],
+            segundo: [segundo_quartil, await this.mediaQuartilTma(segundo_quartil, atributo)],
+            terceiro: [terceiro_quartil, await this.mediaQuartilTma(terceiro_quartil, atributo)],
+            quarto: [quarto_quartil, await this.mediaQuartilTma(quarto_quartil, atributo)],
           };
           return obj;
     }
     else{
         const obj = {
-            primeiro: [primeiro_quartil, await this.mediaQuartilTma(primeiro_quartil, atributo)],
-            segundo: [segundo_quartil, await this.mediaQuartilTma(segundo_quartil, atributo)],
-            terceiro: [terceiro_quartil, await this.mediaQuartilTma(terceiro_quartil, atributo)],
-            quarto: [quarto_quartil, await this.mediaQuartilTma(quarto_quartil, atributo)],
+            primeiro: [primeiro_quartil, await this.mediaQuartil(primeiro_quartil, atributo)],
+            segundo: [segundo_quartil, await this.mediaQuartil(segundo_quartil, atributo)],
+            terceiro: [terceiro_quartil, await this.mediaQuartil(terceiro_quartil, atributo)],
+            quarto: [quarto_quartil, await this.mediaQuartil(quarto_quartil, atributo)],
           };
           return obj;
     }
@@ -198,9 +198,7 @@ export class AppController {
     // Retorna a média do atributo no quartil
     return { media: parseFloat(media.toFixed(2)) }; // Formata a média para 2 casas decimais
   }
-  async mediaQuartilTma(quartil: any[], atributo: string): Promise<{ media: string }> {
-    console.log("Recebendo o quartil:", quartil); // Log para verificar os dados de entrada
-    
+  async mediaQuartilTma(quartil: any[], atributo: string): Promise<{ media: string }> {    
     // Verifica se 'quartil' é um array
     if (!Array.isArray(quartil)) {
       throw new Error("O quartil não é um array.");
@@ -209,6 +207,7 @@ export class AppController {
     // Função para converter tempo 'hh:mm:ss' para segundos
     const timeToSeconds = (time: string): number => {
       const [hours, minutes, seconds] = time.split(':').map(Number);
+      console.log(hours, minutes, seconds)
       return hours * 3600 + minutes * 60 + seconds;
     };
   
@@ -226,7 +225,7 @@ export class AppController {
   
     // Calcula a soma de todos os tempos em segundos
     const somaSegundos = validTimes.reduce((acc, operador) => acc + timeToSeconds(operador[atributo]), 0);
-  
+
     // Calcula a média dos tempos em segundos
     const mediaSegundos = validTimes.length > 0
       ? somaSegundos / validTimes.length
