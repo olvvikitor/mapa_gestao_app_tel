@@ -1,85 +1,130 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CIPA</title>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
+  <title>Login</title>
 
-     <link rel="preconnect" href="https://fonts.googleapis.com">
-     <link href="./src/assets/css/fontsgoogleapiscom.css" rel="stylesheet">
-     <link rel="shortcut icon" type="imagex/png" href="./src/assets/img/icone-cipa.png" />
-     <link rel="stylesheet" href="login.css">
-     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <!-- Favicons -->
+  <link href="../../client/assets/img/favicon.png" rel="icon">
+  <link href="../../client/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../../client/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../client/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../../client/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="../../client/assets/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="../../client/assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="../../client/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="../../client/assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="../../client/assets/css/style.css" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: NiceAdmin
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Updated: Apr 20 2024 with Bootstrap v5.3.3
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
 
 </head>
 
 <body>
 
-  <div class="container">
+  <main>
+    <div class="container">
 
-    <div class="first-colum">
-      <div class="capa-div">
-        <img src="./src/assets/img/capa.gif" alt="">
-      </div>
-    </div>
+      <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
 
-    <div class="second-colum">
-      <div class="icone">
-        <img src="./src/assets/img/icone-cipa.png">
-      </div>
+              <div class="d-flex justify-content-center py-4">
+                <a  class="logo d-flex align-items-center w-auto">
+                  <img src="../../client/assets/img/logo.png" alt="">
+                  <span class="d-none d-lg-block">A DECIDIR</span>
+                </a>
+              </div><!-- End Logo -->
 
-      <form  onsubmit="enviarRequisicaoLogin(event)"  method="post">
+              <div class="card mb-3">
 
-        <div class="box-login">
+                <div class="card-body">
 
-          <div class="regional">
-            <select class="select-regional" name="regional" id="regional" required>
-              <option value="1">Escolha uma opção</option>
-              <option value="FSA">FSABA</option>
-              <option value="FSA2">FSABA_NOVO</option>
-              <option value="ITB">ITB</option>
-              <option value="BARUERI">BARUERI</option>
-              <option value="SSA">SSA</option>
-            </select>
+                  <div class="pt-4 pb-2">
+                    <h5 class="card-title text-center pb-0 fs-4">Login</h5>
+                    <p class="text-center small">Insira suas credenciais</p>
+                  </div>
+
+                  <form  onsubmit="enviarRequisicaoLogin(event)"  method="post" class="row g-3 needs-validation" novalidate>
+
+                    <div class="col-12">
+                      <label for="regional" class="form-label">Regional</label>
+                      <div class="input-group has-validation">
+                        <select class="form-select select-regional" name="regional" id="regional" required>
+                          <option value="" selected disabled>--</option>
+                          <option value="FSA">FSABA</option>
+                          <option value="FSA2">FSABA_NOVO</option>
+                          <option value="ITB">ITB</option>
+                          <option value="BARUERI">BARUERI</option>
+                          <option value="SSA">SSA</option>
+                        </select>
+                        <div class="invalid-feedback">Por favor, selecione sua região!</div>
+                      </div>
+                    </div>
+                    
+
+                    <div class="col-12">
+                      <label for="yourUsername" class="form-label">Login</label>
+                      <div class="input-group has-validation">
+                        <input type="text" name="username" class="form-control" id="login" required>
+                        <div class="invalid-feedback">Por favor, insira seu login!.</div>
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="yourPassword" class="form-label">Senha</label>
+                      <input type="password" name="password" class="form-control" id="senha" required>
+                      <div class="invalid-feedback">Por favor,insira sua senha!</div>
+                    </div>
+                    <div class="col-12">
+                      <button class="btn btn-primary w-100" type="submit">Login</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <div class="usuario">
-            <input name="Usuario" id="Usuario" type="text" placeholder="Usuario" required>
-          </div>
-          <div class="inputs">
-            <input class="senhaUsuario" name="Senha" id="Senha" type="password" placeholder="Senha" required>
-            <i onclick="mostrarSenha()" class="bi bi-eye-slash-fill"></i>
-          </div>
-          <button type="submit" class="btn-acessar">
-            Acessar
-          </button>
         </div>
-      </form>
 
-      <div class="box-problema">
-        <p>Problemas com o acesso?</p>
-        <div class="box-link">
-          <p><a href="http://10.71.201.251/apps/suporte_mis_v2/" target="_blank">Acionar o Suporte Mis</a></p>
-        </div>
-      </div>
+      </section>
+
     </div>
-    </form>
+  </main><!-- End #main -->
 
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <!-- Script da pagina -->
-    <script src="./src/views/login/login.js"></script>
-    <!-- global -->
-    <script defer src="./src/assets/js/global.js"></script>
-     <!-- Jquery -->
-     <script src="./src/assets/js/jquery/jquery-3.7.1.js"></script>
-     <!-- alert -->
-     <script src="./src/assets/js/sweetAlert.js"></script>
+  <!-- Vendor JS Files -->
+  <script src="../../client/assets/vendor/apexcharts/apexcharts.min.js"></script>
+  <script src="../../client/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../../client/assets/vendor/chart.js/chart.umd.js"></script>
+  <script src="../../client/assets/vendor/echarts/echarts.min.js"></script>
+  <script src="../../client/assets/vendor/quill/quill.js"></script>
+  <script src="../../client/assets/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="../../client/assets/vendor/tinymce/tinymce.min.js"></script>
+  <script src="../../client/assets/vendor/php-email-form/validate.js"></script>
 
+  <!-- Template Main JS File -->
+  <script src="../../client/assets/js/main.js"></script>
+  <!-- login Script File -->
+  <script src="../../client/login/index.js"></script>
 
 </body>
 

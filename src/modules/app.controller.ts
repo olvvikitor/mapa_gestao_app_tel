@@ -1,7 +1,6 @@
 import { Controller, Get, Inject, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "./auth/services/auth.guard";
 import { DatabaseService } from "src/config/config.bd";
-import { raceWith } from "rxjs";
 
 @UseGuards(AuthGuard)
 @Controller('dashboard')
@@ -44,7 +43,6 @@ export class AppController {
         const nome_supervisor = req.user.dados.NOME
         const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
         const operadores = await this.databaseService.query(query);
-        console.log(operadores)
         const quartil = await this.dividirEmQuartis(operadores, 'tma');
         return quartil
     }
@@ -65,6 +63,7 @@ export class AppController {
         const operadores = await this.databaseService.query(query);
         console.log(operadores)
         const quartil = await this.dividirEmQuartis(operadores, 'csat');
+    
         return quartil
     }
   }
@@ -138,42 +137,46 @@ export class AppController {
     const quartis: any[][] = [];
     let inicio = 0;
   
-    // Distribuir os operadores pelos quartis, adicionando 1 operador extra nos primeiros "sobra" quartis
+    // Distribuir os operadores pelos quartis, adicionando 1 operador extra nos ultimos "sobra" quartis
     for (let i = 0; i < 4; i++) {
-      const tamanhoAtual = baseTamanho + (i < sobra ? 1 : 0);
+      const tamanhoAtual = baseTamanho + (i >= (4-sobra) ? 1 : 0);
       quartis.push(operadoresOrdenados.slice(inicio, inicio + tamanhoAtual));
       inicio += tamanhoAtual;
     }
   
     const primeiro_quartil = quartis[0];
+    console.log(primeiro_quartil.length)
     const segundo_quartil = quartis[1];
+    console.log(segundo_quartil.length)
     const terceiro_quartil = quartis[2];
+    console.log(terceiro_quartil.length)
     const quarto_quartil = quartis[3];
+    console.log(quarto_quartil.length)
   
     if (atributo === 'qtd_vendas') {
       const obj = {
-        primeiro: [primeiro_quartil, await this.somaVendasQuartil(primeiro_quartil, atributo)],
-        segundo: [segundo_quartil, await this.somaVendasQuartil(segundo_quartil, atributo)],
-        terceiro: [terceiro_quartil, await this.somaVendasQuartil(terceiro_quartil, atributo)],
-        quarto: [quarto_quartil, await this.somaVendasQuartil(quarto_quartil, atributo)],
+        primeiro: await this.somaVendasQuartil(primeiro_quartil, atributo),
+        segundo: await this.somaVendasQuartil(segundo_quartil, atributo),
+        terceiro:  await this.somaVendasQuartil(terceiro_quartil, atributo),
+        quarto: await this.somaVendasQuartil(quarto_quartil, atributo),
       };
       return obj;
     }
     else if( atributo === 'tma'){
         const obj = {
-            primeiro: [primeiro_quartil, await this.mediaQuartilTma(primeiro_quartil, atributo)],
-            segundo: [segundo_quartil, await this.mediaQuartilTma(segundo_quartil, atributo)],
-            terceiro: [terceiro_quartil, await this.mediaQuartilTma(terceiro_quartil, atributo)],
-            quarto: [quarto_quartil, await this.mediaQuartilTma(quarto_quartil, atributo)],
+            primeiro: await this.mediaQuartilTma(primeiro_quartil, atributo),
+            segundo: await this.mediaQuartilTma(segundo_quartil, atributo),
+            terceiro: await this.mediaQuartilTma(terceiro_quartil, atributo),
+            quarto:  await this.mediaQuartilTma(quarto_quartil, atributo),
           };
           return obj;
     }
     else{
         const obj = {
-            primeiro: [primeiro_quartil, await this.mediaQuartil(primeiro_quartil, atributo)],
-            segundo: [segundo_quartil, await this.mediaQuartil(segundo_quartil, atributo)],
-            terceiro: [terceiro_quartil, await this.mediaQuartil(terceiro_quartil, atributo)],
-            quarto: [quarto_quartil, await this.mediaQuartil(quarto_quartil, atributo)],
+            primeiro: await this.mediaQuartil(primeiro_quartil, atributo),
+            segundo:  await this.mediaQuartil(segundo_quartil, atributo),
+            terceiro: await this.mediaQuartil(terceiro_quartil, atributo),
+            quarto: await this.mediaQuartil(quarto_quartil, atributo),
           };
           return obj;
     }

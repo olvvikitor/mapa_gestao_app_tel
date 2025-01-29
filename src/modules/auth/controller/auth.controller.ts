@@ -7,7 +7,7 @@ import { AuthGuard } from "../services/auth.guard";
 export interface LoginDto{
     site:string
     login:string
-    password:string
+    senha:string
 }
 
 //Rota para autenticação
@@ -22,8 +22,9 @@ export default class AuthController{
     async login(@Body() data : LoginDto){
         try {
             const url:string = 'https://mitra.tel.inf.br/services/auth_ldap/authLdap';
+            console.log(data)
             const response = await firstValueFrom( this.httpService.post(url,data))
-            return `Bearer: ${response.data.token}`;
+            return {Bearer: response.data.token}
         } catch (error) {
             console.error('Erro ao fazer a requisição HTTP:', error);
             throw error
