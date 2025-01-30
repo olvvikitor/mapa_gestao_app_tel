@@ -46,8 +46,12 @@ export class AppController {
       const nome_supervisor = req.user.dados.NOME
       const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
       const operadores = await this.databaseService.query(query);
-      return operadores; // Retorna os operadores encontrados na tabela
-    }
+      const tma = await this.mediaTma(operadores, 'tma')
+      const csat = await this.mediaIndicadores(operadores, 'csat')
+      const notaQualidade = await this.mediaIndicadores(operadores, 'nota_qualidade')
+      const notaVenda = await this.mediaIndicadores(operadores, 'nota_venda')
+      const somaVendas = await this.somaVendas(operadores, 'qtd_vendas')
+      return {data: {csat, tma, notaQualidade, notaVenda,somaVendas}}    }
   }
 
   @Get('/quartil-tma')
@@ -57,7 +61,6 @@ export class AppController {
     if (this.isCoordenador(nome_logado, this.coordenadores)) {
       const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT ORDER BY tma ASC`;
       const operadores = await this.databaseService.query(query);
-      console.log(operadores)
       const quartil = await this.dividirEmQuartis(operadores, 'tma');
       return quartil
     } else {
@@ -75,16 +78,13 @@ export class AppController {
     if (this.isCoordenador(nome_logado, this.coordenadores)) {
       const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT ORDER BY tma ASC`;
       const operadores = await this.databaseService.query(query);
-      console.log(operadores)
       const quartil = await this.dividirEmQuartis(operadores, 'csat');
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
         const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
         const operadores = await this.databaseService.query(query);
-        console.log(operadores)
         const quartil = await this.dividirEmQuartis(operadores, 'csat');
-    
         return quartil
     }
   }
@@ -95,14 +95,12 @@ export class AppController {
     if (this.isCoordenador(nome_logado, this.coordenadores)) {
       const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT ORDER BY tma ASC`;
       const operadores = await this.databaseService.query(query);
-      console.log(operadores)
       const quartil = await this.dividirEmQuartis(operadores, 'nota_qualidade');
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
         const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
         const operadores = await this.databaseService.query(query);
-        console.log(operadores)
         const quartil = await this.dividirEmQuartis(operadores, 'nota_qualidade');
         return quartil
     }
@@ -114,14 +112,12 @@ export class AppController {
     if (this.isCoordenador(nome_logado, this.coordenadores)) {
       const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT ORDER BY tma ASC`;
       const operadores = await this.databaseService.query(query);
-      console.log(operadores)
       const quartil = await this.dividirEmQuartis(operadores, 'nota_venda');
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
         const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
         const operadores = await this.databaseService.query(query);
-        console.log(operadores)
         const quartil = await this.dividirEmQuartis(operadores, 'nota_venda');
         return quartil
     }
@@ -134,12 +130,11 @@ export class AppController {
       const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT ORDER BY tma ASC`;
       const operadores = await this.databaseService.query(query);
       const quartil = await this.dividirEmQuartis(operadores, 'qtd_vendas');
-        return quartil
+      return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
         const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
         const operadores = await this.databaseService.query(query);
-        console.log(operadores)
         const quartil = await this.dividirEmQuartis(operadores, 'qtd_vendas');
         return quartil
     }
