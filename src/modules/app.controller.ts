@@ -18,8 +18,29 @@ export class AppController {
     if (this.isCoordenador(login_auth, this.coordenadores)) {
       const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT`;
       const operadores: any[] = await this.databaseService.query(query);
-
       return operadores; // Retorna os operadores encontrados na tabela
+
+    } else {
+      const nome_supervisor = req.user.dados.NOME
+      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
+      const operadores = await this.databaseService.query(query);
+      return operadores; // Retorna os operadores encontrados na tabela
+    }
+  }
+  @Get('indicadores-geral')
+  async getIndicadoresGeral(@Req() req: any) {
+
+    const login_auth = req.user.dados.LOGIN;
+
+    if (this.isCoordenador(login_auth, this.coordenadores)) {
+      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT`;
+      const operadores: any[] = await this.databaseService.query(query);
+      const tma = await this.mediaTma(operadores, 'tma')
+      const csat = await this.mediaIndicadores(operadores, 'csat')
+      const notaQualidade = await this.mediaIndicadores(operadores, 'nota_qualidade')
+      const notaVenda = await this.mediaIndicadores(operadores, 'nota_venda')
+      const somaVendas = await this.somaVendas(operadores, 'qtd_vendas')
+      return {data: {csat, tma, notaQualidade, notaVenda,somaVendas}}
 
     } else {
       const nome_supervisor = req.user.dados.NOME
@@ -155,35 +176,35 @@ export class AppController {
   
     if (atributo === 'qtd_vendas') {
       const obj = {
-        primeiro: await this.somaVendasQuartil(primeiro_quartil, atributo),
-        segundo: await this.somaVendasQuartil(segundo_quartil, atributo),
-        terceiro:  await this.somaVendasQuartil(terceiro_quartil, atributo),
-        quarto: await this.somaVendasQuartil(quarto_quartil, atributo),
+        primeiro: await this.somaVendas(primeiro_quartil, atributo),
+        segundo: await this.somaVendas(segundo_quartil, atributo),
+        terceiro:  await this.somaVendas(terceiro_quartil, atributo),
+        quarto: await this.somaVendas(quarto_quartil, atributo),
       };
       return obj;
     }
     else if( atributo === 'tma'){
         const obj = {
-            primeiro: await this.mediaQuartilTma(primeiro_quartil, atributo),
-            segundo: await this.mediaQuartilTma(segundo_quartil, atributo),
-            terceiro: await this.mediaQuartilTma(terceiro_quartil, atributo),
-            quarto:  await this.mediaQuartilTma(quarto_quartil, atributo),
+            primeiro: await this.mediaTma(primeiro_quartil, atributo),
+            segundo: await this.mediaTma(segundo_quartil, atributo),
+            terceiro: await this.mediaTma(terceiro_quartil, atributo),
+            quarto:  await this.mediaTma(quarto_quartil, atributo),
           };
           return obj;
     }
     else{
         const obj = {
-            primeiro: await this.mediaQuartil(primeiro_quartil, atributo),
-            segundo:  await this.mediaQuartil(segundo_quartil, atributo),
-            terceiro: await this.mediaQuartil(terceiro_quartil, atributo),
-            quarto: await this.mediaQuartil(quarto_quartil, atributo),
+            primeiro: await this.mediaIndicadores(primeiro_quartil, atributo),
+            segundo:  await this.mediaIndicadores(segundo_quartil, atributo),
+            terceiro: await this.mediaIndicadores(terceiro_quartil, atributo),
+            quarto: await this.mediaIndicadores(quarto_quartil, atributo),
           };
           return obj;
     }
 
   }
   
-  async mediaQuartil(quartil: any[], atributo: string): Promise<{ media: number }> {
+  async mediaIndicadores(quartil: any[], atributo: string): Promise<{ media: number }> {
 
     console.log("Recebendo o quartil:", quartil); // Log para verificar os dados de entrada
     
@@ -201,7 +222,7 @@ export class AppController {
     // Retorna a média do atributo no quartil
     return { media: parseFloat(media.toFixed(2)) }; // Formata a média para 2 casas decimais
   }
-  async mediaQuartilTma(quartil: any[], atributo: string): Promise<{ media: string }> {    
+  async mediaTma(quartil: any[], atributo: string): Promise<{ media: string }> {    
     // Verifica se 'quartil' é um array
     if (!Array.isArray(quartil)) {
       throw new Error("O quartil não é um array.");
@@ -238,10 +259,10 @@ export class AppController {
     const mediaFormatada = secondsToTime(mediaSegundos);
   
     // Retorna a média do atributo no formato 'hh:mm:ss'
-    return { media: mediaFormatada };
+    return { media: mediaFormatada.split('.')[0] };
   }
   
-  async somaVendasQuartil(quartil: any[], atributo: string): Promise<{ soma: number }> {
+  async somaVendas(quartil: any[], atributo: string): Promise<{ soma: number }> {
     console.log("Recebendo o quartil:", quartil); // Log para verificar os dados de entrada
     
     // Verifica se 'quartil' é um array e contém objetos com o atributo esperado

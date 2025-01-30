@@ -29,7 +29,7 @@ async function enviarRequisicaoLogin(event) {
         const token = await response.Bearer; 
 
         // Armazena o token no localStorage
-        localStorage.setItem("auth-base-gestao",`Bearer: ${token}`);
+        localStorage.setItem("auth-base-gestao",`${token}`);
 
         // Exibe um alerta de sucesso e redireciona
         alert("Login realizado com sucesso!");

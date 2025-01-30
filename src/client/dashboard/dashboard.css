@@ -1,0 +1,35 @@
+/* Ajuste na tabela para melhor visualização */
+#tabela-geral {
+    width: 100%;
+    font-size: 14px;
+}
+
+#tabela-geral thead {
+    background-color: #007bff; /* Cor de fundo do cabeçalho */
+    color: white;
+    font-weight: bold;
+}
+
+#tabela-geral tbody tr:nth-child(even) {
+    background-color: #f8f9fa; /* Efeito zebra */
+}
+
+#tabela-geral tbody tr:hover {
+    background-color: #dee2e6; /* Destaque ao passar o mouse */
+}
+
+#tabela-geral th, #tabela-geral td {
+    padding: 10px;
+    text-align: center;
+}
+
+/* Ajustando o título do card */
+.card-title {
+    font-weight: bold;
+    color: #333;
+}
+
+.card-title span {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
