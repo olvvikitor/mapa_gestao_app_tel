@@ -131,6 +131,17 @@ async function criarTabelaQuartil() {
         }
         
         tabelaBody.innerHTML = ""; // Limpa a tabela antes de preencher
+
+        function obterClasseQuartil(index) {
+            console.log(index)
+            switch (index) {
+                case 0: return "quartil-verde";   // Primeiro quartil - verde
+                case 1: return "quartil-amarelo"; // Segundo quartil - amarelo
+                case 2: return "quartil-laranja"; // Terceiro quartil - laranja
+                case 3: return "quartil-vermelho"; // Quarto quartil - vermelho
+                default: return "";
+            }
+        }
         
         // Loop para preencher a tabela com dados dos quartis
         const quartis = ['primeiro', 'segundo', 'terceiro', 'quarto'];
@@ -138,14 +149,14 @@ async function criarTabelaQuartil() {
             const row = document.createElement("tr");
             
             // Preenchendo a coluna Quartil
-            row.innerHTML = `<td>${index + 1}</td>`;
+            row.innerHTML = `<td class="quartil-numero" id="${obterClasseQuartil(index)}">${index + 1}Q</td>`;
             
             row.innerHTML += `
-            <td>${dados[1].csat?.[quartil]?.media ?? '-'}</td>
-            <td>${dados[0].tma?.[quartil]?.media ?? '-'}</td>
-            <td>${dados[2].notaQualidade?.[quartil]?.media ?? '-'}</td>
-            <td>${dados[3].notaQualidadeVendas?.[quartil]?.media ?? '-'}</td>
-            <td>${dados[4].qtdVendas?.[quartil]?.soma ?? '-'}</td>
+            <td id="${obterClasseQuartil(index)}" >${dados[1].csat?.[quartil]?.media ?? '-'}</td>
+            <td id="${obterClasseQuartil(index)}" >${dados[0].tma?.[quartil]?.media ?? '-'}</td>
+            <td id="${obterClasseQuartil(index)}" >${dados[2].notaQualidade?.[quartil]?.media ?? '-'}</td>
+            <td id="${obterClasseQuartil(index)}" >${dados[3].notaQualidadeVendas?.[quartil]?.media ?? '-'}</td>
+            <td id="${obterClasseQuartil(index)}" >${dados[4].qtdVendas?.[quartil]?.soma ?? '-'}</td>
         `;
             
             tabelaBody.appendChild(row);

@@ -1,29 +1,63 @@
-/* Ajuste na tabela para melhor visualização */
-#tabela-geral {
+/* Estilo geral para as tabelas */
+#tabela-quartil, #tabela-geral {
     width: 100%;
     font-size: 14px;
+    border-collapse: collapse; /* Remove espaços entre células */
+    border: 1px solid #ddd; /* Borda suave em volta da tabela */
 }
 
-#tabela-geral thead {
+#tabela-quartil thead, #tabela-geral thead {
     background-color: #007bff; /* Cor de fundo do cabeçalho */
     color: white;
     font-weight: bold;
+    text-transform: uppercase; /* Deixa as letras em maiúsculas */
+    letter-spacing: 1px; /* Espaçamento entre letras */
+    border-bottom: 3px solid #0056b3; /* Linha de separação entre cabeçalho e corpo */
 }
 
-#tabela-geral tbody tr:nth-child(even) {
+#tabela-quartil tbody tr:nth-child(even), #tabela-geral tbody tr:nth-child(even) {
     background-color: #f8f9fa; /* Efeito zebra */
 }
 
-#tabela-geral tbody tr:hover {
-    background-color: #dee2e6; /* Destaque ao passar o mouse */
+#tabela-quartil tbody tr:hover, #tabela-geral tbody tr:hover {
+    background-color: #e9ecef; /* Destaque suave ao passar o mouse */
+    cursor: pointer; /* Muda o cursor para indicar interatividade */
+    transition: background-color 0.3s ease; /* Transição suave */
 }
 
-#tabela-geral th, #tabela-geral td {
-    padding: 10px;
+#tabela-quartil th, #tabela-quartil td, #tabela-geral th, #tabela-geral td {
+    padding: 12px 20px; /* Aumenta o espaçamento para melhorar a legibilidade */
     text-align: center;
+    vertical-align: middle; /* Alinha o conteúdo no centro verticalmente */
+    border-right: 1px solid #ddd; /* Bordas finas entre células */
+}
+
+#tabela-quartil td:last-child, #tabela-geral td:last-child {
+    border-right: none; /* Remove a borda à direita da última célula */
 }
 
 /* Ajustando o título do card */
+.card-title {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.25rem; /* Tamanho maior para o título */
+    margin-bottom: 10px;
+}
+
+.card-title span {
+    color: #6c757d;
+    font-size: 1rem;
+    font-weight: normal;
+}
+
+/* Estilo do card */
+.card {
+    background-color: #ffffff;
+    border-radius: 8px; /* Bordas arredondadas */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.295); /* Sombra suave */
+    padding: 20px;
+    margin-top: 20px;
+}
 .card-title {
     font-weight: bold;
     color: #333;
@@ -32,4 +66,63 @@
 .card-title span {
     color: #6c757d;
     font-size: 0.9rem;
+}  
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+    #tabela-quartil, #tabela-geral {
+        font-size: 12px; /* Ajuste no tamanho da fonte para telas pequenas */
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+    }
+}
+/* Estilo específico para a célula do número do quartil */
+.quartil-numero {
+    color: white; /* Cor do texto */
+    font-weight: bold; /* Destacar o número */
+    border-radius: 50%; /* Forma arredondada */
+    padding: 8px 12px; /* Preenchimento interno */
+    width: 40px; /* Largura fixa */
+    height: 40px; /* Altura fixa */
+    text-align: center; /* Centraliza o texto */
+    line-height: 24px; /* Alinha verticalmente o número */
+    font-size: 1.1rem; /* Tamanho da fonte */
+    margin: 0 auto; /* Centraliza a célula */
+}
+
+/* Cores específicas para cada quartil */
+#quartil-verde {
+    color: #28a745; /* Cor do primeiro quartil - verde */
+    font-weight: bold; /* Destacar o número */
+
+}
+
+#quartil-amarelo {
+   color: #ffc107; /* Cor do segundo quartil - amarelo */
+   font-weight: bold; /* Destacar o número */
+
+}
+
+#quartil-laranja {
+    color: #fd7e14; /* Cor do terceiro quartil - laranja */
+    font-weight: bold; /* Destacar o número */
+
+}
+
+#quartil-vermelho {
+    color: #dc3545; /* Cor do quarto quartil - vermelho */
+    font-weight: bold; /* Destacar o número */
+
+}
+
+/* Efeito de destaque ao passar o mouse */
+.quartil-numero:hover {
+    opacity: 0.8; /* Leve transparência ao passar o mouse */
+    cursor: pointer; /* Indica que a célula pode ser clicada */
+    transition: opacity 0.3s ease; /* Transição suave */
+}
+.bi{
+    color: #fd7e14;
 }

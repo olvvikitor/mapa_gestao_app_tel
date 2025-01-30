@@ -7,7 +7,7 @@ import { DatabaseService } from "src/config/config.bd";
 export class AppController {
   constructor(@Inject() private databaseService: DatabaseService) {}
 
-  private coordenadores = ['jvjesus'];
+  private coordenadores = ['teste'];
 
 
   @Get('table')
@@ -22,7 +22,7 @@ export class AppController {
 
     } else {
       const nome_supervisor = req.user.dados.NOME
-      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
+      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = 'LUIS CAVALCANTE COSTA'`;
       const operadores = await this.databaseService.query(query);
       return operadores; // Retorna os operadores encontrados na tabela
     }
@@ -44,7 +44,7 @@ export class AppController {
 
     } else {
       const nome_supervisor = req.user.dados.NOME
-      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
+      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = 'LUIS CAVALCANTE COSTA'`;
       const operadores = await this.databaseService.query(query);
       const tma = await this.mediaTma(operadores, 'tma')
       const csat = await this.mediaIndicadores(operadores, 'csat')
@@ -65,7 +65,7 @@ export class AppController {
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
-        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
+        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = 'LUIS CAVALCANTE COSTA'`;
         const operadores = await this.databaseService.query(query);
         const quartil = await this.dividirEmQuartis(operadores, 'tma');
         return quartil
@@ -82,7 +82,7 @@ export class AppController {
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
-        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
+        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = 'LUIS CAVALCANTE COSTA'`;
         const operadores = await this.databaseService.query(query);
         const quartil = await this.dividirEmQuartis(operadores, 'csat');
         return quartil
@@ -99,7 +99,7 @@ export class AppController {
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
-        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
+        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = 'LUIS CAVALCANTE COSTA'`;
         const operadores = await this.databaseService.query(query);
         const quartil = await this.dividirEmQuartis(operadores, 'nota_qualidade');
         return quartil
@@ -116,7 +116,7 @@ export class AppController {
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
-        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
+        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = 'LUIS CAVALCANTE COSTA'`;
         const operadores = await this.databaseService.query(query);
         const quartil = await this.dividirEmQuartis(operadores, 'nota_venda');
         return quartil
@@ -133,7 +133,7 @@ export class AppController {
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
-        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
+        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = 'LUIS CAVALCANTE COSTA'`;
         const operadores = await this.databaseService.query(query);
         const quartil = await this.dividirEmQuartis(operadores, 'qtd_vendas');
         return quartil
@@ -161,13 +161,9 @@ export class AppController {
     }
   
     const primeiro_quartil = quartis[0];
-    console.log(primeiro_quartil.length)
     const segundo_quartil = quartis[1];
-    console.log(segundo_quartil.length)
     const terceiro_quartil = quartis[2];
-    console.log(terceiro_quartil.length)
     const quarto_quartil = quartis[3];
-    console.log(quarto_quartil.length)
   
     if (atributo === 'qtd_vendas') {
       const obj = {
@@ -201,7 +197,6 @@ export class AppController {
   
   async mediaIndicadores(quartil: any[], atributo: string): Promise<{ media: number }> {
 
-    console.log("Recebendo o quartil:", quartil); // Log para verificar os dados de entrada
     
     // Verifica se 'quartil' é um array
     if (!Array.isArray(quartil)) {
@@ -258,7 +253,6 @@ export class AppController {
   }
   
   async somaVendas(quartil: any[], atributo: string): Promise<{ soma: number }> {
-    console.log("Recebendo o quartil:", quartil); // Log para verificar os dados de entrada
     
     // Verifica se 'quartil' é um array e contém objetos com o atributo esperado
     if (!Array.isArray(quartil)) {
