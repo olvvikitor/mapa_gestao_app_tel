@@ -5,7 +5,7 @@ import { DatabaseService } from "src/config/config.bd";
 @UseGuards(AuthGuard)
 @Controller('dashboard')
 export class AppController {
-  constructor(@Inject() private databaseService: DatabaseService) {}
+  constructor(@Inject('DatabaseService') private databaseService) {}
 
   private coordenadores = ['ecarmo', 'jvjesus'];
 

@@ -6,12 +6,18 @@ import { AppController } from './modules/app.controller';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ClientSideModule } from './client/client.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Global()
 @Module({
   imports: [AuthModule,JwtModule.register({
     global:true
   }),
+
+  ConfigModule.forRoot({
+    isGlobal:true
+  }),
+
   ConfigDatabaseModule,
   ServeStaticModule.forRoot({rootPath: join(__dirname,'..', 'src', 'client'),
     serveRoot:'/client'
