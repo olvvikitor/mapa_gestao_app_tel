@@ -1,3 +1,5 @@
+const { time } = require("console");
+
 async function enviarRequisicaoLogin(event) {
     event.preventDefault(); // Evita o recarregamento da página
 
@@ -22,7 +24,12 @@ async function enviarRequisicaoLogin(event) {
         });
 
         if (!resposta.ok) {
-            throw new Error("Erro ao realizar login. Verifique suas credenciais.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Credenciais inválidas',
+                text: 'Usuário ou senha incorretos!',
+            });
+            return;
         }
 
         const response = await resposta.json();
@@ -31,11 +38,16 @@ async function enviarRequisicaoLogin(event) {
         // Armazena o token no localStorage
         localStorage.setItem("auth-base-gestao",`${token}`);
 
-        // Exibe um alerta de sucesso e redireciona
-        alert("Login realizado com sucesso!");
+
         window.location.href = "/dashboard"; // Redirecione para a página desejada
+
     } catch (erro) {
         console.error("Erro ao fazer login:", erro);
-        alert("Falha no login. Verifique suas credenciais e tente novamente.");
+        Swal.fire({
+            icon: 'error',
+            title: 'Credenciais inválidas',
+            text: 'Usuário ou senha incorretos!',
+        });
+
     }
 }

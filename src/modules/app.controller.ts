@@ -7,13 +7,14 @@ import { DatabaseService } from "src/config/config.bd";
 export class AppController {
   constructor(@Inject() private databaseService: DatabaseService) {}
 
-  private coordenadores = ['teste'];
+  private coordenadores = ['ecarmo', 'jvjesus'];
 
 
   @Get('table')
   async getOperadores(@Req() req: any) {
 
     const login_auth = req.user.dados.LOGIN;
+
 
     if (this.isCoordenador(login_auth, this.coordenadores)) {
       const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT`;
@@ -22,11 +23,12 @@ export class AppController {
 
     } else {
       const nome_supervisor = req.user.dados.NOME
-      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = 'LUIS CAVALCANTE COSTA'`;
+      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
       const operadores = await this.databaseService.query(query);
       return operadores; // Retorna os operadores encontrados na tabela
     }
   }
+
   @Get('indicadores-geral')
   async getIndicadoresGeral(@Req() req: any) {
 
@@ -44,7 +46,7 @@ export class AppController {
 
     } else {
       const nome_supervisor = req.user.dados.NOME
-      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = 'LUIS CAVALCANTE COSTA'`;
+      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
       const operadores = await this.databaseService.query(query);
       const tma = await this.mediaTma(operadores, 'tma')
       const csat = await this.mediaIndicadores(operadores, 'csat')
@@ -65,7 +67,7 @@ export class AppController {
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
-        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = 'LUIS CAVALCANTE COSTA'`;
+        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
         const operadores = await this.databaseService.query(query);
         const quartil = await this.dividirEmQuartis(operadores, 'tma');
         return quartil
@@ -82,7 +84,7 @@ export class AppController {
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
-        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = 'LUIS CAVALCANTE COSTA'`;
+        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
         const operadores = await this.databaseService.query(query);
         const quartil = await this.dividirEmQuartis(operadores, 'csat');
         return quartil
@@ -99,7 +101,7 @@ export class AppController {
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
-        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = 'LUIS CAVALCANTE COSTA'`;
+        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
         const operadores = await this.databaseService.query(query);
         const quartil = await this.dividirEmQuartis(operadores, 'nota_qualidade');
         return quartil
@@ -116,7 +118,7 @@ export class AppController {
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
-        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = 'LUIS CAVALCANTE COSTA'`;
+        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
         const operadores = await this.databaseService.query(query);
         const quartil = await this.dividirEmQuartis(operadores, 'nota_venda');
         return quartil
@@ -133,7 +135,7 @@ export class AppController {
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
-        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = 'LUIS CAVALCANTE COSTA'`;
+        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
         const operadores = await this.databaseService.query(query);
         const quartil = await this.dividirEmQuartis(operadores, 'qtd_vendas');
         return quartil
@@ -221,7 +223,6 @@ export class AppController {
     // Função para converter tempo 'hh:mm:ss' para segundos
     const timeToSeconds = (time: string): number => {
       const [hours, minutes, seconds] = time.split(':').map(Number);
-      console.log(hours, minutes, seconds)
       return hours * 3600 + minutes * 60 + seconds;
     };
   

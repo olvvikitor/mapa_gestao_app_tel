@@ -45,32 +45,56 @@ async function buscarTabelaOperadorGeral() {
         if (!tabelaGeral.ok) {
             throw new Error("Erro ao carregar tabela geral")
         }
-        const dados = await tabelaGeral.json()
+        const dados = await tabelaGeral.json();
 
+        $('#tabela-geral').bootstrapTable('destroy'); // Remove qualquer inicialização anterior
 
-        const tabela = document.getElementById("tabela-geral");
-
-        // Criando o corpo da tabela se ainda não existir
-        let tabelaBody = tabela.querySelector("tbody");
-        if (!tabelaBody) {
-            tabelaBody = document.createElement("tbody");
-            tabela.appendChild(tabelaBody);
-        }
-
-        tabelaBody.innerHTML = ""; // Limpa a tabela antes de preencher
-
-        dados.forEach(item => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${item.matricula}</td>
-                <td>${item.nome}</td>
-                <td>${item.csat ?? '-'}</td>
-                <td>${item.tma ?? '-'}</td>
-                <td>${item.nota_qualidade ?? '-'}</td>
-                <td>${item.nota_venda ?? '-'}</td>
-                <td>${item.qtd_vendas ?? '-'}</td>
-            `;
-            tabelaBody.appendChild(row);
+        $('#tabela-geral').bootstrapTable({
+            data: dados,
+            pagination: true,
+            pageSize: 10,
+            searchAlign: 'left',
+            search: true,
+            formatLoadingMessage: function () {
+                return "Carregando...";
+            },
+            formatRecordsPerPage: function (pageNumber) {
+                return `${pageNumber} Registros por página`;
+            },
+            formatShowingRows: function (pageFrom, pageTo, totalRows) {
+                return `Exibindo ${pageFrom} a ${pageTo} de ${totalRows} registros`;
+            },
+            formatSearch: function () {
+                return "Buscar";
+            },
+            formatNoMatches: function () {
+                return "Nenhum registro encontrado";
+            },
+            formatPaginationSwitch: function () {
+                return "Ocultar/Mostrar paginação";
+            },
+            formatRefresh: function () {
+                return "Atualizar";
+            },
+            formatToggle: function () {
+                return "Alternar exibição";
+            },
+            formatColumns: function () {
+                return "Colunas";
+            },
+            formatAllRows: function () {
+                return "Todos";
+            },
+            paginationVAlign: 'top',
+            columns: [
+                { field: 'matricula', title: 'Matrícula' },
+                { field: 'nome', title: 'Nome' },
+                { field: 'csat', title: 'CSAT', formatter: (value) => value ?? '-' },
+                { field: 'tma', title: 'TMA', formatter: (value) => value ?? '-' },
+                { field: 'nota_qualidade', title: 'Nota Qualidade', formatter: (value) => value ?? '-' },
+                { field: 'nota_venda', title: 'Nota Venda', formatter: (value) => value ?? '-' },
+                { field: 'qtd_vendas', title: 'Qtd Vendas', formatter: (value) => value ?? '-' }
+            ]
         });
 
     } catch (error) {
@@ -233,6 +257,12 @@ async function buscarIndicadoresPorQuartil() {
         console.error("Erro ao buscar indicadores:", error);
         throw error;
     }
+
+
+}
+async function logout(){
+    localStorage.removeItem("auth-base-gestao")
+    window.location.href = "/login"
 }
 
 

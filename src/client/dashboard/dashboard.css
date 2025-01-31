@@ -126,3 +126,21 @@
 .bi{
     color: #fd7e14;
 }
+.bootstrap-table .search {
+    color: rgb(221, 8, 8);
+    margin-bottom: 10px; /* Dá um espaçamento */
+}
+.header{
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.233); /* Sombra suave */
+
+}
+.sidebar{
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.37); /* Sombra suave */
+
+}
+.footer-img {
+    width: 25px;  /* Ajuste o tamanho conforme necessário */
+    
+    height: auto; /* Mantém a proporção da imagem */
+  }
+  
