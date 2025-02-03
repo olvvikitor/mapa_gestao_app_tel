@@ -14,7 +14,7 @@ async function enviarRequisicaoLogin(event) {
     };
 
     try {
-        const resposta = await fetch("http://10.71.202.115:3000/auth", {
+        const resposta = await fetch("auth", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

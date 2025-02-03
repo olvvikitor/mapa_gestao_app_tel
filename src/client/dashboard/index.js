@@ -4,7 +4,7 @@ async function carregarDadosUserLogado() {
 
         const token = localStorage.getItem("auth-base-gestao");
 
-        const resposta = await fetch("http://10.71.202.115:3000/auth/token", {
+        const resposta = await fetch("auth/token", {
             method: 'GET',
             headers: {
                 "Authorization": `Bearer: ${token}`,
@@ -35,7 +35,7 @@ async function buscarTabelaOperadorGeral() {
     try {
         const token = localStorage.getItem("auth-base-gestao")
 
-        const tabelaGeral = await fetch('http://10.71.202.115:3000/dashboard/table', {
+        const tabelaGeral = await fetch('dashboard/table', {
             method: "GET",
             headers: {
                 "Authorization": `Bearer: ${token}`,
@@ -105,7 +105,7 @@ async function buscarIndicadoresGeral() {
     try {
         const token = localStorage.getItem("auth-base-gestao")
 
-        const response = await fetch('http://10.71.202.115:3000/dashboard/indicadores-geral', {
+        const response = await fetch('dashboard/indicadores-geral', {
             method: "GET",
             headers: {
                 "Authorization": `Bearer: ${token}`,
@@ -197,7 +197,7 @@ async function buscarIndicadoresPorQuartil() {
 
     try {
         // Realizando as requisições
-        const quartilTMA = await fetch('http://10.71.202.115:3000/dashboard/quartil-tma', {
+        const quartilTMA = await fetch('dashboard/quartil-tma', {
             method: "GET",
             headers: {
                 "Authorization": `Bearer: ${token}`,
@@ -208,7 +208,7 @@ async function buscarIndicadoresPorQuartil() {
         const tma = await quartilTMA.json();
         indicadores.push({tma: tma});
 
-        const quartilCSAT = await fetch('http://10.71.202.115:3000/dashboard/quartil-csat', {
+        const quartilCSAT = await fetch('dashboard/quartil-csat', {
             method: "GET",
             headers: {
                 "Authorization": `Bearer: ${token}`,
@@ -219,7 +219,7 @@ async function buscarIndicadoresPorQuartil() {
         const csat = await quartilCSAT.json();
         indicadores.push({csat: csat});
 
-        const quartlNotaQualidade = await fetch('http://10.71.202.115:3000/dashboard/quartil-monitoria', {
+        const quartlNotaQualidade = await fetch('dashboard/quartil-monitoria', {
             method: "GET",
             headers: {
                 "Authorization": `Bearer: ${token}`,
@@ -230,7 +230,7 @@ async function buscarIndicadoresPorQuartil() {
         const nota_qualidade = await quartlNotaQualidade.json();
         indicadores.push({notaQualidade: nota_qualidade});
 
-        const quartlNotaQualidadeVendas = await fetch('http://10.71.202.115:3000/dashboard/quartil-monitoria-vendas', {
+        const quartlNotaQualidadeVendas = await fetch('dashboard/quartil-monitoria-vendas', {
             method: "GET",
             headers: {
                 "Authorization": `Bearer: ${token}`,
@@ -241,7 +241,7 @@ async function buscarIndicadoresPorQuartil() {
         const nota_qualidade_vendas = await quartlNotaQualidadeVendas.json();
         indicadores.push({notaQualidadeVendas: nota_qualidade_vendas});
 
-        const quartilQtdVendas = await fetch('http://10.71.202.115:3000/dashboard/quartil-vendas', {
+        const quartilQtdVendas = await fetch('dashboard/quartil-vendas', {
             method: "GET",
             headers: {
                 "Authorization": `Bearer: ${token}`,

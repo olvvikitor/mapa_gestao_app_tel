@@ -17,13 +17,13 @@ export class AppController {
 
 
     if (this.isCoordenador(login_auth, this.coordenadores)) {
-      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT`;
+      const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT`;
       const operadores: any[] = await this.databaseService.query(query);
       return operadores; // Retorna os operadores encontrados na tabela
 
     } else {
       const nome_supervisor = req.user.dados.NOME
-      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
+      const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
       const operadores = await this.databaseService.query(query);
       return operadores; // Retorna os operadores encontrados na tabela
     }
@@ -35,7 +35,7 @@ export class AppController {
     const login_auth = req.user.dados.LOGIN;
 
     if (this.isCoordenador(login_auth, this.coordenadores)) {
-      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT`;
+      const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT`;
       const operadores: any[] = await this.databaseService.query(query);
       const tma = await this.mediaTma(operadores, 'tma')
       const csat = await this.mediaIndicadores(operadores, 'csat')
@@ -46,7 +46,7 @@ export class AppController {
 
     } else {
       const nome_supervisor = req.user.dados.NOME
-      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
+      const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
       const operadores = await this.databaseService.query(query);
       const tma = await this.mediaTma(operadores, 'tma')
       const csat = await this.mediaIndicadores(operadores, 'csat')
@@ -61,13 +61,13 @@ export class AppController {
     const nome_logado = req.user.dados.LOGIN;
 
     if (this.isCoordenador(nome_logado, this.coordenadores)) {
-      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT ORDER BY tma ASC`;
+      const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT ORDER BY tma ASC`;
       const operadores = await this.databaseService.query(query);
       const quartil = await this.dividirEmQuartis(operadores, 'tma');
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
-        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
+        const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
         const operadores = await this.databaseService.query(query);
         const quartil = await this.dividirEmQuartis(operadores, 'tma');
         return quartil
@@ -78,13 +78,13 @@ export class AppController {
     const nome_logado = req.user.dados.LOGIN;
 
     if (this.isCoordenador(nome_logado, this.coordenadores)) {
-      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT ORDER BY tma ASC`;
+      const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT ORDER BY tma ASC`;
       const operadores = await this.databaseService.query(query);
       const quartil = await this.dividirEmQuartis(operadores, 'csat');
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
-        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
+        const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
         const operadores = await this.databaseService.query(query);
         const quartil = await this.dividirEmQuartis(operadores, 'csat');
         return quartil
@@ -95,13 +95,13 @@ export class AppController {
     const nome_logado = req.user.dados.LOGIN;
 
     if (this.isCoordenador(nome_logado, this.coordenadores)) {
-      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT ORDER BY tma ASC`;
+      const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT ORDER BY tma ASC`;
       const operadores = await this.databaseService.query(query);
       const quartil = await this.dividirEmQuartis(operadores, 'nota_qualidade');
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
-        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
+        const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
         const operadores = await this.databaseService.query(query);
         const quartil = await this.dividirEmQuartis(operadores, 'nota_qualidade');
         return quartil
@@ -112,13 +112,13 @@ export class AppController {
     const nome_logado = req.user.dados.LOGIN;
 
     if (this.isCoordenador(nome_logado, this.coordenadores)) {
-      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT ORDER BY tma ASC`;
+      const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT ORDER BY tma ASC`;
       const operadores = await this.databaseService.query(query);
       const quartil = await this.dividirEmQuartis(operadores, 'nota_venda');
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
-        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
+        const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
         const operadores = await this.databaseService.query(query);
         const quartil = await this.dividirEmQuartis(operadores, 'nota_venda');
         return quartil
@@ -129,13 +129,13 @@ export class AppController {
     const nome_logado = req.user.dados.LOGIN;
 
     if (this.isCoordenador(nome_logado, this.coordenadores)) {
-      const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT ORDER BY tma ASC`;
+      const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT ORDER BY tma ASC`;
       const operadores = await this.databaseService.query(query);
       const quartil = await this.dividirEmQuartis(operadores, 'qtd_vendas');
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME
-        const query = `SELECT * FROM TESTES.dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
+        const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
         const operadores = await this.databaseService.query(query);
         const quartil = await this.dividirEmQuartis(operadores, 'qtd_vendas');
         return quartil
