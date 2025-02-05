@@ -31,11 +31,20 @@ async function carregarDadosUserLogado() {
     }
 }
 
-async function buscarTabelaOperadorGeral() {
+async function buscarTabelaOperadorGeral(mes) {
     try {
-        const token = localStorage.getItem("auth-base-gestao")
 
-        const tabelaGeral = await fetch('dashboard/table', {
+        if (mes === null) {
+            const mesAtual = new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase(); // Mês atual em português
+            mes = mesAtual;
+        }
+        
+
+        const token = localStorage.getItem("auth-base-gestao");
+        const url = `dashboard/table/${mes}`
+        console.log(url)
+
+        const tabelaGeral = await fetch(url, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer: ${token}`,
@@ -101,11 +110,18 @@ async function buscarTabelaOperadorGeral() {
         console.log(error)
     }
 }
-async function buscarIndicadoresGeral() {
+async function buscarIndicadoresGeral(mes) {
     try {
         const token = localStorage.getItem("auth-base-gestao")
 
-        const response = await fetch('dashboard/indicadores-geral', {
+        if (mes === null) {
+            const mesAtual = new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase(); // Mês atual em português
+            mes = mesAtual;
+        }
+
+        const url = mes ? `dashboard/indicadores-geral/${mes}` : 'dashboard/indicadores-geral/';
+
+        const response = await fetch(url, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer: ${token}`,
@@ -140,20 +156,20 @@ async function buscarIndicadoresGeral() {
     }
 
 }
-async function criarTabelaQuartil() {
+async function criarTabelaQuartil(mes) {
     try {
-        const dados = await buscarIndicadoresPorQuartil();
+        const dados = await buscarIndicadoresPorQuartil(mes);
         console.log(dados);
-        
+
         const tabela = document.getElementById("tabela-quartil");
-        
+
         // Criando o corpo da tabela se ainda não existir
         let tabelaBody = tabela.querySelector("tbody");
         if (!tabelaBody) {
             tabelaBody = document.createElement("tbody");
             tabela.appendChild(tabelaBody);
         }
-        
+
         tabelaBody.innerHTML = ""; // Limpa a tabela antes de preencher
 
         function obterClasseQuartil(index) {
@@ -166,15 +182,15 @@ async function criarTabelaQuartil() {
                 default: return "";
             }
         }
-        
+
         // Loop para preencher a tabela com dados dos quartis
         const quartis = ['primeiro', 'segundo', 'terceiro', 'quarto'];
         quartis.forEach((quartil, index) => {
             const row = document.createElement("tr");
-            
+
             // Preenchendo a coluna Quartil
             row.innerHTML = `<td class="quartil-numero" id="${obterClasseQuartil(index)}">${index + 1}Q</td>`;
-            
+
             row.innerHTML += `
             <td id="${obterClasseQuartil(index)}" >${dados[1].csat?.[quartil]?.media ?? '-'}</td>
             <td id="${obterClasseQuartil(index)}" >${dados[0].tma?.[quartil]?.media ?? '-'}</td>
@@ -182,94 +198,90 @@ async function criarTabelaQuartil() {
             <td id="${obterClasseQuartil(index)}" >${dados[3].notaQualidadeVendas?.[quartil]?.media ?? '-'}</td>
             <td id="${obterClasseQuartil(index)}" >${dados[4].qtdVendas?.[quartil]?.soma ?? '-'}</td>
         `;
-            
+
             tabelaBody.appendChild(row);
         });
-        
+
     } catch (error) {
         console.log("Erro:", error);
     }
 }
 
-async function buscarIndicadoresPorQuartil() {
+async function buscarIndicadoresPorQuartil(mes) {
     const token = localStorage.getItem("auth-base-gestao");
     const indicadores = [];
 
+    if (!mes) {
+        const mesAtual = new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+        mes = mesAtual;
+    }
+
+    console.log('mesquartil', mes);
+    
+    const urls = [
+        `dashboard/quartil-tma/${mes}`,
+        `dashboard/quartil-csat/${mes}`,
+        `dashboard/quartil-monitoria/${mes}`,
+        `dashboard/quartil-monitoria-vendas/${mes}`,
+        `dashboard/quartil-vendas/${mes}`
+    ];
+
     try {
-        // Realizando as requisições
-        const quartilTMA = await fetch('dashboard/quartil-tma', {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer: ${token}`,
-                "Content-Type": "application/json"
-            }
-        });
-        if (!quartilTMA.ok) throw new Error("Erro ao carregar quartil TMA");
-        const tma = await quartilTMA.json();
-        indicadores.push({tma: tma});
+        const respostas = await Promise.all(urls.map(url =>
+            fetch(url, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer: ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }).then(res => {
+                if (!res.ok) throw new Error(`Erro ao carregar ${url}`);
+                return res.json();
+            })
+        ));
 
-        const quartilCSAT = await fetch('dashboard/quartil-csat', {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer: ${token}`,
-                "Content-Type": "application/json"
-            }
-        });
-        if (!quartilCSAT.ok) throw new Error("Erro ao carregar quartil CSAT");
-        const csat = await quartilCSAT.json();
-        indicadores.push({csat: csat});
+        // Mapeando os resultados para os indicadores
+        indicadores.push(
+            { tma: respostas[0] },
+            { csat: respostas[1] },
+            { notaQualidade: respostas[2] },
+            { notaQualidadeVendas: respostas[3] },
+            { qtdVendas: respostas[4] }
+        );
 
-        const quartlNotaQualidade = await fetch('dashboard/quartil-monitoria', {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer: ${token}`,
-                "Content-Type": "application/json"
-            }
-        });
-        if (!quartlNotaQualidade.ok) throw new Error("Erro ao carregar quartil monitoria");
-        const nota_qualidade = await quartlNotaQualidade.json();
-        indicadores.push({notaQualidade: nota_qualidade});
-
-        const quartlNotaQualidadeVendas = await fetch('dashboard/quartil-monitoria-vendas', {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer: ${token}`,
-                "Content-Type": "application/json"
-            }
-        });
-        if (!quartlNotaQualidadeVendas.ok) throw new Error("Erro ao carregar quartil monitoria vendas");
-        const nota_qualidade_vendas = await quartlNotaQualidadeVendas.json();
-        indicadores.push({notaQualidadeVendas: nota_qualidade_vendas});
-
-        const quartilQtdVendas = await fetch('dashboard/quartil-vendas', {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer: ${token}`,
-                "Content-Type": "application/json"
-            }
-        });
-        if (!quartilQtdVendas.ok) throw new Error("Erro ao carregar quartil monitoria vendas");
-        const qtdVendas = await quartilQtdVendas.json();
-        indicadores.push({qtdVendas: qtdVendas});
-
-        return indicadores
+        console.log(indicadores)
+        return indicadores;
     } catch (error) {
         console.error("Erro ao buscar indicadores:", error);
         throw error;
     }
-
-
 }
-async function logout(){
+
+async function logout() {
     localStorage.removeItem("auth-base-gestao")
     window.location.href = "/login"
 }
 
 
 
-// Chama a função ao carregar a página
 document.addEventListener("DOMContentLoaded", carregarDadosUserLogado);
-document.addEventListener("DOMContentLoaded", criarTabelaQuartil);
-document.addEventListener("DOMContentLoaded", buscarIndicadoresGeral);
-document.addEventListener("DOMContentLoaded", buscarTabelaOperadorGeral)
 
+// Evento de clique para os itens do dropdown
+document.querySelectorAll('.dropdown-item').forEach(item => {
+    item.addEventListener('click', (event) => {
+        const mes = event.target.getAttribute('data-mes').toUpperCase(); // Corrige o erro de digitação
+        buscarTabelaOperadorGeral(mes); // Chama a função passando o mês selecionado
+        buscarIndicadoresGeral(mes); // Supondo que você tenha uma função para buscar os indicadores gerais
+        buscarIndicadoresPorQuartil(mes)
+        criarTabelaQuartil(mes)
+    });
+});
+
+// Reorganizando o carregamento do conteúdo
+document.addEventListener("DOMContentLoaded", () => {
+    carregarDadosUserLogado();
+    criarTabelaQuartil(null); // Supondo que você tenha uma função para criar a tabela de quartil
+    buscarTabelaOperadorGeral(null); // Carrega a tabela para o mês atual ou o selecionado
+    buscarIndicadoresGeral(null); // Supondo que você tenha uma função para buscar os indicadores gerais
+    buscarIndicadoresPorQuartil()
+});
