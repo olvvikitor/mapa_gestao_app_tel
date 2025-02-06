@@ -31,6 +31,7 @@ async function carregarDadosUserLogado() {
     }
 }
 
+
 async function buscarTabelaOperadorGeral(mes) {
     try {
 
@@ -38,11 +39,14 @@ async function buscarTabelaOperadorGeral(mes) {
             const mesAtual = new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase(); // Mês atual em português
             mes = mesAtual;
         }
+
+        const mesSelecionadoHtmlInner = document.getElementById('mes_selected')
+        mesSelecionadoHtmlInner.innerHTML = mes
         
 
         const token = localStorage.getItem("auth-base-gestao");
         const url = `dashboard/table/${mes}`
-        console.log(url)
+        
 
         const tabelaGeral = await fetch(url, {
             method: "GET",

@@ -1,3 +1,4 @@
+
 /* Estilo geral para as tabelas */
 #tabela-quartil, #tabela-geral {
     width: 100%;
@@ -143,4 +144,8 @@
     
     height: auto; /* Mantém a proporção da imagem */
   }
-  
+.bi-calendar-month{
+    color: #333;
+}.filter{
+    margin-top: 3%;
+}
