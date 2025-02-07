@@ -16,22 +16,22 @@ export class DatabaseService implements OnModuleDestroy {
     try {
       this.pool = await sql.connect(
         {
-          server: 'MISDEV30\\MIS_BI',
+          server: '10.71.202.120\\MIS',
           authentication: {
             type: 'default',
             options: {
-              userName: 'john',
+              userName: 'relatorios',
               password: 'devmis@2'
             },
           },
           options: {
             database: 'MERCANTIL',
-            
+
             encrypt: false, // Desabilita o uso de SSL
             trustServerCertificate: true, // Ignora o certificado SSL se o banco não tiver um válido
           },
         }
-    );
+      );
       console.log('Conexão bem-sucedida ao SQL Server');
     } catch (error) {
       console.error('Erro ao conectar ao banco de dados', error);
