@@ -16,11 +16,13 @@ export class DatabaseService implements OnModuleDestroy {
     try {
       this.pool = await sql.connect(
         {
-          server: '10.71.202.120\\MIS',
+          // server: '10.71.202.120\\MIS',
+          server: 'localhost',
+          port: 1433,
           authentication: {
             type: 'default',
             options: {
-              userName: 'relatorios',
+              userName: 'SA',
               password: 'devmis@2'
             },
           },

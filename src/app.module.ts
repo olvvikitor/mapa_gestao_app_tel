@@ -6,6 +6,7 @@ import { AppController } from './modules/app.controller';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ClientSideModule } from './client/client.module';
+import AcaoModule from './modules/5w2h/5w2h.module';
 
 @Global()
 @Module({
@@ -16,8 +17,7 @@ import { ClientSideModule } from './client/client.module';
   ServeStaticModule.forRoot({rootPath: join(__dirname,'..', 'src', 'client'),
     serveRoot:'/client'
   }),
-  ClientSideModule
-  
+  ClientSideModule,AcaoModule
 ],
   controllers: [AppController],
   providers: [],
