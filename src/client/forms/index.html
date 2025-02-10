@@ -27,7 +27,7 @@
   <link href="../../client/assets/vendor/quill/quill.bubble.css" rel="stylesheet">
   <link href="../../client/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="../../client/assets/vendor/simple-datatables/style.css" rel="stylesheet">
-
+  
 
   <!-- Template Main CSS File -->
   <link href="../../client/assets/css/style.css" rel="stylesheet">
@@ -35,9 +35,9 @@
 
 
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <!-- Bootstrap Table CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.21.3/bootstrap-table.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<!-- Bootstrap Table CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.21.3/bootstrap-table.min.css">
 
 
   <!-- =======================================================
@@ -116,116 +116,37 @@
 
   <main id="main" class="main">
 
-    <div class="pagetitle">
-      <h1>Form Elements</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
-          <li class="breadcrumb-item"><a href="/forms">Forms</a></li>
-          <li class="breadcrumb-item active">Elements</li>
-        </ol>
-      </nav>
-    </div><!-- End Page Title -->
 
-    <section class="section">
-      <div class="row">
-        <div class="col-lg-12">
+    <div class="row align-items-center">
+      <div class="col-md-4 pagetitle d-flex align-items-center">
+        <h1 class="card-title">Formulários | <span  id="mes_selected">Abertos</span></h1>
+      </div>
+    </div>
+    
 
-          <div class="card">
+    <section class="section dashboard mb-5">
+        
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 g-3">
+        <!-- Sales Card -->
+        <div class="col">
+          <div class="card info-card sales-card h-100 ">
             <div class="card-body">
-              <h5 class="card-title">General Form Elements</h5>
+              <h5 class="card-title">Form</h5>
+              <div class="d-flex align-items-center">
 
-              <!-- General Form Elements -->
-              <form onsubmit="enviarForm(event)">
-
-                <div class="row mb-3">
-                  <label if class="has-validation col-sm-2 col-form-label">Operador</label>
-                  <div class="col-sm-10">
-                    <select id= operadoresSelect class="form-select" aria-label="Default select example">
-                      <option  selected>-</option>
-                    </select>
-                    <div id="operadorErro" class="text-danger d-none">Selecione um operador.</div>
-
-                  </div>
+                <div class="ps-3">
+                  <h6 id="form"></h6>
                 </div>
-
-                <div class="row mb-3">
-                  <label for="inputDate" class="col-sm-2 col-form-label">Data inicial</label>
-                  <div class="col-sm-10">
-                    <input id="dataInicial" type="date" class="has-validation form-control">
-                    <div id="dataInicialErro" class="text-danger d-none">Informe a data inicial.</div>
-
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label  for="inputDate" class="col-sm-2 col-form-label">Data final</label>
-                  <div class="col-sm-10">
-                    <input id="dataFinal" type="date" class="form-control">
-                    <div id="dataFinalErro" class="text-danger d-none">Informe a data final.</div>
-                    <div id="dataRangeErro" class="text-danger d-none">A data final deve ser maior ou igual à data inicial.</div>
-                  </div>
-                </div>
-
-                <div class="row mb-3">
-                  <label for="inputPassword" class="col-sm-2 col-form-label"> O que deve ser feito?</label>
-                  <div class="col-sm-10">
-                    <textarea id ="oqueDeveSerFeito" class="form-control" style="height: 60px"></textarea>
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputPassword" class="col-sm-2 col-form-label">Por que precisa ser realizado?</label>
-                  <div class="col-sm-10">
-                    <textarea id="porquePrecisaSerRealizado" class="form-control" style="height: 60px"></textarea>
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputPassword" class="col-sm-2 col-form-label">Quem será responsável?</label>
-                  <div class="col-sm-10">
-                    <textarea id="quemSeraResponsavel" class="form-control" style="height: 60px"></textarea>
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputPassword" class="col-sm-2 col-form-label">Onde a ação será realizada ou implementada?</label>
-                  <div class="col-sm-10">
-                    <textarea id="ondeAcaoSeraRealizada" class="form-control" style="height: 60px"></textarea>
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputPassword" class="col-sm-2 col-form-label">Quando ela será iniciada?</label>
-                  <div class="col-sm-10">
-                    <textarea id="quandoElaSeraIniciada" class="form-control" style="height: 60px"></textarea>
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputPassword" class="col-sm-2 col-form-label">Como ela deve ser realizada?</label>
-                  <div class="col-sm-10">
-                    <textarea id="comoElaDeveSerRealizada" class="form-control" style="height: 60"></textarea>
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="inputPassword" class="col-sm-2 col-form-label">Quanto custa?</label>
-                  <div class="col-sm-10">
-                    <textarea id="quantoCusta" class="form-control" style="height: 60px"></textarea>
-                  </div>
-                </div>
-
-                <div class="row mb-3">
-                  <label class="col-sm-2 col-form-label"></label>
-                  <div class="col-sm-10">
-                    <button type="submit" class="btn btn-primary">Salvar</button>
-                  </div>
-                </div>
-
-              </form><!-- End General Form Elements -->
-
+              </div>
             </div>
           </div>
-
         </div>
+
       </div>
     </section>
 
   </main><!-- End #main -->
+
   <footer id="footer" class="footer">
     <div class="copyright">
       &copy; Copyright <strong><span>Tel Telemática</span></strong>. Todos os direitos reservados
@@ -235,7 +156,7 @@
       <img class="footer-img" src="../../client/assets/img/MIS.png" alt="Logo MIS">
     </div>
   </footer><!-- End Footer -->
-
+  
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
       class="bi bi-arrow-up-short"></i></a>
@@ -253,14 +174,12 @@
 
   <!-- Template Main JS File -->
   <script src="../../client/assets/js/main.js"></script>
-  <!-- Javascript Api-Consumer -->
-  <script src="../../client/5w2h/index.js" defer></script>
 
   <!-- jQuery (necessário para Bootstrap Table) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-  <!-- Bootstrap JS -->
-  <!-- Bootstrap Table JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.21.3/bootstrap-table.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<!-- Bootstrap JS -->
+<!-- Bootstrap Table JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.21.3/bootstrap-table.min.js"></script>
 
 
 </body>

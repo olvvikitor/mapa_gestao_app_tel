@@ -10,19 +10,20 @@ export class DatabaseService implements OnModuleDestroy {
     this.connect();
   }
 
-  // Conectar ao banco de dados
+  // Conectar ao banco de dadosCONS
   private async connect() {
 
     try {
       this.pool = await sql.connect(
         {
-          // server: '10.71.202.120\\MIS',
-          server: 'localhost',
+          server: '10.71.202.120\\MIS',
+          // server: 'localhost',
           port: 1433,
           authentication: {
             type: 'default',
             options: {
-              userName: 'SA',
+              userName: 'relatorios',
+              // userName: 'sa',
               password: 'devmis@2'
             },
           },

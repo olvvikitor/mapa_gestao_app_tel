@@ -2,7 +2,7 @@ import { Controller, Get, Inject, Param, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "./auth/services/auth.guard";
 import { DatabaseService } from "src/config/config.bd";
 
-// @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 @Controller('dashboard')
 export class AppController {
   constructor(@Inject() private databaseService: DatabaseService) {}
@@ -13,17 +13,16 @@ export class AppController {
   @Get('operadores')
   async getNameOperador(@Req() req: any){
 
-    const login_auth = 'jvjesus'
+    const login_auth = req.user.dados.LOGIN;
 
     if (this.isCoordenador(login_auth, this.coordenadores)) {
       const query = `SELECT DISTINCT nome FROM dbo.MAPA_GESTAO_CHAT`;
-      console.log( query)
       const operadores: any[] = await this.databaseService.query(query);
       return operadores; // Retorna os operadores encontrados na tabela
 
     } else {
       const nome_supervisor = req.user.dados.NOME
-      const query = `SELECT DISTINCT nome FROM dbo.MAPA_GESTAO_CHAT`;
+      const query = `SELECT DISTINCT nome FROM dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'`;
       const operadores = await this.databaseService.query(query);
       return operadores; // Retorna os operadores encontrados na tabela
     }
@@ -33,14 +32,11 @@ export class AppController {
   @Get('table/:mes')
   async getOperadores(@Param('mes') mes:string, @Req() req: any) {
 
-    // const login_auth = req.user.dados.LOGIN;
-    const login_auth = 'jvjesus'
-
+    const login_auth = req.user.dados.LOGIN;
 
 
     if (this.isCoordenador(login_auth, this.coordenadores)) {
       const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'`;
-      console.log( query)
       const operadores: any[] = await this.databaseService.query(query);
       return operadores; // Retorna os operadores encontrados na tabela
 
@@ -60,9 +56,7 @@ export class AppController {
     if (this.isCoordenador(login_auth, this.coordenadores)) {
       const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'`;
       const operadores: any[] = await this.databaseService.query(query);
-      console.log(operadores)
       const tma = await this.mediaTma(operadores, 'tma')
-      console.log(tma)
       const csat = await this.mediaIndicadores(operadores, 'csat')
       const notaQualidade = await this.mediaIndicadores(operadores, 'nota_qualidade')
       const notaVenda = await this.mediaIndicadores(operadores, 'nota_venda')
@@ -87,11 +81,8 @@ export class AppController {
 
     if (this.isCoordenador(nome_logado, this.coordenadores)) {
       const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' ORDER BY tma ASC`;
-      console.log(query, 'query')
       const operadores = await this.databaseService.query(query);
-      console.log('tma-operadores',operadores)
       const quartil = await this.dividirEmQuartis(operadores, 'tma');
-      console.log('quartil tma', quartil)
       return quartil
     } else {
         const nome_supervisor = req.user.dados.NOME

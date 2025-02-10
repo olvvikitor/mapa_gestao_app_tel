@@ -4,10 +4,10 @@ async function carregarDadosUserLogado() {
 
         const token = localStorage.getItem("auth-base-gestao");
 
-        // if(!token){
-        //     window.alert('Token expirado, faça o login novamente')
-        //     window.location.href='/login'
-        // }
+        if(!token){
+            window.alert('Token expirado, faça o login novamente')
+            window.location.href='/login'
+        }
 
         const resposta = await fetch("auth/token", {
             method: 'GET',
@@ -141,7 +141,6 @@ async function buscarIndicadoresGeral(mes) {
             throw new Error("Erro ao carregar tabela geral")
         }
         const indicadores = await response.json()
-        console.log(indicadores)
 
         const tma = document.getElementById('tma')
         tma.innerHTML = indicadores.data.tma.media
@@ -168,7 +167,6 @@ async function buscarIndicadoresGeral(mes) {
 async function criarTabelaQuartil(mes) {
     try {
         const dados = await buscarIndicadoresPorQuartil(mes);
-        console.log(dados);
 
         const tabela = document.getElementById("tabela-quartil");
 
@@ -182,7 +180,6 @@ async function criarTabelaQuartil(mes) {
         tabelaBody.innerHTML = ""; // Limpa a tabela antes de preencher
 
         function obterClasseQuartil(index) {
-            console.log(index)
             switch (index) {
                 case 0: return "quartil-verde";   // Primeiro quartil - verde
                 case 1: return "quartil-amarelo"; // Segundo quartil - amarelo
@@ -225,7 +222,6 @@ async function buscarIndicadoresPorQuartil(mes) {
         mes = mesAtual;
     }
 
-    console.log('mesquartil', mes);
     
     const urls = [
         `dashboard/quartil-tma/${mes}`,
@@ -258,7 +254,6 @@ async function buscarIndicadoresPorQuartil(mes) {
             { qtdVendas: respostas[4] }
         );
 
-        console.log(indicadores)
         return indicadores;
     } catch (error) {
         console.error("Erro ao buscar indicadores:", error);

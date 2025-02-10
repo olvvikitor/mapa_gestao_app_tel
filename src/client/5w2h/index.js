@@ -1,10 +1,23 @@
 
-async function carregarOperadores() {
+async function carregarOperadores(event) {
   try {
-    const response = await fetch('http://localhost:3000/dashboard/operadores'); // Ajuste a URL conforme necessário
+
+    const token = localStorage.getItem("auth-base-gestao");
+
+    if (!token) {
+      window.alert('Token expirado, faça o login novamente')
+      window.location.href = '/login'
+    }
+
+    const response = await fetch('http://localhost:3000/dashboard/operadores', {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer: ${token}`,
+        "Content-Type": "application/json"
+      }
+    }); // Ajuste a URL conforme necessário
     const operadores = await response.json();
-    console.log(operadores)
-    
+
     const select = document.getElementById('operadoresSelect');
     operadores.forEach(op => {
       const option = document.createElement('option');
@@ -16,52 +29,88 @@ async function carregarOperadores() {
     console.error('Erro ao carregar operadores:', error);
   }
 }
-async function enviarForm() {
+async function enviarForm(event) {
   // Capturar valores do formulário
+  const token = localStorage.getItem("auth-base-gestao");
+  event.preventDefault(); // Evita o recarregamento da página
+
   const operador = document.getElementById("operadoresSelect").value;
   const data_inicial = document.getElementById("dataInicial").value;
   const data_final = document.getElementById("dataFinal").value;
   const o_que_deve_ser_feito = document.getElementById("oqueDeveSerFeito").value;
   const por_que_precisa_ser_realizado = document.getElementById("porquePrecisaSerRealizado").value;
-  const quem_sera_responsável = document.getElementById("quemSeraResponsavel").value;
+  const quem_sera_responsavel = document.getElementById("quemSeraResponsavel").value;
   const onde_a_acao_sera_realizada = document.getElementById("ondeAcaoSeraRealizada").value;
   const quando_ela_sera_iniciada = document.getElementById("quandoElaSeraIniciada").value;
   const como_ela_deve_ser_realizada = document.getElementById("comoElaDeveSerRealizada").value;
   const quanto_custa = document.getElementById("quantoCusta").value;
 
-  // Montar o objeto com os dados
-  const dados = {
-    operador,
-    data_inicial,
-    data_final,
-    o_que_deve_ser_feito,
-    por_que_precisa_ser_realizado,
-    quem_sera_responsavel,
-    onde_a_acao_sera_realizada,
-    quando_ela_sera_iniciada,
-    como_ela_deve_ser_realizada,
-    quanto_custa
-  };
+  const operadorErro = document.getElementById("operadorErro");
+  const dataInicialErro = document.getElementById("dataInicialErro");
+  const dataFinalErro = document.getElementById("dataFinalErro");
+  const dataRangeErro = document.getElementById("dataRangeErro");
 
-  try {
-    const response = await fetch("http://localhost:3000/5w2h/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(dados)
-    });
+  operadorErro.classList.add("d-none");
+  dataInicialErro.classList.add("d-none");
+  dataFinalErro.classList.add("d-none");
+  dataRangeErro.classList.add("d-none");
 
-    if (!response.ok) {
-      throw new Error("Erro ao enviar o formulário");
+  let formValido = true;
+
+  if (!operador || operador === "-") {
+    operadorErro.classList.remove("d-none");
+    formValido = false;
+  }
+
+  // Validação das datas
+  if (!data_inicial) {
+    dataInicialErro.classList.remove("d-none");
+    formValido = false;
+  }
+  if (!data_inicial) {
+    dataFinalErro.classList.remove("d-none");
+    formValido = false;
+  }
+  if (data_inicial && data_final && data_final < data_inicial) {
+    dataRangeErro.classList.remove("d-none");
+    formValido = false;
+  }
+  if (formValido) {
+
+    // Montar o objeto com os dados
+    const dados = {
+      operador,
+      data_inicial,
+      data_final,
+      o_que_deve_ser_feito,
+      por_que_precisa_ser_realizado,
+      quem_sera_responsavel,
+      onde_a_acao_sera_realizada,
+      quando_ela_sera_iniciada,
+      como_ela_deve_ser_realizada,
+      quanto_custa
+    };
+
+    try {
+      const response = await fetch("http://localhost:3000/5w2h/create", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer: ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dados)
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao enviar o formulário");
+      }
+
+      alert("Formulário enviado com sucesso!");
+      window.location.href = '/5w2h'
+    } catch (error) {
+      console.error("Erro:", error);
+      alert("Erro ao enviar o formulário!");
     }
-
-    const resultado = await response.json();
-    console.log("Formulário enviado com sucesso:", resultado);
-    alert("Formulário enviado com sucesso!");
-  } catch (error) {
-    console.error("Erro:", error);
-    alert("Erro ao enviar o formulário!");
   }
 }
 

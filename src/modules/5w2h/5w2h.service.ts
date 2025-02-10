@@ -8,14 +8,12 @@ export class AcaoService {
 
   async createAcao(data: CreateAcaoDto, nome_logado:string): Promise<void> {
     data.status = 'ABERTO'
-    console.log(data)
-
     try {
       const query = `
-        INSERT INTO Acoes (
+        INSERT INTO MERCANTIL.dbo.MAPA_GESTAO5W2H (
           operador, data_inicial, data_final, o_que_deve_ser_feito, 
-          por_que_precisa_ser_realizado, quem_será_responsável, 
-          onde_a_ação_será_realizada, quando_ela_será_iniciada, 
+          por_que_precisa_ser_realizado, quem_sera_responsavel, 
+          onde_a_acao_sera_realizada, quando_ela_sera_iniciada, 
           como_ela_deve_ser_realizada, quanto_custa, status,
           criado_por
         ) VALUES (
@@ -28,7 +26,6 @@ export class AcaoService {
       `;
 
       await this.databaseService.query(query);
-      console.log('Ação inserida com sucesso');
     } catch (error) {
       console.error('Erro ao inserir ação:', error);
       throw error;
@@ -39,11 +36,10 @@ export class AcaoService {
   async getAll(nome_logado:string):Promise<any>{
     try {
       const query = `
-        SELECT * FROM Acoes WHERE criado_por = '${nome_logado}' AND status = 'ABERTO' `;
+        SELECT * FROM MERCANTIL.dbo.MAPA_GESTAO5W2H WHERE criado_por = '${nome_logado}' AND status = 'ABERTO' `;
 
       const forms  = await this.databaseService.query(query);
       return forms
-      console.log('Ação inserida com sucesso');
     } catch (error) {
       console.error('Erro ao inserir ação:', error);
       throw error;
@@ -60,7 +56,7 @@ export class AcaoService {
       } 
 
       const query = `
-      UPDATE Acoes
+      UPDATE MERCANTIL.dbo.MAPA_GESTAO5W2H
       SET status = '${status}'
       WHERE id = '${id}'
     `;
