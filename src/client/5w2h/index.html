@@ -99,7 +99,7 @@
         </a>
       </li><!-- End Dashboard Nav -->
       <li class="nav-item">
-        <a class="nav-link " href="/dashboard">
+        <a class="nav-link " href="/5w2h">
           <i class="bi bi-grid"></i>
           <span>5W2H</span>
         </a>
@@ -136,16 +136,13 @@
               <h5 class="card-title">General Form Elements</h5>
 
               <!-- General Form Elements -->
-              <form>
+              <form onsubmit="enviarForm(event)">
 
                 <div class="row mb-3">
-                  <label class="col-sm-2 col-form-label">Operador</label>
+                  <label if class="col-sm-2 col-form-label">Operador</label>
                   <div class="col-sm-10">
-                    <select class="form-select" aria-label="Default select example">
-                      <option selected>-</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
-                      <option value="3">Three</option>
+                    <select id= operadoresSelect class="form-select" aria-label="Default select example">
+                      <option  selected>-</option>
                     </select>
                   </div>
                 </div>
@@ -153,56 +150,56 @@
                 <div class="row mb-3">
                   <label for="inputDate" class="col-sm-2 col-form-label">Data inicial</label>
                   <div class="col-sm-10">
-                    <input type="date" class="form-control">
+                    <input id="dataInicial" type="date" class="form-control">
                   </div>
                 </div>
                 <div class="row mb-3">
-                  <label for="inputDate" class="col-sm-2 col-form-label">Data final</label>
+                  <label id="dataFinal" for="inputDate" class="col-sm-2 col-form-label">Data final</label>
                   <div class="col-sm-10">
-                    <input type="date" class="form-control">
+                    <input id="dataFinal" type="date" class="form-control">
                   </div>
                 </div>
 
                 <div class="row mb-3">
                   <label for="inputPassword" class="col-sm-2 col-form-label"> O que deve ser feito?</label>
                   <div class="col-sm-10">
-                    <textarea class="form-control" style="height: 60px"></textarea>
+                    <textarea id ="oqueDeveSerFeito" class="form-control" style="height: 60px"></textarea>
                   </div>
                 </div>
                 <div class="row mb-3">
                   <label for="inputPassword" class="col-sm-2 col-form-label">Por que precisa ser realizado?</label>
                   <div class="col-sm-10">
-                    <textarea class="form-control" style="height: 60px"></textarea>
+                    <textarea id="porquePrecisaSerRealizado" class="form-control" style="height: 60px"></textarea>
                   </div>
                 </div>
                 <div class="row mb-3">
                   <label for="inputPassword" class="col-sm-2 col-form-label">Quem será responsável?</label>
                   <div class="col-sm-10">
-                    <textarea class="form-control" style="height: 60px"></textarea>
+                    <textarea id="quemSeraResponsavel" class="form-control" style="height: 60px"></textarea>
                   </div>
                 </div>
                 <div class="row mb-3">
                   <label for="inputPassword" class="col-sm-2 col-form-label">Onde a ação será realizada ou implementada?</label>
                   <div class="col-sm-10">
-                    <textarea class="form-control" style="height: 60px"></textarea>
+                    <textarea id="ondeAcaoSeraRealizada" class="form-control" style="height: 60px"></textarea>
                   </div>
                 </div>
                 <div class="row mb-3">
                   <label for="inputPassword" class="col-sm-2 col-form-label">Quando ela será iniciada?</label>
                   <div class="col-sm-10">
-                    <textarea class="form-control" style="height: 60px"></textarea>
+                    <textarea id="quandoElaSeraIniciada" class="form-control" style="height: 60px"></textarea>
                   </div>
                 </div>
                 <div class="row mb-3">
                   <label for="inputPassword" class="col-sm-2 col-form-label">Como ela deve ser realizada?</label>
                   <div class="col-sm-10">
-                    <textarea class="form-control" style="height: 60"></textarea>
+                    <textarea id="comoElaDeveSerRealizada" class="form-control" style="height: 60"></textarea>
                   </div>
                 </div>
                 <div class="row mb-3">
                   <label for="inputPassword" class="col-sm-2 col-form-label">Quanto custa?</label>
                   <div class="col-sm-10">
-                    <textarea class="form-control" style="height: 60px"></textarea>
+                    <textarea id="quantoCusta" class="form-control" style="height: 60px"></textarea>
                   </div>
                 </div>
 
@@ -251,7 +248,7 @@
   <!-- Template Main JS File -->
   <script src="../../client/assets/js/main.js"></script>
   <!-- Javascript Api-Consumer -->
-  <script src="../../client/dashboard/index.js" defer></script>
+  <script src="../../client/5w2h/index.js" defer></script>
 
   <!-- jQuery (necessário para Bootstrap Table) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>

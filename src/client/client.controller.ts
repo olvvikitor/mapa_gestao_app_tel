@@ -6,16 +6,24 @@ import { join } from 'path';
 export class ClientController {
   @Get(':page')
   async servePage(@Res() res: Response, @Param('page') page: string) {
-    // Caminho para o diretório específico do cliente
-    const clientPath = join(__dirname,'..','..', 'src', 'client', page);
+    const clientPath = join(__dirname, '..', '..', 'src', 'client', page, 'index.html');
 
+    return res.sendFile(clientPath, (err) => {
+      if (err) {
+        if(err)
+        return res.sendFile(join(__dirname, '..', '..', 'src', 'client', 'error', '404.html'));
+      }
+    });
+  }
 
-    // Se a pasta existir, serve o index.html dessa pasta
-    //exemplo o index.html de login...
-    try {
-      return res.sendFile(join(clientPath, 'index.html'));
-    } catch (error) {
-      return res.status(404).send('Página não encontrada');
-    }
+  @Get()
+  async servePageLogin(@Res() res: Response) {
+    const clientPath = join(__dirname, '..', '..', 'src', 'client', 'login', 'index.html');
+
+    return res.sendFile(clientPath, (err) => {
+      if (err) {
+        return res.sendFile(join(__dirname, '..', '..', 'src', 'client', 'error', '404.html'));
+      }
+    });
   }
 }

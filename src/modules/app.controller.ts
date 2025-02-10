@@ -2,7 +2,7 @@ import { Controller, Get, Inject, Param, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "./auth/services/auth.guard";
 import { DatabaseService } from "src/config/config.bd";
 
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 @Controller('dashboard')
 export class AppController {
   constructor(@Inject() private databaseService: DatabaseService) {}
@@ -10,10 +10,32 @@ export class AppController {
   private coordenadores = ['ecarmo', 'jvjesus'];
 
 
+  @Get('operadores')
+  async getNameOperador(@Req() req: any){
+
+    const login_auth = 'jvjesus'
+
+    if (this.isCoordenador(login_auth, this.coordenadores)) {
+      const query = `SELECT DISTINCT nome FROM dbo.MAPA_GESTAO_CHAT`;
+      console.log( query)
+      const operadores: any[] = await this.databaseService.query(query);
+      return operadores; // Retorna os operadores encontrados na tabela
+
+    } else {
+      const nome_supervisor = req.user.dados.NOME
+      const query = `SELECT DISTINCT nome FROM dbo.MAPA_GESTAO_CHAT`;
+      const operadores = await this.databaseService.query(query);
+      return operadores; // Retorna os operadores encontrados na tabela
+    }
+  }
+
+
   @Get('table/:mes')
   async getOperadores(@Param('mes') mes:string, @Req() req: any) {
 
-    const login_auth = req.user.dados.LOGIN;
+    // const login_auth = req.user.dados.LOGIN;
+    const login_auth = 'jvjesus'
+
 
 
     if (this.isCoordenador(login_auth, this.coordenadores)) {

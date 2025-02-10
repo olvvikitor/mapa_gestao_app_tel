@@ -20,8 +20,8 @@ export class AcaoService {
           criado_por
         ) VALUES (
           '${data.operador}', '${data.data_inicial}', '${data.data_final}', '${data.o_que_deve_ser_feito}', 
-          '${data.por_que_precisa_ser_realizado}', '${data.quem_será_responsável}', 
-          '${data.onde_a_ação_será_realizada}', '${data.quando_ela_será_iniciada}', 
+          '${data.por_que_precisa_ser_realizado}', '${data.quem_sera_responsavel}', 
+          '${data.onde_a_acao_sera_realizada}', '${data.quando_ela_sera_iniciada}', 
           '${data.como_ela_deve_ser_realizada}', '${data.quanto_custa}','${data.status}',
           '${nome_logado}'
         )
@@ -72,4 +72,5 @@ export class AcaoService {
       throw error;
     }
   }
+
 }

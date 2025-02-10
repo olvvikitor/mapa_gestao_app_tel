@@ -28,4 +28,5 @@ export class AcaoController{
 
     await this.acaoService.update(id_parsed, data.status)
   }
+
 }

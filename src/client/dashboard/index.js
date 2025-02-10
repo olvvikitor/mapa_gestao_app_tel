@@ -4,6 +4,11 @@ async function carregarDadosUserLogado() {
 
         const token = localStorage.getItem("auth-base-gestao");
 
+        // if(!token){
+        //     window.alert('Token expirado, faça o login novamente')
+        //     window.location.href='/login'
+        // }
+
         const resposta = await fetch("auth/token", {
             method: 'GET',
             headers: {
@@ -268,7 +273,6 @@ async function logout() {
 
 
 
-document.addEventListener("DOMContentLoaded", carregarDadosUserLogado);
 
 // Evento de clique para os itens do dropdown
 document.querySelectorAll('.dropdown-item').forEach(item => {
