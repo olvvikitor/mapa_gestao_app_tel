@@ -26,8 +26,7 @@ export class AcaoController{
   @Put('update/:id')
   async updateStatusAcao(@Param('id') id:string, @Body() data : {status: string}){
     const id_parsed = parseInt(id)
-
-    await this.acaoService.update(id_parsed, data.status)
+    await this.acaoService.update(id_parsed)
   }
   @Delete('delete/:id')
   async deleteAcao(@Param('id') id: string){

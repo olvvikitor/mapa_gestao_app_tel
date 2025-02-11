@@ -46,20 +46,13 @@ export class AcaoService {
     }
   }
 
-  async update(id:number, status:string):Promise<any>{
-
-
+  async update(id:number):Promise<any>{
     try {
-      if(status !== 'ABERTO' && status !== 'FECHADO'){
-        throw new BadRequestException('valores de atualização incorretos')
-      } 
-
       const query = `
       UPDATE MERCANTIL.dbo.MAPA_GESTAO5W2H
-      SET status = '${status}'
+      SET status = 'FECHADO'
       WHERE id = '${id}'
     `;
-
       await this.databaseService.query(query);
       console.log('Ação atualizada com sucesso');
     } catch (error) {

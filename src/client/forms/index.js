@@ -83,10 +83,7 @@ async function renderCards(dados) {
                 </div>
 
                 <div class="d-flex justify-content-between w-100">
-                    <button class="btn btn-danger btn-sm" onclick="deletarAcao('${form.id}')">
-                        <i class="bi bi-trash"></i> Deletar
-                    </button>
-                    <button class="btn btn-success btn-sm" onclick="editCard('${form.id}')">
+                    <button class="btn btn-success btn-sm" onclick="editarAcao('${form.id}')">
                         <i class="bi bi-pencil"></i> Editar
                     </button>
                     <button class="btn btn-info btn-sm" onclick="viewDetails(decodeURIComponent('${encodeURIComponent(JSON.stringify(form))}'))">
@@ -122,25 +119,26 @@ function viewDetails(form) {
   modal.show();
 }
 
-async function deletarAcao(id) {
+async function editarAcao(id) {
   console.log(id)
   const token = localStorage.getItem("auth-base-gestao");
 
   try {
-    const response = await fetch(`http://localhost:3000/5w2h/delete/${id}`, {
-      method: "DELETE",
+    const response = await fetch(`http://localhost:3000/5w2h/update/${id}`, {
+      method: "PUT",
       headers: {
         "Authorization": `Bearer: ${token}`,
         "Content-Type": "application/json"
       },
     });
     if (!response.ok) {
-      throw new Error("Erro ao deletar o formulário");
+      throw new Error("Erro ao editar o formulário");
     }
+    alert('atualizado com sucesso')
     window.location.href = '/forms'
   } catch (error) {
     console.error("Erro:", error);
-    alert("Erro ao deletar o formulário!");
+    alert("Erro ao editar o formulário!");
   }
 }
 // Reorganizando o carregamento do conteúdo
