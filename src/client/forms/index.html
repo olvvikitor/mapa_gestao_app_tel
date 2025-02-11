@@ -105,11 +105,6 @@
         </a>
       </li><!-- End Dashboard Nav -->
 
-      <!-- <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-menu-button-wide"></i><span>Components</span>
-        </a>
-      </li>End Components Nav -->
     </ul>
 
   </aside><!-- End Sidebar-->
@@ -123,24 +118,35 @@
       </div>
     </div>
     
-
     <section class="section dashboard mb-5">
         
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 g-3">
         <!-- Sales Card -->
         <div class="col">
-          <div class="card info-card sales-card h-100 ">
+          <div class="card info-card sales-card h-100">
             <div class="card-body">
-              <h5 class="card-title">Form</h5>
+              <h5 class="card-title ">Titulo</h5>
               <div class="d-flex align-items-center">
+                <div class="ps-3 w-100">
+                  <label for="operatorName" class="form-label">Operador:</label>
+                  <h1>-</h1>
+                  
+                  <label for="field1" class="form-label">Campo 1:</label>
+                  <h1>-</h1>
+                  
+                  <label for="field2" class="form-label">Campo 2:</label>
+                  <h1>-</h1>
 
-                <div class="ps-3">
-                  <h6 id="form"></h6>
+                  
+                  <div class="justify-content-center">
+                    <button class="btn btn-danger" onclick="deleteCard(this)">Deletar</button>
+                    <button class="btn btn-success" onclick="deleteCard(this)">Editar</button>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
       </div>
     </section>
