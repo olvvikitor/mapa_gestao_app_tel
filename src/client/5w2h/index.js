@@ -1,4 +1,41 @@
 
+async function carregarDadosUserLogado() {
+  try {
+
+      const token = localStorage.getItem("auth-base-gestao");
+
+      if(!token){
+          window.alert('Token expirado, faça o login novamente')
+          window.location.href='/login'
+      }
+
+      const resposta = await fetch("auth/token", {
+          method: 'GET',
+          headers: {
+              "Authorization": `Bearer: ${token}`,
+              "Content-Type": "application/json"
+          }
+      });
+      if (!resposta.ok) {
+          throw new Error("Erro ao carregar os dados.");
+      }
+
+      const dados = await resposta.json();
+      let a = 'abc';
+
+      // Seleciona o elemento onde os dados serão inseridos
+      const nomeLogado = document.getElementById("nome_logado");
+      nomeLogado.innerHTML = dados.dados.NOME; // Limpa o conteúdo antes de adicionar novos dados
+      const nomeLogado2 = document.getElementById("nome_logado_2")
+      nomeLogado2.innerHTML = dados.dados.NOME.split(' ')[1]
+      const funcao = document.getElementById("funcao_logado")
+      funcao.innerHTML = dados.dados.FUNCAO
+
+  } catch (erro) {
+      console.error("Erro ao buscar os dados:", erro);
+  }
+}
+
 async function carregarOperadores(event) {
   try {
 
@@ -57,7 +94,7 @@ async function enviarForm(event) {
 
   let formValido = true;
 
-  if (!operador || operador === "-") {
+  if (!operador || operador === "") {
     operadorErro.classList.remove("d-none");
     formValido = false;
   }
@@ -116,5 +153,6 @@ async function enviarForm(event) {
 
 // Reorganizando o carregamento do conteúdo
 document.addEventListener("DOMContentLoaded", () => {
+  carregarDadosUserLogado()
   carregarOperadores();
 });

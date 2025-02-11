@@ -50,7 +50,6 @@ export class AcaoService {
 
 
     try {
-      console.log(status)
       if(status !== 'ABERTO' && status !== 'FECHADO'){
         throw new BadRequestException('valores de atualização incorretos')
       } 
@@ -65,6 +64,20 @@ export class AcaoService {
       console.log('Ação atualizada com sucesso');
     } catch (error) {
       console.error('Erro ao atualizar ação:', error);
+      throw error;
+    }
+  }
+  async delete(id:number){
+    try {
+      const query = `
+      DELETE MERCANTIL.dbo.MAPA_GESTAO5W2H
+      WHERE id = '${id}'
+    `;
+
+      await this.databaseService.query(query);
+      console.log('Deletado com sucesso');
+    } catch (error) {
+      console.error('Erro ao deletar ação:', error);
       throw error;
     }
   }

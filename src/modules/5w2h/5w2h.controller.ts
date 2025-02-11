@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { CreateAcaoDto } from './5w2h.dto';
 import { AcaoService } from './5w2h.service';
 import { AuthGuard } from '../auth/services/auth.guard';
@@ -28,6 +28,11 @@ export class AcaoController{
     const id_parsed = parseInt(id)
 
     await this.acaoService.update(id_parsed, data.status)
+  }
+  @Delete('delete/:id')
+  async deleteAcao(@Param('id') id: string){
+    const id_parsed = parseInt(id)
+    await this.acaoService.delete(id_parsed)
   }
 
 }
