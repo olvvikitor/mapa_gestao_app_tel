@@ -5,10 +5,15 @@ async function carregarDadosUserLogado() {
     const token = localStorage.getItem("auth-base-gestao");
 
     if (!token) {
-      window.alert('Token expirado, faça o login novamente')
-      window.location.href = '/login'
+      Swal.fire({
+        icon: 'warning',
+        title: 'Sessão expirada',
+        text: 'Token expirado, faça o login novamente',
+        confirmButtonText: 'OK'
+      }).then(() => {
+        window.location.href = '/login';
+      });
     }
-
     const resposta = await fetch("auth/token", {
       method: 'GET',
       headers: {
@@ -58,7 +63,6 @@ async function getForms(event) {
 
   } catch (error) {
     console.error("Erro:", error);
-    alert("Erro ao Carregar o formulário!");
   }
 }
 async function renderCards(dados) {
@@ -134,11 +138,25 @@ async function editarAcao(id) {
     if (!response.ok) {
       throw new Error("Erro ao editar o formulário");
     }
-    alert('atualizado com sucesso')
-    window.location.href = '/forms'
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Atualizado com sucesso!',
+      text: 'O formulário foi concluido.',
+      confirmButtonText: 'OK'
+    }).then(() => {
+      window.location.href = '/forms';
+    });
+
   } catch (error) {
     console.error("Erro:", error);
-    alert("Erro ao editar o formulário!");
+
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro!',
+      text: 'Erro ao editar o formulário!',
+      confirmButtonText: 'OK'
+    });
   }
 }
 // Reorganizando o carregamento do conteúdo

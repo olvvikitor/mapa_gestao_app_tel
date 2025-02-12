@@ -4,9 +4,15 @@ async function carregarDadosUserLogado() {
 
         const token = localStorage.getItem("auth-base-gestao");
 
-        if(!token){
-            window.alert('Token expirado, faça o login novamente')
-            window.location.href='/login'
+        if (!token) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Sessão expirada',
+                text: 'Token expirado, faça o login novamente',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = '/login';
+            });
         }
 
         const resposta = await fetch("auth/token", {

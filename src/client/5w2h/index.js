@@ -2,12 +2,18 @@
 async function carregarDadosUserLogado() {
   try {
 
-      const token = localStorage.getItem("auth-base-gestao");
+    const token = localStorage.getItem("auth-base-gestao");
 
-      if(!token){
-          window.alert('Token expirado, faça o login novamente')
-          window.location.href='/login'
-      }
+    if (!token) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Sessão expirada',
+            text: 'Token expirado, faça o login novamente',
+            confirmButtonText: 'OK'
+        }).then(() => {
+            window.location.href = '/login';
+        });
+    }
 
       const resposta = await fetch("auth/token", {
           method: 'GET',
@@ -40,11 +46,6 @@ async function carregarOperadores(event) {
   try {
 
     const token = localStorage.getItem("auth-base-gestao");
-
-    if (!token) {
-      window.alert('Token expirado, faça o login novamente')
-      window.location.href = '/login'
-    }
 
     const response = await fetch('http://localhost:3000/dashboard/operadores', {
       method: "GET",
@@ -99,19 +100,40 @@ async function enviarForm(event) {
     formValido = false;
   }
 
-  // Validação das datas
-  if (!data_inicial) {
-    dataInicialErro.classList.remove("d-none");
-    formValido = false;
-  }
-  if (!data_inicial) {
-    dataFinalErro.classList.remove("d-none");
-    formValido = false;
-  }
-  if (data_inicial && data_final && data_final < data_inicial) {
-    dataRangeErro.classList.remove("d-none");
-    formValido = false;
-  }
+// Validação das datas
+if (!data_inicial) {
+  dataInicialErro.classList.remove("d-none");
+  Swal.fire({
+      icon: 'warning',
+      title: 'Atenção!',
+      text: 'A data inicial é obrigatória.',
+      confirmButtonText: 'OK'
+  });
+  formValido = false;
+}
+
+if (!data_final) {
+  dataFinalErro.classList.remove("d-none");
+  Swal.fire({
+      icon: 'warning',
+      title: 'Atenção!',
+      text: 'A data final é obrigatória.',
+      confirmButtonText: 'OK'
+  });
+  formValido = false;
+}
+
+if (data_inicial && data_final && data_final < data_inicial) {
+  dataRangeErro.classList.remove("d-none");
+  Swal.fire({
+      icon: 'error',
+      title: 'Erro!',
+      text: 'A data final não pode ser menor que a data inicial.',
+      confirmButtonText: 'OK'
+  });
+  formValido = false;
+}
+
   if (formValido) {
 
     // Montar o objeto com os dados
@@ -140,14 +162,27 @@ async function enviarForm(event) {
 
       if (!response.ok) {
         throw new Error("Erro ao enviar o formulário");
-      }
-
-      alert("Formulário enviado com sucesso!");
-      window.location.href = '/5w2h'
-    } catch (error) {
-      console.error("Erro:", error);
-      alert("Erro ao enviar o formulário!");
     }
+    
+    Swal.fire({
+        icon: 'success',
+        title: 'Sucesso!',
+        text: 'Formulário enviado com sucesso!',
+        confirmButtonText: 'OK'
+    }).then(() => {
+        window.location.href = '/5w2h';
+    });
+    
+  } catch (error) {
+    console.error("Erro:", error);
+    
+    Swal.fire({
+        icon: 'error',
+        title: 'Erro!',
+        text: 'Erro ao enviar o formulário!',
+        confirmButtonText: 'OK'
+    });
+}
   }
 }
 
