@@ -9,10 +9,9 @@ export class AppController {
 
   private autorizados = [
     'COORDENADOR MIS SR', 
-    'COORDENADOR DE OPERACOES',
-    'MIS',
-    'QUALIDADE',
-
+    'COORDENADOR DE QUALIDADE E PROCESSOS',
+    'ANALISTA DE MIS I',
+    'ANALISTA DE MIS SR',
 
   ];
 
