@@ -66,6 +66,29 @@ async function getForms(event) {
   }
 }
 async function renderCards(dados) {
+  if (dados.length < 1) {
+    const container = document.createElement("div"); // Cria um novo div
+    container.id = "mensagem-container"; // Define um ID para referência futura
+    container.className = "text-center mt-5"; // Adiciona classes para estilização
+  
+    container.innerHTML = `
+      <h1 class="text-info fw-bold bg-light p-3 rounded d-inline-block">
+        Nenhum formulário aberto no momento!
+      </h1>
+      <br>
+      <a href="/5w2h" class="btn btn-primary mt-3 mb-5">
+        Cadastrar Novo
+      </a>
+    `;
+  
+    const footer = document.querySelector("footer"); 
+    if (footer) {
+      footer.parentNode.insertBefore(container, footer);
+    } else {
+      document.body.appendChild(container); // Se não houver footer, adiciona ao final do body
+    }
+
+  }
   const container = document.getElementById("cardsContainer");
   container.innerHTML = ""; // Limpa os cards antes de adicionar novos
 
@@ -87,10 +110,10 @@ async function renderCards(dados) {
                 </div>
 
                 <div class="d-flex justify-content-between w-100">
-                    <button class="btn btn-success btn-sm" onclick="editarAcao('${form.id}')">
-                        <i class="bi bi-pencil"></i> Editar
+                    <button class="btn btn-outline-success btn-sm" onclick="editarAcao('${form.id}')">
+                        <i class="bi bi-pencil"></i> Fechar
                     </button>
-                    <button class="btn btn-info btn-sm" onclick="viewDetails(decodeURIComponent('${encodeURIComponent(JSON.stringify(form))}'))">
+                    <button class="btn btn-outline-info btn-sm" onclick="viewDetails(decodeURIComponent('${encodeURIComponent(JSON.stringify(form))}'))">
                         <i class="bi bi-eye"></i> Visualizar
                     </button>
                 </div>
@@ -124,41 +147,57 @@ function viewDetails(form) {
 }
 
 async function editarAcao(id) {
-  console.log(id)
+  console.log(id);
+
   const token = localStorage.getItem("auth-base-gestao");
 
-  try {
-    const response = await fetch(`http://localhost:3000/5w2h/update/${id}`, {
-      method: "PUT",
-      headers: {
-        "Authorization": `Bearer: ${token}`,
-        "Content-Type": "application/json"
-      },
-    });
-    if (!response.ok) {
-      throw new Error("Erro ao editar o formulário");
+  Swal.fire({
+    title: 'Tem certeza?',
+    text: "Deseja fechar este formulário?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sim, fechar!',
+    cancelButtonText: 'Cancelar'
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch(`http://localhost:3000/5w2h/update/${id}`, {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer: ${token}`, 
+            "Content-Type": "application/json"
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Erro ao editar o formulário");
+        }
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Fechado com sucesso!',
+          text: 'O formulário foi concluído.',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          window.location.href = '/forms';
+        });
+
+      } catch (error) {
+        console.error("Erro:", error);
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro!',
+          text: 'Erro ao editar o formulário!',
+          confirmButtonText: 'OK'
+        });
+      }
     }
-
-    Swal.fire({
-      icon: 'success',
-      title: 'Atualizado com sucesso!',
-      text: 'O formulário foi concluido.',
-      confirmButtonText: 'OK'
-    }).then(() => {
-      window.location.href = '/forms';
-    });
-
-  } catch (error) {
-    console.error("Erro:", error);
-
-    Swal.fire({
-      icon: 'error',
-      title: 'Erro!',
-      text: 'Erro ao editar o formulário!',
-      confirmButtonText: 'OK'
-    });
-  }
+  });
 }
+
 // Reorganizando o carregamento do conteúdo
 document.addEventListener("DOMContentLoaded", () => {
   carregarDadosUserLogado();

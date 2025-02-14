@@ -81,9 +81,8 @@
 }
 /* Estilo específico para a célula do número do quartil */
 .quartil-numero {
-    color: white; /* Cor do texto */
+    background-color: #e9ecef;
     font-weight: bold; /* Destacar o número */
-    border-radius: 50%; /* Forma arredondada */
     padding: 8px 12px; /* Preenchimento interno */
     width: 40px; /* Largura fixa */
     height: 40px; /* Altura fixa */
@@ -120,6 +119,7 @@
 
 /* Efeito de destaque ao passar o mouse */
 .quartil-numero:hover {
+    
     opacity: 0.8; /* Leve transparência ao passar o mouse */
     cursor: pointer; /* Indica que a célula pode ser clicada */
     transition: opacity 0.3s ease; /* Transição suave */
