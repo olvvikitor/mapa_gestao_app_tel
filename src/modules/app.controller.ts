@@ -7,15 +7,24 @@ import { DatabaseService } from "src/config/config.bd";
 export class AppController {
   constructor(@Inject() private databaseService: DatabaseService) {}
 
-  private coordenadores = ['ecarmo', 'jvjesus'];
+  private autorizados = [
+    'COORDENADOR MIS SR', 
+    'COORDENADOR DE OPERACOES',
+    'MIS',
+    'QUALIDADE',
+
+
+  ];
 
 
   @Get('operadores')
   async getNameOperador(@Req() req: any){
 
     const login_auth = req.user.dados.LOGIN;
-
-    if (this.isCoordenador(login_auth, this.coordenadores)) {
+    
+    const cargo = req.user.dados.FUNCAO
+    
+    if (this.isCoordenador(cargo, this.autorizados)) {
       const query = `SELECT DISTINCT nome FROM dbo.MAPA_GESTAO_CHAT`;
       const operadores: any[] = await this.databaseService.query(query);
       return operadores; // Retorna os operadores encontrados na tabela
@@ -34,8 +43,8 @@ export class AppController {
 
     const login_auth = req.user.dados.LOGIN;
 
-
-    if (this.isCoordenador(login_auth, this.coordenadores)) {
+    const cargo = req.user.dados.FUNCAO
+    if (this.isCoordenador(cargo, this.autorizados)) {
       const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'`;
       const operadores: any[] = await this.databaseService.query(query);
       return operadores; // Retorna os operadores encontrados na tabela
@@ -53,7 +62,8 @@ export class AppController {
 
     const login_auth = req.user.dados.LOGIN;
 
-    if (this.isCoordenador(login_auth, this.coordenadores)) {
+    const cargo = req.user.dados.FUNCAO
+    if (this.isCoordenador(cargo, this.autorizados)) {
       const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'`;
       const operadores: any[] = await this.databaseService.query(query);
       const tma = await this.mediaTma(operadores, 'tma')
@@ -79,7 +89,8 @@ export class AppController {
   async getQuartilTma(@Param('mes') mes:string, @Req() req: any) {
     const nome_logado = req.user.dados.LOGIN;
 
-    if (this.isCoordenador(nome_logado, this.coordenadores)) {
+    const cargo = req.user.dados.FUNCAO
+    if (this.isCoordenador(cargo, this.autorizados)) {
       const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' ORDER BY tma ASC`;
       const operadores = await this.databaseService.query(query);
       const quartil = await this.dividirEmQuartis(operadores, 'tma');
@@ -96,7 +107,8 @@ export class AppController {
   async getQuartilCsat(@Param('mes') mes:string, @Req() req: any) {
     const nome_logado = req.user.dados.LOGIN;
 
-    if (this.isCoordenador(nome_logado, this.coordenadores)) {
+    const cargo = req.user.dados.FUNCAO
+    if (this.isCoordenador(cargo, this.autorizados)) {
       const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'  ORDER BY csat ASC`;
       const operadores = await this.databaseService.query(query);
       const quartil = await this.dividirEmQuartis(operadores, 'csat');
@@ -113,7 +125,8 @@ export class AppController {
   async quartilNotaQualidade(@Param('mes') mes:string, @Req() req: any) {
     const nome_logado = req.user.dados.LOGIN;
 
-    if (this.isCoordenador(nome_logado, this.coordenadores)) {
+    const cargo = req.user.dados.FUNCAO
+    if (this.isCoordenador(cargo, this.autorizados)) {
       const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' ORDER BY nota_qualidade ASC`;
       const operadores = await this.databaseService.query(query);
       const quartil = await this.dividirEmQuartis(operadores, 'nota_qualidade');
@@ -130,7 +143,8 @@ export class AppController {
   async quartilMoitoriaVendas(@Param('mes') mes:string, @Req() req: any) {
     const nome_logado = req.user.dados.LOGIN;
 
-    if (this.isCoordenador(nome_logado, this.coordenadores)) {
+    const cargo = req.user.dados.FUNCAO
+    if (this.isCoordenador(cargo, this.autorizados)) {
       const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' ORDER BY nota_venda ASC`;
       const operadores = await this.databaseService.query(query);
       const quartil = await this.dividirEmQuartis(operadores, 'nota_venda');
@@ -147,7 +161,8 @@ export class AppController {
   async quartilVendas(@Param('mes') mes:string,@Req() req: any) {
     const nome_logado = req.user.dados.LOGIN;
 
-    if (this.isCoordenador(nome_logado, this.coordenadores)) {
+    const cargo = req.user.dados.FUNCAO
+    if (this.isCoordenador(cargo, this.autorizados)) {
       const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes ='${mes}' ORDER BY qtd_vendas ASC`;
       const operadores = await this.databaseService.query(query);
       const quartil = await this.dividirEmQuartis(operadores, 'qtd_vendas');
@@ -289,7 +304,7 @@ export class AppController {
   
   
   // Método auxiliar para verificar se o usuário é coordenador
-  private isCoordenador(nome_logado: string, coordenadores: string[]): boolean {
-    return coordenadores.includes(nome_logado);
+  private isCoordenador(funcaoLogada: string, autorizadas: string[]): boolean {
+    return autorizadas.includes(funcaoLogada);
   }
 }
