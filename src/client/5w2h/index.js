@@ -47,7 +47,7 @@ async function carregarOperadores(event) {
 
     const token = localStorage.getItem("auth-base-gestao");
 
-    const response = await fetch('http://localhost:3000/dashboard/operadores', {
+    const response = await fetch('dashboard/operadores', {
       method: "GET",
       headers: {
         "Authorization": `Bearer: ${token}`,
@@ -151,7 +151,7 @@ if (data_inicial && data_final && data_final < data_inicial) {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/5w2h/create", {
+      const response = await fetch("5w2h/create", {
         method: "POST",
         headers: {
           "Authorization": `Bearer: ${token}`,

@@ -46,7 +46,7 @@ async function getForms(event) {
   const token = localStorage.getItem("auth-base-gestao");
 
   try {
-    const response = await fetch("http://localhost:3000/5w2h/getAll", {
+    const response = await fetch("5w2h/getAll", {
       method: "GET",
       headers: {
         "Authorization": `Bearer: ${token}`,
@@ -163,7 +163,7 @@ async function editarAcao(id) {
   }).then(async (result) => {
     if (result.isConfirmed) {
       try {
-        const response = await fetch(`http://localhost:3000/5w2h/update/${id}`, {
+        const response = await fetch(`5w2h/update/${id}`, {
           method: "PUT",
           headers: {
             "Authorization": `Bearer: ${token}`, 
