@@ -70,7 +70,7 @@ async function renderCards(dados) {
     const container = document.createElement("div"); // Cria um novo div
     container.id = "mensagem-container"; // Define um ID para referência futura
     container.className = "text-center mt-5"; // Adiciona classes para estilização
-  
+
     container.innerHTML = `
       <h1 class="text-info fw-bold bg-light p-3 rounded d-inline-block">
         Nenhum formulário aberto no momento!
@@ -80,8 +80,8 @@ async function renderCards(dados) {
         Cadastrar Novo
       </a>
     `;
-  
-    const footer = document.querySelector("footer"); 
+
+    const footer = document.querySelector("footer");
     if (footer) {
       footer.parentNode.insertBefore(container, footer);
     } else {
@@ -110,11 +110,14 @@ async function renderCards(dados) {
                 </div>
 
                 <div class="d-flex justify-content-between w-100">
-                    <button class="btn btn-outline-success btn-sm" onclick="editarAcao('${form.id}')">
+                    <button class="btn btn-outline-danger btn-sm" onclick="editarAcao('${form.id}')">
                         <i class="bi bi-pencil"></i> Fechar
                     </button>
                     <button class="btn btn-outline-info btn-sm" onclick="viewDetails(decodeURIComponent('${encodeURIComponent(JSON.stringify(form))}'))">
                         <i class="bi bi-eye"></i> Visualizar
+                    </button>
+                    <button class="btn btn-outline-success btn-sm" onclick="baixarFormsByID(decodeURIComponent('${encodeURIComponent(JSON.stringify(form.id))}'))">
+                        <i class="bi bi-download"></i>  Exportar
                     </button>
                 </div>
             </div>
@@ -166,7 +169,7 @@ async function editarAcao(id) {
         const response = await fetch(`5w2h/update/${id}`, {
           method: "PUT",
           headers: {
-            "Authorization": `Bearer: ${token}`, 
+            "Authorization": `Bearer: ${token}`,
             "Content-Type": "application/json"
           },
         });
@@ -196,6 +199,96 @@ async function editarAcao(id) {
       }
     }
   });
+}
+async function baixarForms() {
+  const token = localStorage.getItem("auth-base-gestao");
+  try {
+    const response = await fetch('5w2h/export-geral', {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer: ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+    if (!response.ok) {
+      throw new Error(`Erro ao baixar o arquivo: ${response.statusText}`);
+      
+    }
+    Swal.fire({
+      icon: 'success',
+      title: 'Exportado com sucesso!',
+      text: 'O download foi iniciado.',
+      confirmButtonText: 'OK'
+    }).then(() => {
+      window.location.href = '/forms';
+    });
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'planos.xlsx';
+    document.body.appendChild(a);
+    a.click();
+
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  } catch(error) {
+    console.error('Erro ao baixar o arquivo:', error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro!',
+      text: 'Erro ao baixar arquivo!',
+      confirmButtonText: 'OK'
+    });
+  }
+}
+
+async function baixarFormsByID(id) {
+  const token = localStorage.getItem("auth-base-gestao");
+  try {
+    const response = await fetch(`5w2h/export-by-id/${id}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer: ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+    if (!response.ok) {
+      throw new Error(`Erro ao baixar o arquivo: ${response.statusText}`);
+
+
+    }
+    Swal.fire({
+      icon: 'success',
+      title: 'Exportado com sucesso!',
+      text: 'O download foi iniciado.',
+      confirmButtonText: 'OK'
+    }).then(() => {
+      window.location.href = '/forms';
+    });
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'planos.xlsx';
+    document.body.appendChild(a);
+    a.click();
+
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  } catch(error) {
+    console.error('Erro ao baixar o arquivo:', error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro!',
+      text: 'Erro ao baixar arquivo!',
+      confirmButtonText: 'OK'
+    });
+  }
 }
 
 // Reorganizando o carregamento do conteúdo

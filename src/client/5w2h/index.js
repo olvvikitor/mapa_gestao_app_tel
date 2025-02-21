@@ -186,6 +186,9 @@ if (data_inicial && data_final && data_final < data_inicial) {
   }
 }
 
+  
+
+
 // Reorganizando o carregamento do conteúdo
 document.addEventListener("DOMContentLoaded", () => {
   carregarDadosUserLogado()

@@ -42,6 +42,7 @@ export class AppController {
       const operadores = await this.databaseService.query(query);
       return operadores; // Retorna os operadores encontrados na tabela
     }
+    
   }
 
 
