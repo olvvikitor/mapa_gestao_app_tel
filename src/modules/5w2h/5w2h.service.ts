@@ -110,7 +110,7 @@ export class AcaoService {
   }
   async exportById(id:number):Promise<any>{
     const query = `
-    SELECT * FROM MERCANTIL.dbo.MAPA_GESTAO5W2H WHERE id = '${id}'`;
+    SELECT * FROM MERCANTIL.dbo.MAPA_GESTAO5W2H WHERE id = '${id}'  AND status = 'ABERTO'`;
     const forms  = await this.databaseService.query(query);
 
     const workbook = new ExcelJS.Workbook()
