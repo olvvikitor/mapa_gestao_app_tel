@@ -72,7 +72,7 @@ async function renderCards(dados) {
     container.className = "text-center mt-5"; // Adiciona classes para estilização
 
     container.innerHTML = `
-      <h1 class="text-info fw-bold bg-light p-3 rounded d-inline-block">
+      <h1 class="card-title fw-bold p-5 rounded d-inline-block">
         Nenhum formulário aberto no momento!
       </h1>
       <br>

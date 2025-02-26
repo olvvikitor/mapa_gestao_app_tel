@@ -119,11 +119,38 @@
               <h6>Mês</h6>
             </li>
             <li><a class="dropdown-item" href="#" data-mes="janeiro">JANEIRO</a></li>
-            <li><a class="dropdown-item" href="#" data-mes="fevereiro">FEVEREIRO</a></li>          
+            <li><a class="dropdown-item" href="#" data-mes="fevereiro">FEVEREIRO</a></li>
+            <li><a class="dropdown-item" href="#" data-mes="marco">MARÇO</a></li>
+            <li><a class="dropdown-item" href="#" data-mes="abril">ABRIL</a></li>
+            <li><a class="dropdown-item" href="#" data-mes="maio">MAIO</a></li>
+            <li><a class="dropdown-item" href="#" data-mes="junho">JUNHO</a></li>
+            <li><a class="dropdown-item" href="#" data-mes="julho">JULHO</a></li>
+            <li><a class="dropdown-item" href="#" data-mes="agosto">AGOSTO</a></li>
+            <li><a class="dropdown-item" href="#" data-mes="setembro">SETEMBRO</a></li>
+            <li><a class="dropdown-item" href="#" data-mes="outubro">OUTUBRO</a></li>
+            <li><a class="dropdown-item" href="#" data-mes="novembro">NOVEMBRO</a></li>
+            <li><a class="dropdown-item" href="#" data-mes="dezembro">DEZEMBRO</a></li>           
           </ul>
         </div>
       </div>
+
+      <div class="filter ms-2">
+        <h6 class="card-title">Canal</h6>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="canal" id="chat" value="CHAT" checked>
+          <label class="form-check-label" for="chat">CHAT</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="canal" id="voz" value="VOZ">
+          <label class="form-check-label" for="voz">VOZ</label>
+        </div>
+      </div>
+      
+
+      
     </div>
+
+
     
 
     <section class="section dashboard">
@@ -136,8 +163,8 @@
             <div class="card-body">
               <h5 class="card-title">TMA</h5>
               <div class="d-flex align-items-center">
-                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                  <i class="bi bi-clock-fill"></i>
+                <div class="rounded-circle d-flex align-items-center justify-content-center">
+                  <i class="bi bi-clock-fill fs-1"></i>
                 </div>
                 <div class="ps-3">
                   <h6 id="tma"></h6>
@@ -153,8 +180,8 @@
             <div class="card-body">
               <h5 class="card-title">CSAT</h5>
               <div class="d-flex align-items-center">
-                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                  <i class="bi bi-star-fill"></i>
+                <div class="rounded-circle d-flex align-items-center justify-content-center">
+                  <i class="bi bi-star-fill fs-1"></i>
                 </div>
                 <div class="ps-3">
                   <h6 id="csat">...</h6>
@@ -170,8 +197,8 @@
             <div class="card-body">
               <h5 class="card-title">Nota Qualidade <span>| Vendas</span></h5>
               <div class="d-flex align-items-center">
-                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                  <i class="bi bi-person-up"></i>
+                <div class="rounded-circle d-flex align-items-center justify-content-center">
+                  <i class="bi bi-person-up fs-1"></i>
                 </div>
                 <div class="ps-3">
                   <h6 id="nota_vendas">...</h6>
@@ -187,8 +214,8 @@
             <div class="card-body">
               <h5 class="card-title">Nota Qualidade <span>| Atendimento</span></h5>
               <div class="d-flex align-items-center">
-                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                  <i class="bi bi-bar-chart-line-fill"></i>
+                <div class=" rounded-circle d-flex align-items-center justify-content-center">
+                  <i class="bi bi-bar-chart-line-fill fs-1"></i>
                 </div>
                 <div class="ps-3">
                   <h6 id="nota_qualidade">...</h6>
@@ -204,8 +231,8 @@
             <div class="card-body">
               <h5 class="card-title">QUANTIDADE DE VENDAS</h5>
               <div class="d-flex align-items-center">
-                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                  <i class="bi bi-cash-coin"></i>
+                <div class="rounded-circle d-flex align-items-center justify-content-center bg-branco">
+                  <i class="bi bi-cash-coin fs-1"></i>
                 </div>
                 <div class="ps-3">
                   <h6 id="soma_vendas">...</h6>
@@ -292,8 +319,7 @@
   </footer><!-- End Footer -->
   
 
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
-      class="bi bi-arrow-up-short"></i></a>
+ 
 
   <!-- Vendor JS Files -->
   <script src="../../client/assets/vendor/apexcharts/apexcharts.min.js"></script>

@@ -45,6 +45,7 @@
     margin-bottom: 10px;
 }
 
+
 .card-title span {
     color: #6c757d;
     font-size: 1rem;
@@ -125,8 +126,14 @@
     transition: opacity 0.3s ease; /* Transição suave */
 }
 .bi{
-    color: #fd7e14;
+    color: hsla(36, 100%, 50%, 0.671);  
+    background: white;
+    background-color: white;
 }
+.rounded-circle{
+    background: white;
+  }
+
 .bootstrap-table .search {
     color: rgb(221, 8, 8);
     margin-bottom: 10px; /* Dá um espaçamento */

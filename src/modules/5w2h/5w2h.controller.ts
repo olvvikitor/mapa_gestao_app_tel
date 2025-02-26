@@ -21,7 +21,6 @@ export class AcaoController{
   @Get('getAll')
   async getAll(@Req() req: any){
     const nome_logado = req.user.dados.NOME
-    
     return await this.acaoService.getAll(nome_logado)
   }
   @Put('update/:id')
