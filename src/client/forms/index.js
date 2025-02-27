@@ -110,14 +110,14 @@ async function renderCards(dados) {
                 </div>
 
                 <div class="d-flex justify-content-between w-100">
-                    <button class="btn btn-outline-danger btn-sm" onclick="editarAcao('${form.id}')">
+                    <button class="btn btn-outline-danger btn-sm m-2" onclick="editarAcao('${form.id}')">
                         <i class="bi bi-pencil"></i> Fechar
                     </button>
-                    <button class="btn btn-outline-info btn-sm" onclick="viewDetails(decodeURIComponent('${encodeURIComponent(JSON.stringify(form))}'))">
+                    <button class="btn btn-outline-info btn-sm m-2" onclick="viewDetails(decodeURIComponent('${encodeURIComponent(JSON.stringify(form))}'))">
                         <i class="bi bi-eye"></i> Visualizar
                     </button>
-                    <button class="btn btn-outline-success btn-sm" onclick="baixarFormsByID(decodeURIComponent('${encodeURIComponent(JSON.stringify(form.id))}'))">
-                        <i class="bi bi-download"></i>  Exportar
+                    <button class="btn btn-outline-success btn-sm m-2" onclick="baixarFormsByID(decodeURIComponent('${encodeURIComponent(JSON.stringify(form.id))}'))">
+                        <i class="bi bi-download""></i>  Exportar
                     </button>
                 </div>
             </div>

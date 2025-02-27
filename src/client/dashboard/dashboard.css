@@ -127,12 +127,7 @@
 }
 .bi{
     color: hsla(36, 100%, 50%, 0.671);  
-    background: white;
-    background-color: white;
 }
-.rounded-circle{
-    background: white;
-  }
 
 .bootstrap-table .search {
     color: rgb(221, 8, 8);
