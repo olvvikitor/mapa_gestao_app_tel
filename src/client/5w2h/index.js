@@ -47,7 +47,7 @@ async function carregarOperadores(event) {
 
     const token = localStorage.getItem("auth-base-gestao");
 
-    const response = await fetch('dashboard/operadores', {
+    const response = await fetch('api/operadores', {
       method: "GET",
       headers: {
         "Authorization": `Bearer: ${token}`,

@@ -109,48 +109,32 @@
   <main id="main" class="main">
 
 
+    <h6 class="card-title">Mapa Geral</h1>
     <div class="row align-items-center">
+
       <div class="col-md-4 pagetitle d-flex align-items-center">
-        <h1 class="card-title">Mapa Geral | <span  id="mes_selected">...</span></h1>
         <div class="filter ms-2">
-          <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-calendar-month"></i></a>
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-            <li class="dropdown-header text-start">
-              <h6>Mês</h6>
-            </li>
-            <li><a class="dropdown-item" href="#" data-mes="janeiro">JANEIRO</a></li>
-            <li><a class="dropdown-item" href="#" data-mes="fevereiro">FEVEREIRO</a></li>
-            <li><a class="dropdown-item" href="#" data-mes="marco">MARÇO</a></li>
-            <li><a class="dropdown-item" href="#" data-mes="abril">ABRIL</a></li>
-            <li><a class="dropdown-item" href="#" data-mes="maio">MAIO</a></li>
-            <li><a class="dropdown-item" href="#" data-mes="junho">JUNHO</a></li>
-            <li><a class="dropdown-item" href="#" data-mes="julho">JULHO</a></li>
-            <li><a class="dropdown-item" href="#" data-mes="agosto">AGOSTO</a></li>
-            <li><a class="dropdown-item" href="#" data-mes="setembro">SETEMBRO</a></li>
-            <li><a class="dropdown-item" href="#" data-mes="outubro">OUTUBRO</a></li>
-            <li><a class="dropdown-item" href="#" data-mes="novembro">NOVEMBRO</a></li>
-            <li><a class="dropdown-item" href="#" data-mes="dezembro">DEZEMBRO</a></li>           
-          </ul>
+            <label for="mesSelect" class="card-title me-2">Mês:</label>
+            <select id="mesSelect" class="form-select" aria-label="Selecione um mês">
+                <option value="JANEIRO">JANEIRO</option>
+                <option value="FEVEREIRO">FEVEREIRO</option>
+                <option value="MARCO">MARÇO</option>
+                <option value="ABRIL">ABRIL</option>
+                <option value="MAIO">MAIO</option>
+                <option value="JUNHO">JUNHO</option>
+                <option value="JULHO">JULHO</option>
+                <option value="AGOSTO">AGOSTO</option>
+                <option value="SETEMBRO">SETEMBRO</option>
+                <option value="OUTUBRO">OUTUBRO</option>
+                <option value="NOVEMBRO">NOVEMBRO</option>
+                <option value="DEZEMBRO">DEZEMBRO</option>
+            </select>
         </div>
-      </div>
-
-      <div class="filter ms-2">
-        <h6 class="card-title">Canal</h6>
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="canal" id="chat" value="CHAT" checked>
-          <label class="form-check-label" for="chat">CHAT</label>
-        </div>
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="canal" id="voz" value="VOZ">
-          <label class="form-check-label" for="voz">VOZ</label>
-        </div>
-      </div>
-      
-
-      
     </div>
 
-
+  <div class="col-md-4" id="filtroCanal"></div>
+  <div class="col-md-4" id="filtroSupervisor"></div>
+  <div class="col-md-4" id="filtroEquipe"></div>
     
 
     <section class="section dashboard">

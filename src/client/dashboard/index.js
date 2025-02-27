@@ -1,6 +1,20 @@
-const BASE_URL = 'dashboard';
+const BASE_URL = 'api/indicadores';
 const AUTH_TOKEN = localStorage.getItem("auth-base-gestao");
-
+    const autorizados = [
+        'COORDENADOR MIS SR',
+        'COORDENADOR DE QUALIDADE E PROCESSOS',
+        'COORDENADOR DE QUALIDADE',
+        'COORDENADOR DE QUALIDADE SR',
+        'ANALISTA DE MIS I',
+        'ANALISTA DE MIS SR',
+        'COORDENADOR DE OPERACOES',
+        'SUPERVISOR(A) DE QUALIDADE - INTERINO',
+        'SUPERVISOR(A) DE QUALIDADE',
+        'SUPERVISOR(A) DE MONITORIA',
+        'COORDENADOR DE PLANEJAMENTO',
+        'GERENTE DE QUALIDADE',
+        'GERENTE GERAL'
+    ];
 async function fetchWithAuth(url, options = {}) {
     if (!AUTH_TOKEN) {
         Swal.fire({
@@ -31,34 +45,122 @@ async function fetchWithAuth(url, options = {}) {
 }
 
 async function carregarDadosUserLogado() {
+
+
     try {
         const dados = await fetchWithAuth("auth/token", { method: 'GET' });
 
         document.getElementById("nome_logado").innerHTML = dados.dados.NOME;
-        document.getElementById("nome_logado_2").innerHTML = dados.dados.NOME.split(' ')[1];
+        document.getElementById("nome_logado_2").innerHTML = dados.dados.NOME.split(' ')[1] || "";
         document.getElementById("funcao_logado").innerHTML = dados.dados.FUNCAO;
+
+        if (autorizados.includes(dados.dados.FUNCAO)) {
+
+            const container = document.getElementById("filtroCanal"); // Elemento onde você quer adicionar os filtros
+
+            if (container) {
+                container.insertAdjacentHTML("beforeend", `
+                <div">
+                    <h6 class="card-title">Canal</h6>
+                    <select class="form-select" name="canal" id="canalSelect">
+                        <option value="CHAT" selected>CHAT</option>
+                        <option value="VOZ">VOZ</option>
+                    </select>
+                </div>
+            `);
+            }
+            const container2 = document.getElementById("filtroSupervisor"); // Elemento onde você quer adicionar os filtros
+
+            if (container2) {
+                container2.insertAdjacentHTML("beforeend", `
+                    <div>
+                        <label for="supervisorSelect" class="me-2 card-title">Supervisor:</label>
+                        <select id= supervisorSelect class="form-select" aria-label="Default select example">
+                        <option  selected></option>
+                        </select>
+                    </div>
+
+            `);
+            }
+
+        }
+        else{
+            const container3 = document.getElementById("filtroEquipe"); // Elemento onde você quer adicionar os filtros
+
+            if (container3) {
+                container3.insertAdjacentHTML("beforeend", `
+                <div">
+                    <h6 class="card-title">Resultado</h6>
+                    <select class="form-select" name="canal" id="canalSelect">
+                        <option value="equipe" selected>EQUIPE</option>
+                        <option value="geral">GERAL</option>
+                    </select>
+                </div>
+            `);
+            }
+        }
+
     } catch (erro) {
         console.error("Erro ao buscar os dados:", erro);
+    }
+}
+
+
+async function carregarSupervisores(canal) {
+    try {
+
+        const token = localStorage.getItem("auth-base-gestao");
+
+
+
+        const response = await fetch(`api/operadores/supervisores/${canal}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer: ${token}`,
+                "Content-Type": "application/json"
+            }
+        }); // Ajuste a URL conforme necessário
+
+
+        const supervisores = await response.json();
+        console.log(supervisores)
+
+        const select = document.getElementById('supervisorSelect');
+        supervisores.forEach(op => {
+            const option = document.createElement('option');
+            option.value = op.supervisor;
+            option.textContent = op.supervisor;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar operadores:', error);
     }
 }
 
 async function buscarTabelaOperadorGeral(mes = null) {
     try {
         mes = mes || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
-        document.getElementById('mes_selected').innerHTML = mes;
+        mesSelected = document.getElementById('mesSelect')
+        mesSelected.value = mes
 
-        const canalSelecionado = document.querySelector('input[name="canal"]:checked').value;
+        // Pega o valor atual do canal a partir do select
+        let canalSelecionado = document.querySelector('#canalSelect')?.value;
 
-        // Adiciona listener para atualizar dinamicamente quando o canal é alterado
-        document.querySelectorAll('input[name="canal"]').forEach(radio => {
-            radio.addEventListener('change', async (event) => {
+        // Adiciona listener para atualizar dinamicamente quando o canal for alterado
+        const canalSelect = document.getElementById('canalSelect');
+        if (canalSelect) {
+            canalSelect.addEventListener('change', async (event) => {
                 const novoCanal = event.target.value;
+                // Chama as funções com o novo valor de canal e o mesmo mês
                 await atualizarTabela(novoCanal, mes);
                 await buscarIndicadoresGeral(mes, novoCanal);
                 await buscarIndicadoresPorQuartil(mes, novoCanal);
                 await criarTabelaQuartil(mes, novoCanal);
+                await carregarSupervisores(novoCanal)
             });
-        });
+        }
+
+
 
         await atualizarTabela(canalSelecionado, mes);
     } catch (error) {
@@ -105,15 +207,16 @@ async function atualizarTabela(canalSelecionado, mes) {
 async function buscarIndicadoresGeral(mes = null, canalSelecionado = null) {
     try {
         mes = mes || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
-        canalSelecionado = canalSelecionado || document.querySelector('input[name="canal"]:checked').value;
+        canalSelecionado = canalSelecionado || document.querySelector('#canalSelect').value;
 
-        const indicadores = await fetchWithAuth(`${BASE_URL}/indicadores-geral/${mes}/${canalSelecionado}`, { method: "GET" });
+        const indicadores = await fetchWithAuth(`${BASE_URL}/${mes}/${canalSelecionado}`, { method: "GET" });
+        console.log(indicadores)
 
-        document.getElementById('tma').innerHTML = indicadores.data.tma.media;
-        document.getElementById('csat').innerHTML = indicadores.data.csat.media;
-        document.getElementById('nota_qualidade').innerHTML = indicadores.data.notaQualidade.media;
-        document.getElementById('nota_vendas').innerHTML = indicadores.data.notaVenda.media;
-        document.getElementById('soma_vendas').innerHTML = indicadores.data.somaVendas.soma;
+        document.getElementById('tma').innerHTML = indicadores.tma.media;
+        document.getElementById('csat').innerHTML = indicadores.csat.media;
+        document.getElementById('nota_qualidade').innerHTML = indicadores.notaQualidade.media;
+        document.getElementById('nota_vendas').innerHTML = indicadores.notaVenda.media;
+        document.getElementById('soma_vendas').innerHTML = indicadores.somaVendas.soma;
     } catch (error) {
         console.error(error);
     }
@@ -150,7 +253,7 @@ function obterClasseQuartil(index) {
 
 async function buscarIndicadoresPorQuartil(mes = null, canalSelecionado = null) {
     mes = mes || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
-    canalSelecionado = canalSelecionado || document.querySelector('input[name="canal"]:checked').value;
+    canalSelecionado = canalSelecionado || document.querySelector('#canalSelect').value;
 
     const urls = [
         `${BASE_URL}/quartil-tma/${mes}/${canalSelecionado}`,
@@ -180,20 +283,20 @@ function logout() {
     window.location.href = "/login";
 }
 
-document.querySelectorAll('.dropdown-item').forEach(item => {
-    item.addEventListener('click', (event) => {
-        const mes = event.target.getAttribute('data-mes').toUpperCase();
-        buscarTabelaOperadorGeral(mes);
-        buscarIndicadoresGeral(mes);
-        buscarIndicadoresPorQuartil(mes);
-        criarTabelaQuartil(mes);
-    });
+document.getElementById("mesSelect").addEventListener("change", function () {
+    const mes = this.value.toUpperCase(); // Obtém o valor do select e converte para maiúsculas
+    buscarTabelaOperadorGeral(mes);
+    buscarIndicadoresGeral(mes);
+    buscarIndicadoresPorQuartil(mes);
+    criarTabelaQuartil(mes);
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-    carregarDadosUserLogado();
-    criarTabelaQuartil();
-    buscarTabelaOperadorGeral();
-    buscarIndicadoresGeral();
-    buscarIndicadoresPorQuartil();
+
+document.addEventListener("DOMContentLoaded", async () => {
+    await carregarDadosUserLogado();
+    await criarTabelaQuartil();
+    await buscarTabelaOperadorGeral();
+    await buscarIndicadoresGeral();
+    await buscarIndicadoresPorQuartil();
+    await carregarSupervisores()
 });
