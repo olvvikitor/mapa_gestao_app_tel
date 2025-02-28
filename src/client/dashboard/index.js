@@ -116,12 +116,14 @@ async function carregarDadosUserLogado() {
 
 async function carregarSupervisores(canalSelecionado, supervisor, mes) {
     try {
-        mes = mes || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
-        mesSelected = document.getElementById('mesSelect')
-        mesSelected.value = mes
-        canalSelecionado = document.querySelector('#canalSelect').value
-        supervisor = document.querySelector('#supervisorSelect').value
 
+        const mesSelect = document.querySelector("#mesSelect").value
+        mes = mesSelect || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+
+        // Atualiza os valores dos selects
+        canalSelecionado = document.querySelector('#canalSelect')?.value || canalSelecionado;
+        supervisor = document.querySelector('#supervisorSelect')?.value || supervisor;
+        
         const token = localStorage.getItem("auth-base-gestao");
 
         const response = await fetch(`api/operadores/supervisores?canal=${canalSelecionado}&mes=${mes}`, {
@@ -134,7 +136,6 @@ async function carregarSupervisores(canalSelecionado, supervisor, mes) {
 
 
         const supervisores = await response.json();
-
 
         // Obtém o elemento <select>
         const select = document.getElementById('supervisorSelect');
@@ -312,11 +313,11 @@ function adicionarListeners() {
             const supervisor = document.querySelector("#supervisorSelect").value || "";
 
 
-            carregarSupervisores(canal, supervisor)
+            await carregarSupervisores(canal, supervisor)
             await buscarTabelaOperadorGeral(mes, canal, supervisor);
             await buscarIndicadoresGeral(mes, canal, supervisor);
-            buscarIndicadoresPorQuartil(mes, canal, supervisor);
-            criarTabelaQuartil(mes, canal, supervisor);
+            await buscarIndicadoresPorQuartil(mes, canal, supervisor);
+            await criarTabelaQuartil(mes, canal, supervisor);
         });
     });
 }
