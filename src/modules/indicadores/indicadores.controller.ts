@@ -97,8 +97,8 @@ export class IndicadoresController {
     }
   }
 
-  @Get('/quartil-monitoria/:mes/:canal')
-  async quartilNotaQualidade(@Param('mes') mes: string, @Param('canal') canal: string, @Req() req: any) {
+  @Get('/quartil-monitoria/')
+  async quartilNotaQualidade(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor:string | undefined, @Req() req: any) {
     const nome_logado = req.user.dados.NOME
     const cargo = req.user.dados.FUNCAO;
 
@@ -106,8 +106,7 @@ export class IndicadoresController {
       return await this.indicadoresSupervisorService.getQuartilNotaQualide(mes, canal, nome_logado);
     }
     else{
-      return await this.coordenadorService.getQuartilNotaQualide(mes, canal);
-
+      return await this.coordenadorService.getQuartilNotaQualide(mes, canal,supervisor);
     }
 
   }

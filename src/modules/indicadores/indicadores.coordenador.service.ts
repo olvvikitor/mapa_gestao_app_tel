@@ -143,16 +143,29 @@ export class CoordenadorService {
         return await this.dividirEmQuartis(operadores, 'csat')
         }
     }
-    async getQuartilNotaQualide(mes: string, canal: string): Promise<any> {
+    async getQuartilNotaQualide(mes: string, canal: string, supervisor: string | undefined): Promise<any> {
         if (canal === 'CHAT') {
-            const operadores =
+            if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
+                const operadores =
                 await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'  ORDER BY nota_qualidade ASC`)
-            return await this.dividirEmQuartis(operadores, 'nota_qualidade')
+                return await this.dividirEmQuartis(operadores, 'csat')
+            }
+            else{
+                const operadores =
+                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY nota_qualidade ASC`)
+                return await this.dividirEmQuartis(operadores, 'csat')
+            }
+
         }
         else {
+            if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
             const operadores =
-                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY nota_qualidade ASC`)
-            return await this.dividirEmQuartis(operadores, 'nota_qualidade')
+            await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY nota_qualidade ASC`)
+            return await this.dividirEmQuartis(operadores, 'csat')
+        }
+        const operadores =
+        await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY nota_qualidade ASC`)
+        return await this.dividirEmQuartis(operadores, 'csat')
         }
     }
     async getQuartilNotaVenda(mes: string, canal: string): Promise<any> {
