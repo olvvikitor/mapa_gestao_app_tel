@@ -111,8 +111,8 @@ export class IndicadoresController {
 
   }
 
-  @Get('/quartil-monitoria-vendas/:mes/:canal')
-  async quartilMoitoriaVendas(@Param('mes') mes: string, @Param('canal') canal: string, @Req() req: any) {
+  @Get('/quartil-monitoria-vendas/')
+  async quartilMoitoriaVendas(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor:string | undefined, @Req() req: any) {
     const nome_logado = req.user.dados.NOME
     const cargo = req.user.dados.FUNCAO;
 
@@ -120,14 +120,14 @@ export class IndicadoresController {
       return await this.indicadoresSupervisorService.getQuartilNotaVenda(mes, canal, nome_logado);
     }
     else{
-      return await this.coordenadorService.getQuartilNotaVenda(mes, canal);
+      return await this.coordenadorService.getQuartilNotaVenda(mes, canal,supervisor);
 
     }
 
   }
 
-  @Get('/quartil-vendas/:mes/:canal')
-  async quartilVendas(@Param('mes') mes: string, @Param('canal') canal: string, @Req() req: any) {
+  @Get('/quartil-vendas/')
+  async quartilVendas(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor:string | undefined, @Req() req: any) {
     const nome_logado = req.user.dados.NOME
     // const nome_logado = 'LUIS CAVALCANTE COSTA'
     const cargo = req.user.dados.FUNCAO;
@@ -137,7 +137,7 @@ export class IndicadoresController {
     }
 
     else{
-      return await this.coordenadorService.getQuartilVenda(mes, canal);
+      return await this.coordenadorService.getQuartilVenda(mes, canal,supervisor);
     }
 
   }

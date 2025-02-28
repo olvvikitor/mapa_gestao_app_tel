@@ -122,73 +122,99 @@ export class CoordenadorService {
         if (canal === 'CHAT') {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
-                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'  ORDER BY csat ASC`)
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'  ORDER BY csat ASC`)
                 return await this.dividirEmQuartis(operadores, 'csat')
             }
-            else{
+            else {
                 const operadores =
-                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY csat ASC`)
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY csat ASC`)
                 return await this.dividirEmQuartis(operadores, 'csat')
             }
 
         }
         else {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
+                const operadores =
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY csat ASC`)
+                return await this.dividirEmQuartis(operadores, 'csat')
+            }
             const operadores =
-            await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY csat ASC`)
+                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY csat ASC`)
             return await this.dividirEmQuartis(operadores, 'csat')
-        }
-        const operadores =
-        await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY csat ASC`)
-        return await this.dividirEmQuartis(operadores, 'csat')
         }
     }
     async getQuartilNotaQualide(mes: string, canal: string, supervisor: string | undefined): Promise<any> {
         if (canal === 'CHAT') {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
-                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'  ORDER BY nota_qualidade ASC`)
-                return await this.dividirEmQuartis(operadores, 'csat')
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'  ORDER BY nota_qualidade ASC`)
+                return await this.dividirEmQuartis(operadores, 'nota_qualidade')
             }
-            else{
+            else {
                 const operadores =
-                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY nota_qualidade ASC`)
-                return await this.dividirEmQuartis(operadores, 'csat')
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY nota_qualidade ASC`)
+                return await this.dividirEmQuartis(operadores, 'nota_qualidade')
             }
 
         }
         else {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
+                const operadores =
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY nota_qualidade ASC`)
+                return await this.dividirEmQuartis(operadores, 'nota_qualidade')
+            }
             const operadores =
-            await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY nota_qualidade ASC`)
-            return await this.dividirEmQuartis(operadores, 'csat')
-        }
-        const operadores =
-        await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY nota_qualidade ASC`)
-        return await this.dividirEmQuartis(operadores, 'csat')
-        }
-    }
-    async getQuartilNotaVenda(mes: string, canal: string): Promise<any> {
-        if (canal === 'CHAT') {
-            const operadores =
-                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'  ORDER BY nota_venda ASC`)
-            return await this.dividirEmQuartis(operadores, 'nota_venda')
-        }
-        else {
-            const operadores =
-                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY nota_venda ASC`)
-            return await this.dividirEmQuartis(operadores, 'nota_venda')
+                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY nota_qualidade ASC`)
+            return await this.dividirEmQuartis(operadores, 'nota_qualidade')
         }
     }
-    async getQuartilVenda(mes: string, canal: string): Promise<any> {
+    async getQuartilNotaVenda(mes: string, canal: string, supervisor: string | undefined): Promise<any> {
         if (canal === 'CHAT') {
-            const operadores =
-                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'  ORDER BY qtd_vendas ASC`)
-            return await this.dividirEmQuartis(operadores, 'qtd_vendas')
+            if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
+                const operadores =
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'  ORDER BY nota_venda ASC`)
+                return await this.dividirEmQuartis(operadores, 'nota_venda')
+            }
+            else {
+                const operadores =
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY nota_venda ASC`)
+                return await this.dividirEmQuartis(operadores, 'nota_venda')
+            }
+
         }
         else {
+            if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
+                const operadores =
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY nota_venda ASC`)
+                return await this.dividirEmQuartis(operadores, 'nota_venda')
+            }
             const operadores =
-                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY qtd_vendas ASC`)
+                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY nota_venda ASC`)
+            return await this.dividirEmQuartis(operadores, 'nota_venda')
+        }
+    }
+    async getQuartilVenda(mes: string, canal: string, supervisor: string | undefined): Promise<any> {
+        if (canal === 'CHAT') {
+            if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
+                const operadores =
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'  ORDER BY qtd_vendas ASC`)
+                return await this.dividirEmQuartis(operadores, 'qtd_vendas')
+            }
+            else {
+                const operadores =
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY qtd_vendas ASC`)
+                return await this.dividirEmQuartis(operadores, 'qtd_vendas')
+            }
+
+        }
+        else {
+            if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
+                const operadores =
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY qtd_vendas ASC`)
+                return await this.dividirEmQuartis(operadores, 'qtd_vendas')
+            }
+            const operadores =
+                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY qtd_vendas ASC`)
             return await this.dividirEmQuartis(operadores, 'qtd_vendas')
         }
     }

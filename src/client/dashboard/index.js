@@ -286,8 +286,8 @@ async function buscarIndicadoresPorQuartil(mes, canalSelecionado,supervisor) {
         `${BASE_URL}/quartil-tma?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`,
         `${BASE_URL}/quartil-csat?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`,
         `${BASE_URL}/quartil-monitoria?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`,
-        `${BASE_URL}/quartil-monitoria-vendas/${mes}/${canalSelecionado}`,
-        `${BASE_URL}/quartil-vendas/${mes}/${canalSelecionado}`
+        `${BASE_URL}/quartil-monitoria-vendas?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`,
+        `${BASE_URL}/quartil-vendas?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`
     ];
 
     try {
