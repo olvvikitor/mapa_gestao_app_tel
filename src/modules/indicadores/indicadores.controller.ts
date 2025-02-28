@@ -50,8 +50,11 @@ export class IndicadoresController {
     }
   }
 
-  @Get('/:mes/:canal')
-  async getIndicadoresEquipe(@Param('mes') mes: string, @Param('canal') canal: string, @Req() req: any) {
+  @Get('/')
+  async getIndicadoresEquipe(
+    @Query('mes') mes: string, @Query('canal') canal: string,
+    @Query('supervisor') supervisor:string|undefined,
+    @Req() req: any) {
 
     const cargo = req.user.dados.FUNCAO
     const nome_logado = req.user.dados.NOME
@@ -61,13 +64,13 @@ export class IndicadoresController {
       return await this.indicadoresSupervisorService.getIndicadoresEquipe(mes, canal, nome_logado)
     }
     else {
-      return await this.coordenadorService.getIndicadoresEquipe(mes, canal)
+      return await this.coordenadorService.getIndicadoresEquipe(mes, canal, supervisor)
     }
 
   }
 
-  @Get('/quartil-tma/:mes/:canal')
-  async getQuartilTma(@Param('mes') mes: string, @Param('canal') canal: string, @Req() req: any) {
+  @Get('/quartil-tma/')
+  async getQuartilTma(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor:string | undefined, @Req() req: any) {
 
     const nome_logado = req.user.dados.NOME
     const cargo = req.user.dados.FUNCAO;
@@ -76,7 +79,7 @@ export class IndicadoresController {
       return await this.indicadoresSupervisorService.getQuartilTma(mes, canal, nome_logado);
     }
     else{
-      return await this.coordenadorService.getQuartilTma(mes, canal);
+      return await this.coordenadorService.getQuartilTma(mes, canal, supervisor);
     }
   }
 

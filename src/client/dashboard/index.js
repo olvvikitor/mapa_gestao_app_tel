@@ -175,7 +175,6 @@ async function buscarTabelaOperadorGeral(mes, canalSelecionado, supervisor) {
         mesSelected = document.getElementById('mesSelect')
         mesSelected.value = mes
         canalSelecionado = document.querySelector('#canalSelect').value
-        supervisor = document.querySelector('#supervisorSelect').value
 
         await atualizarTabela(canalSelecionado, mes, supervisor);
     } catch (error) {
@@ -220,15 +219,12 @@ async function atualizarTabela(canalSelecionado, mes, supervisor) {
     }
 }
 
-async function buscarIndicadoresGeral(mes, canalSelecionado) {
+async function buscarIndicadoresGeral(mes, canalSelecionado,supervisor) {
     try {
         mes = mes || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
-
+        mesSelected = document.getElementById('mesSelect')
         canalSelecionado = document.querySelector('#canalSelect').value
-
-
-        const indicadores = await fetchWithAuth(`${BASE_URL}/${mes}/${canalSelecionado}`, { method: "GET" });
-
+        const indicadores = await fetchWithAuth(`${BASE_URL}?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`, { method: "GET" });
         document.getElementById('tma').innerHTML = indicadores.tma.media;
         document.getElementById('csat').innerHTML = indicadores.csat.media;
         document.getElementById('nota_qualidade').innerHTML = indicadores.notaQualidade.media;
@@ -239,13 +235,18 @@ async function buscarIndicadoresGeral(mes, canalSelecionado) {
     }
 }
 
-async function criarTabelaQuartil(mes, canalSelecionado, supervisorSelecionado) {
+async function criarTabelaQuartil(mes, canalSelecionado, supervisor) {
     try {
 
-        canalSelecionado = document.querySelector('#canalSelect').value
-        supervisorSelecionado = document.querySelector('#supervisorSelect').value
 
-        const dados = await buscarIndicadoresPorQuartil(mes, canalSelecionado, supervisorSelecionado);
+        const mesSelect = document.querySelector("#mesSelect").value
+        mes = mesSelect || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+
+        // Atualiza os valores dos selects
+        canalSelecionado = document.querySelector('#canalSelect')?.value || canalSelecionado;
+        supervisor = document.querySelector('#supervisorSelect')?.value || supervisor;
+
+        const dados = await buscarIndicadoresPorQuartil(mes, canalSelecionado, supervisor);
         const tabelaBody = document.getElementById("tabela-quartil").querySelector("tbody") || document.createElement("tbody");
         tabelaBody.innerHTML = "";
 
@@ -272,11 +273,17 @@ function obterClasseQuartil(index) {
     return classes[index] || "";
 }
 
-async function buscarIndicadoresPorQuartil(mes = null, canalSelecionado) {
-    mes = mes || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+async function buscarIndicadoresPorQuartil(mes, canalSelecionado,supervisor) {
+
+    const mesSelect = document.querySelector("#mesSelect").value
+    mes = mesSelect || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+
+    // Atualiza os valores dos selects
+    canalSelecionado = document.querySelector('#canalSelect')?.value || canalSelecionado;
+    supervisor = document.querySelector('#supervisorSelect')?.value || supervisor;
 
     const urls = [
-        `${BASE_URL}/quartil-tma/${mes}/${canalSelecionado}`,
+        `${BASE_URL}/quartil-tma?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`,
         `${BASE_URL}/quartil-csat/${mes}/${canalSelecionado}`,
         `${BASE_URL}/quartil-monitoria/${mes}/${canalSelecionado}`,
         `${BASE_URL}/quartil-monitoria-vendas/${mes}/${canalSelecionado}`,
@@ -308,6 +315,7 @@ function logout() {
 function adicionarListeners() {
     document.querySelectorAll("#mesSelect, #supervisorSelect, #canalSelect").forEach(element => {
         element.addEventListener("change", async function () {
+
             const mes = document.querySelector('#mesSelect').value.toUpperCase();
             const canal = document.querySelector('#canalSelect').value || "";
             const supervisor = document.querySelector("#supervisorSelect").value || "";
@@ -316,7 +324,6 @@ function adicionarListeners() {
             await carregarSupervisores(canal, supervisor)
             await buscarTabelaOperadorGeral(mes, canal, supervisor);
             await buscarIndicadoresGeral(mes, canal, supervisor);
-            await buscarIndicadoresPorQuartil(mes, canal, supervisor);
             await criarTabelaQuartil(mes, canal, supervisor);
         });
     });

@@ -1,4 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
+import { retry } from "rxjs";
 import { DatabaseService } from "src/config/config.bd";
 
 export interface Indicadores {
@@ -21,7 +22,7 @@ export class CoordenadorService {
         if (canal === 'CHAT') {
             let query: string;
 
-            if (supervisor === '' || supervisor === `null` || supervisor === `undefined` || supervisor ===`GERAL`) {
+            if (supervisor === '' || supervisor === `null` || supervisor === `undefined` || supervisor === `GERAL`) {
                 query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'`;
             }
             else {
@@ -32,7 +33,7 @@ export class CoordenadorService {
         }
         else {
             let query: string
-            if (supervisor === '' || supervisor === `null` || supervisor === `undefined` || supervisor ===`GERAL`) {
+            if (supervisor === '' || supervisor === `null` || supervisor === `undefined` || supervisor === `GERAL`) {
                 query = `SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'`;
             }
             else {
@@ -43,26 +44,79 @@ export class CoordenadorService {
         }
     }
 
-    async getIndicadoresEquipe(mes: string, canal: string): Promise<Indicadores> {
+    async getIndicadoresEquipe(mes: string, canal: string, supervisor: string | undefined): Promise<Indicadores> {
         if (canal === 'CHAT') {
-            const operadores = await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'`)
-            return await this.getIndicadoresGeral(operadores);
+            if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
+                const operadores = await this.databaseService.query(`
+                    SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'`)
+                console.log(mes, supervisor, canal)
+
+                return await this.getIndicadoresGeral(operadores);
+            }
+            else {
+                const operadores = await this.databaseService.query(`
+                    SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'
+                    AND supervisor = '${supervisor}'`)
+                console.log(mes, supervisor, canal)
+
+                return await this.getIndicadoresGeral(operadores);
+            }
         }
         else {
-            const operadores = await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'`)
-            return await this.getIndicadoresGeral(operadores);
+            if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
+                const operadores = await this.databaseService.query(`
+                    SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'`)
+                console.log(mes, supervisor, canal)
+                return await this.getIndicadoresGeral(operadores);
+            }
+            else {
+                const operadores = await this.databaseService.query(`
+                SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'
+                AND supervisor = '${supervisor}'`)
+                console.log(mes, supervisor, canal)
+
+                return await this.getIndicadoresGeral(operadores);
+            }
         }
     }
-    async getQuartilTma(mes: string, canal: string): Promise<any> {
+    async getQuartilTma(mes: string, canal: string, supervisor: string | undefined): Promise<any> {
+        //Se ele for do segmento chat
         if (canal === 'CHAT') {
-            const operadores =
-                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' ORDER BY tma ASC`)
-            return await this.dividirEmQuartis(operadores, 'tma')
+
+            //se ele quiser ver o resultado geral
+            if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
+                const operadores =
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' ORDER BY tma ASC`)
+                const quartil = await this.dividirEmQuartis(operadores, 'tma')
+                return quartil
+            } 
+            
+            //se ele quiser ver o resultado por supervisor
+            else {
+                const operadores =
+                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY tma ASC`)
+                const quartil = await this.dividirEmQuartis(operadores, 'tma')
+                return quartil
+            }
         }
+
+        //se for do segumento Voz
         else {
-            const operadores =
+
+            //se ele quiser ver o resultado geral
+            if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
+                const operadores =
                 await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' ORDER BY tma ASC`)
-            return await this.dividirEmQuartis(operadores, 'tma')
+                return await this.dividirEmQuartis(operadores, 'tma')
+            }
+
+
+            //se ele quiser ver o resultado por supervisor
+            else {
+                const operadores =
+                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' ORDER BY tma ASC`)
+                return await this.dividirEmQuartis(operadores, 'tma')
+            }
         }
     }
     async getQuartilCsat(mes: string, canal: string): Promise<any> {
@@ -97,7 +151,7 @@ export class CoordenadorService {
         }
         else {
             const operadores =
-            await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY nota_venda ASC`)
+                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY nota_venda ASC`)
             return await this.dividirEmQuartis(operadores, 'nota_venda')
         }
     }
@@ -194,11 +248,18 @@ export class CoordenadorService {
             throw new Error("O quartil não é um array.");
         }
 
-        // Calcula a soma de todos os valores do atributo no quartil
-        const soma = quartil.reduce((acc, operador) => acc + (operador[atributo] || 0), 0);
+        const soma = quartil.reduce((acc, operador) => {
+            const valor = parseFloat(operador[atributo]);
+            return !isNaN(valor) && valor !== null ? acc + valor : acc;
+        }, 0);
 
-        // Calcula a média
-        const media = quartil.length > 0 ? soma / quartil.length : 0;
+        const count = quartil.filter(operador => {
+            const valor = parseFloat(operador[atributo]);
+            return !isNaN(valor) && valor !== null;
+        }).length;
+
+        const media = count > 0 ? soma / count : 0;
+
 
         // Retorna a média do atributo no quartil
         return { media: parseFloat(media.toFixed(2)) }; // Formata a média para 2 casas decimais

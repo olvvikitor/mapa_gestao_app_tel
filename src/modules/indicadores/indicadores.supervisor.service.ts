@@ -37,6 +37,7 @@ export class IndicadoresSupervisorService {
         else {
             const operadores = await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE supervisor = '${nome_supervisor}' AND mes = '${mes}'`)
             return await this.getIndicadoresGeral(operadores);
+            
         }
     }
     async getQuartilTma(mes: string, canal: string, nome_supervisor: string): Promise<any> {
