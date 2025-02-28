@@ -14,18 +14,33 @@ export interface Indicadores {
 export class CoordenadorService {
     constructor(@Inject() private databaseService: DatabaseService) { }
 
-    
 
-    async getTable(mes:string, canal:string):Promise<any[]>{
 
-        if(canal==='CHAT'){
-            const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'`;
+    async getTable(mes: string, canal: string, supervisor?: string): Promise<any[]> {
+
+        if (canal === 'CHAT') {
+            let query: string;
+
+            if (supervisor === '' || supervisor === `null` || supervisor === `undefined` || supervisor ===`GERAL`) {
+                query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'`;
+            }
+            else {
+                query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' AND supervisor = '${supervisor}'`;
+            }
             const operadores: any[] = await this.databaseService.query(query);
+            console.log(query)
             return operadores
         }
-        else{
-            const query = `SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'`;
+        else {
+            let query: string
+            if (supervisor === '' || supervisor === `null` || supervisor === `undefined` || supervisor ===`GERAL`) {
+                query = `SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'`;
+            }
+            else {
+                query = `SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' AND supervisor = '${supervisor}' `;
+            }
             const operadores: any[] = await this.databaseService.query(query);
+            console.log(query)
             return operadores
         }
     }
@@ -43,12 +58,12 @@ export class CoordenadorService {
     async getQuartilTma(mes: string, canal: string): Promise<any> {
         if (canal === 'CHAT') {
             const operadores =
-            await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' ORDER BY tma ASC`)
+                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' ORDER BY tma ASC`)
             return await this.dividirEmQuartis(operadores, 'tma')
         }
         else {
             const operadores =
-            await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' ORDER BY tma ASC`)
+                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' ORDER BY tma ASC`)
             return await this.dividirEmQuartis(operadores, 'tma')
         }
     }

@@ -1,21 +1,21 @@
 
 const BASE_URL = 'api/indicadores';
 const AUTH_TOKEN = localStorage.getItem("auth-base-gestao");
-    const autorizados = [
-        'COORDENADOR MIS SR',
-        'COORDENADOR DE QUALIDADE E PROCESSOS',
-        'COORDENADOR DE QUALIDADE',
-        'COORDENADOR DE QUALIDADE SR',
-        'ANALISTA DE MIS I',
-        'ANALISTA DE MIS SR',
-        'COORDENADOR DE OPERACOES',
-        'SUPERVISOR(A) DE QUALIDADE - INTERINO',
-        'SUPERVISOR(A) DE QUALIDADE',
-        'SUPERVISOR(A) DE MONITORIA',
-        'COORDENADOR DE PLANEJAMENTO',
-        'GERENTE DE QUALIDADE',
-        'GERENTE GERAL'
-    ];
+const autorizados = [
+    'COORDENADOR MIS SR',
+    'COORDENADOR DE QUALIDADE E PROCESSOS',
+    'COORDENADOR DE QUALIDADE',
+    'COORDENADOR DE QUALIDADE SR',
+    'ANALISTA DE MIS I',
+    'ANALISTA DE MIS SR',
+    'COORDENADOR DE OPERACOES',
+    'SUPERVISOR(A) DE QUALIDADE - INTERINO',
+    'SUPERVISOR(A) DE QUALIDADE',
+    'SUPERVISOR(A) DE MONITORIA',
+    'COORDENADOR DE PLANEJAMENTO',
+    'GERENTE DE QUALIDADE',
+    'GERENTE GERAL'
+];
 async function fetchWithAuth(url, options = {}) {
     if (!AUTH_TOKEN) {
         Swal.fire({
@@ -70,7 +70,7 @@ async function carregarDadosUserLogado() {
                 </div>
             `);
             }
-                        adicionarListeners();
+            adicionarListeners();
 
             const container2 = document.getElementById("filtroSupervisor"); // Elemento onde você quer adicionar os filtros
 
@@ -80,6 +80,7 @@ async function carregarDadosUserLogado() {
                         <label for="supervisorSelect" class="me-2 card-title">Supervisor:</label>
                         <select id= supervisorSelect class="form-select" aria-label="Default select example">
                         <option  selected></option>
+                        
                         </select>
                     </div>
 
@@ -89,7 +90,7 @@ async function carregarDadosUserLogado() {
 
 
         }
-        else{
+        else {
             const container3 = document.getElementById("filtroEquipe"); // Elemento onde você quer adicionar os filtros
 
             if (container3) {
@@ -113,10 +114,11 @@ async function carregarDadosUserLogado() {
 }
 
 
-async function carregarSupervisores(canalSelecionado) {
+async function carregarSupervisores(canalSelecionado, supervisor) {
     try {
 
         canalSelecionado = document.querySelector('#canalSelect').value
+        supervisor = document.querySelector('#supervisorSelect').value
 
         const token = localStorage.getItem("auth-base-gestao");
 
@@ -131,8 +133,20 @@ async function carregarSupervisores(canalSelecionado) {
 
         const supervisores = await response.json();
 
+
+        // Obtém o elemento <select>
         const select = document.getElementById('supervisorSelect');
+
+        // Limpa o conteúdo atual do <select>
         select.innerHTML = "";
+
+        // Adiciona a opção "Selecione um supervisor" como a primeira opção
+        const selectOption = document.createElement('option');
+        selectOption.value = ""; // Valor vazio
+        selectOption.textContent = supervisor || "Selecione um supervisor"; // Texto do placeholder
+        select.appendChild(selectOption);
+
+        // Adiciona as opções dos supervisores
         supervisores.forEach(op => {
             const option = document.createElement('option');
             option.value = op.supervisor;
@@ -140,32 +154,35 @@ async function carregarSupervisores(canalSelecionado) {
             select.appendChild(option);
         });
 
+        // Adiciona uma opção extra, por exemplo, "Todos os Supervisores"
+        const allSupervisorsOption = document.createElement('option');
+        allSupervisorsOption.value = "GERAL"; // Valor que representa todos os supervisores
+        allSupervisorsOption.textContent = "GERAL"; // Texto da nova opção
+        select.appendChild(allSupervisorsOption);
 
     } catch (error) {
         console.error('Erro ao carregar operadores:', error);
     }
 }
 
-async function buscarTabelaOperadorGeral(mes = null, canal) {
+async function buscarTabelaOperadorGeral(mes, canalSelecionado, supervisor) {
     try {
         mes = mes || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
         mesSelected = document.getElementById('mesSelect')
         mesSelected.value = mes
-
         canalSelecionado = document.querySelector('#canalSelect').value
+        supervisor = document.querySelector('#supervisorSelect').value
 
-
-        await atualizarTabela(canal, mes);
+        await atualizarTabela(canalSelecionado, mes, supervisor);
     } catch (error) {
         console.error(error);
     }
 }
 
-async function atualizarTabela(canalSelecionado, mes) {
+async function atualizarTabela(canalSelecionado, mes, supervisor) {
     try {
 
-
-        const dados = await fetchWithAuth(`${BASE_URL}/table/${mes}/${canalSelecionado}`, { method: "GET" });
+        const dados = await fetchWithAuth(`${BASE_URL}/table?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`, { method: "GET" });
 
         $('#tabela-geral').bootstrapTable('destroy').bootstrapTable({
             data: dados,
@@ -199,13 +216,12 @@ async function atualizarTabela(canalSelecionado, mes) {
     }
 }
 
-async function buscarIndicadoresGeral(mes = null, canalSelecionado) {
+async function buscarIndicadoresGeral(mes, canalSelecionado) {
     try {
         mes = mes || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
 
         canalSelecionado = document.querySelector('#canalSelect').value
 
-        console.log(canalSelecionado)
 
         const indicadores = await fetchWithAuth(`${BASE_URL}/${mes}/${canalSelecionado}`, { method: "GET" });
 
@@ -219,11 +235,13 @@ async function buscarIndicadoresGeral(mes = null, canalSelecionado) {
     }
 }
 
-async function criarTabelaQuartil(mes = null, canalSelecionado) {
+async function criarTabelaQuartil(mes, canalSelecionado, supervisorSelecionado) {
     try {
 
         canalSelecionado = document.querySelector('#canalSelect').value
-        const dados = await buscarIndicadoresPorQuartil(mes, canalSelecionado);
+        supervisorSelecionado = document.querySelector('#supervisorSelect').value
+
+        const dados = await buscarIndicadoresPorQuartil(mes, canalSelecionado, supervisorSelecionado);
         const tabelaBody = document.getElementById("tabela-quartil").querySelector("tbody") || document.createElement("tbody");
         tabelaBody.innerHTML = "";
 
@@ -281,92 +299,29 @@ function logout() {
     window.location.href = "/login";
 }
 
-async function carregarDadosUserLogado() {
-    try {
-        const dados = await fetchWithAuth("auth/token", { method: 'GET' });
-
-        document.getElementById("nome_logado").innerHTML = dados.dados.NOME;
-        document.getElementById("nome_logado_2").innerHTML = dados.dados.NOME.split(' ')[1] || "";
-        document.getElementById("funcao_logado").innerHTML = dados.dados.FUNCAO;
-
-        if (autorizados.includes(dados.dados.FUNCAO)) {
-            const container = document.getElementById("filtroCanal"); // Elemento onde você quer adicionar os filtros
-            const container2 = document.getElementById("filtroSupervisor"); // Elemento onde você quer adicionar os filtros
-
-            if (container) {
-                container.insertAdjacentHTML("beforeend", `
-                    <div>
-                        <h6 class="card-title">Canal</h6>
-                        <select class="form-select" name="canal" id="canalSelect">
-                            <option value="CHAT" selected>CHAT</option>
-                            <option value="VOZ">VOZ</option>
-                        </select>
-                    </div>
-                `);
-            }
-
-            if (container2) {
-                container2.insertAdjacentHTML("beforeend", `
-                    <div>
-                        <label for="supervisorSelect" class="me-2 card-title">Supervisor:</label>
-                        <select id="supervisorSelect" class="form-select" aria-label="Default select example">
-                            <option selected></option>
-                        </select>
-                    </div>
-                `);
-            }
-
-            // Adiciona os listeners após criar os elementos
-            adicionarListeners();
-        } else {
-            const container3 = document.getElementById("filtroEquipe"); // Elemento onde você quer adicionar os filtros
-
-            if (container3) {
-                container3.insertAdjacentHTML("beforeend", `
-                    <div>
-                        <h6 class="card-title">Resultado</h6>
-                        <select class="form-select" name="canal" id="canalSelect">
-                            <option value="equipe" selected>EQUIPE</option>
-                            <option value="geral">GERAL</option>
-                        </select>
-                    </div>
-                `);
-            }
-
-            // Adiciona os listeners após criar os elementos
-            adicionarListeners();
-        }
-    } catch (erro) {
-        console.error("Erro ao buscar os dados:", erro);
-    }
-}
 
 // Função para adicionar os listeners
 function adicionarListeners() {
     document.querySelectorAll("#mesSelect, #supervisorSelect, #canalSelect").forEach(element => {
-        element.addEventListener("change", function () {
+        element.addEventListener("change", async function () {
             const mes = document.querySelector('#mesSelect').value.toUpperCase();
             const canal = document.querySelector('#canalSelect').value || "";
             const supervisor = document.querySelector("#supervisorSelect").value || "";
 
-            console.log("Elemento alterado:", this.id);
-            console.log("Mês:", mes);
-            console.log("Supervisor:", supervisor);
-            console.log("Canal:", canal);
 
-            buscarTabelaOperadorGeral(mes, canal, supervisor);
-            buscarIndicadoresGeral(mes, canal, supervisor);
+            carregarSupervisores(canal, supervisor)
+            await buscarTabelaOperadorGeral(mes, canal, supervisor);
+            await buscarIndicadoresGeral(mes, canal, supervisor);
             buscarIndicadoresPorQuartil(mes, canal, supervisor);
-            criarTabelaQuartil(mes);
+            criarTabelaQuartil(mes, canal, supervisor);
         });
     });
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-
     await carregarDadosUserLogado();
-    await criarTabelaQuartil();
     await buscarTabelaOperadorGeral();
+    await criarTabelaQuartil();
     await buscarIndicadoresGeral();
     await buscarIndicadoresPorQuartil();
     await carregarSupervisores()

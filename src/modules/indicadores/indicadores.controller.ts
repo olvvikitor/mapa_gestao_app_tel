@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Param, Req, UseGuards } from "@nestjs/common";
+import { Controller, Get, Inject, Param, Query, Req, UseGuards } from "@nestjs/common";
 import { DatabaseService } from "src/config/config.bd";
 import { AuthGuard } from "../auth/services/auth.guard";
 import { IndicadoresSupervisorService } from "./indicadores.supervisor.service";
@@ -32,17 +32,23 @@ export class IndicadoresController {
 
 
 
-  @Get('table/:mes/:canal')
-  async getTable(@Param('mes') mes: string, @Param('canal') canal: string, @Req() req: any) {
+  @Get('table/')
+  async getTable(
+   @Query('mes') mes: string,
+   @Query('canal') canal: string,
+   @Query('supervisor') supervisor:string , @Req() req: any) {
     const cargo = req.user.dados.FUNCAO
     const nome_logado = req.user.dados.NOME
-    // const nome_logado = 'LUIS CAVALCANTE COSTA
+
+    // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
-      return await this.indicadoresSupervisorService.getTable(mes, canal, nome_logado)
+      console.log('oi')
+      return await this.indicadoresSupervisorService.getTable(mes, canal, supervisor)
     }
     else {
-      return await this.coordenadorService.getTable(mes, canal)
+      console.log('oi')
+      return await this.coordenadorService.getTable(mes, canal,supervisor)
     }
   }
 
