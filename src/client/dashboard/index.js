@@ -114,15 +114,17 @@ async function carregarDadosUserLogado() {
 }
 
 
-async function carregarSupervisores(canalSelecionado, supervisor) {
+async function carregarSupervisores(canalSelecionado, supervisor, mes) {
     try {
-
+        mes = mes || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+        mesSelected = document.getElementById('mesSelect')
+        mesSelected.value = mes
         canalSelecionado = document.querySelector('#canalSelect').value
         supervisor = document.querySelector('#supervisorSelect').value
 
         const token = localStorage.getItem("auth-base-gestao");
 
-        const response = await fetch(`api/operadores/supervisores/${canalSelecionado}`, {
+        const response = await fetch(`api/operadores/supervisores?canal=${canalSelecionado}&mes=${mes}`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer: ${token}`,
@@ -159,6 +161,7 @@ async function carregarSupervisores(canalSelecionado, supervisor) {
         allSupervisorsOption.value = "GERAL"; // Valor que representa todos os supervisores
         allSupervisorsOption.textContent = "GERAL"; // Texto da nova opção
         select.appendChild(allSupervisorsOption);
+
 
     } catch (error) {
         console.error('Erro ao carregar operadores:', error);

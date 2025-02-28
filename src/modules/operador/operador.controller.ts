@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Param, Req, UseGuards } from "@nestjs/common";
+import { Controller, Get, Inject, Param, Query, Req, UseGuards } from "@nestjs/common";
 import { OperadorService } from "./operador.service";
 import { AuthGuard } from "../auth/services/auth.guard";
 
@@ -38,9 +38,9 @@ export class OperadorController {
         }
         
     }
-    @Get('supervisores/:canal')
-    async getNameSupervisor(@Req() req: any, @Param('canal') canal:string) {
-        return await this.operadorService.getAllNameSupervisor(canal)
+    @Get('supervisores/')
+    async getNameSupervisor(@Req() req: any, @Query('canal') canal:string, @Query('mes') mes:string) {
+        return await this.operadorService.getAllNameSupervisor(canal, mes)
     }
 
     // Método auxiliar para verificar se o usuário é coordenador

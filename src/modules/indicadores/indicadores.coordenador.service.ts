@@ -28,7 +28,6 @@ export class CoordenadorService {
                 query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' AND supervisor = '${supervisor}'`;
             }
             const operadores: any[] = await this.databaseService.query(query);
-            console.log(query)
             return operadores
         }
         else {
@@ -40,7 +39,6 @@ export class CoordenadorService {
                 query = `SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' AND supervisor = '${supervisor}' `;
             }
             const operadores: any[] = await this.databaseService.query(query);
-            console.log(query)
             return operadores
         }
     }
@@ -99,7 +97,7 @@ export class CoordenadorService {
         }
         else {
             const operadores =
-                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY nota_venda ASC`)
+            await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY nota_venda ASC`)
             return await this.dividirEmQuartis(operadores, 'nota_venda')
         }
     }

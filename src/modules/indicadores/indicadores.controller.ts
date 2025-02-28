@@ -43,11 +43,9 @@ export class IndicadoresController {
     // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
-      console.log('oi')
       return await this.indicadoresSupervisorService.getTable(mes, canal, supervisor)
     }
     else {
-      console.log('oi')
       return await this.coordenadorService.getTable(mes, canal,supervisor)
     }
   }

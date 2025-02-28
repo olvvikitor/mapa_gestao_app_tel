@@ -24,18 +24,18 @@ export class OperadorService {
         const operadores = await this.databaseService.query(query);
         return operadores; // Retorna os operadores encontrados nas duas tabelas para o supervisor
     }
-    async getAllNameSupervisor(canal:string) {
+    async getAllNameSupervisor(canal:string, mes:string) {
       let query;
       if(canal ==='CHAT'){
         query = `
-            SELECT DISTINCT supervisor FROM dbo.MAPA_GESTAO_CHAT`;
+            SELECT DISTINCT supervisor FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}';`;
       }
       else{
         query = `
-        SELECT DISTINCT supervisor FROM dbo.MAPA_GESTAO_VOZ`;
+        SELECT DISTINCT supervisor FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}';`;
       }
-
         const operadores = await this.databaseService.query(query);
+        console.log(operadores)
         return operadores; // Retorna os operadores encontrados nas duas tabelas para o supervisor
     }
 
