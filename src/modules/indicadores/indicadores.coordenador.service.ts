@@ -89,12 +89,12 @@ export class CoordenadorService {
                     await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' ORDER BY tma ASC`)
                 const quartil = await this.dividirEmQuartis(operadores, 'tma')
                 return quartil
-            } 
-            
+            }
+
             //se ele quiser ver o resultado por supervisor
             else {
                 const operadores =
-                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY tma ASC`)
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY tma ASC`)
                 const quartil = await this.dividirEmQuartis(operadores, 'tma')
                 return quartil
             }
@@ -106,29 +106,41 @@ export class CoordenadorService {
             //se ele quiser ver o resultado geral
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
-                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' ORDER BY tma ASC`)
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' ORDER BY tma ASC`)
                 return await this.dividirEmQuartis(operadores, 'tma')
             }
-
 
             //se ele quiser ver o resultado por supervisor
             else {
                 const operadores =
-                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' ORDER BY tma ASC`)
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' ORDER BY tma ASC`)
                 return await this.dividirEmQuartis(operadores, 'tma')
             }
         }
     }
-    async getQuartilCsat(mes: string, canal: string): Promise<any> {
+    async getQuartilCsat(mes: string, canal: string, supervisor: string | undefined): Promise<any> {
         if (canal === 'CHAT') {
-            const operadores =
+            if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
+                const operadores =
                 await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'  ORDER BY csat ASC`)
-            return await this.dividirEmQuartis(operadores, 'csat')
+                return await this.dividirEmQuartis(operadores, 'csat')
+            }
+            else{
+                const operadores =
+                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY csat ASC`)
+                return await this.dividirEmQuartis(operadores, 'csat')
+            }
+
         }
         else {
+            if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
             const operadores =
-                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY csat ASC`)
+            await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY csat ASC`)
             return await this.dividirEmQuartis(operadores, 'csat')
+        }
+        const operadores =
+        await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' AND supervisor = '${supervisor}' ORDER BY csat ASC`)
+        return await this.dividirEmQuartis(operadores, 'csat')
         }
     }
     async getQuartilNotaQualide(mes: string, canal: string): Promise<any> {

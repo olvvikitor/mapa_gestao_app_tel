@@ -83,8 +83,8 @@ export class IndicadoresController {
     }
   }
 
-  @Get('/quartil-csat/:mes/:canal')
-  async getQuartilCsat(@Param('mes') mes: string, @Param('canal') canal: string, @Req() req: any) {
+  @Get('/quartil-csat/')
+  async getQuartilCsat(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor:string | undefined, @Req() req: any) {
     const nome_logado = req.user.dados.NOME
     const cargo = req.user.dados.FUNCAO;
 
@@ -92,7 +92,7 @@ export class IndicadoresController {
       return await this.indicadoresSupervisorService.getQuartilCsat(mes, canal, nome_logado);
     }
     else{
-      return await this.coordenadorService.getQuartilCsat(mes, canal);
+      return await this.coordenadorService.getQuartilCsat(mes, canal, supervisor);
 
     }
   }
