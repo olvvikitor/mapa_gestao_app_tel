@@ -106,7 +106,6 @@ export class AcaoService {
     // Gerando o arquivo Excel como buffer
     const buffer = await workbook.xlsx.writeBuffer();
     return buffer;
-    
   }
   async exportById(id:number):Promise<any>{
     const query = `

@@ -1,6 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { retry } from "rxjs";
 import { DatabaseService } from "src/config/config.bd";
+import * as ExcelJS from 'exceljs'
 
 export interface Indicadores {
     csat: any,
@@ -14,7 +15,6 @@ export interface Indicadores {
 @Injectable()
 export class CoordenadorService {
     constructor(@Inject() private databaseService: DatabaseService) { }
-
 
 
     async getTable(mes: string, canal: string, supervisor?: string): Promise<any[]> {
