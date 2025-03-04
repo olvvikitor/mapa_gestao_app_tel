@@ -210,7 +210,7 @@ async function atualizarTabela(canalSelecionado, mes, supervisor) {
         const quartisFixos = [];
         quartis.forEach((quartil, indiceQuartil) => {
             quartil.forEach((item) => {
-                quartisFixos.push(`Q${indiceQuartil + 1}`); // Q1, Q2, Q3, Q4
+                quartisFixos.push(`${indiceQuartil + 1}Q`); // Q1, Q2, Q3, Q4
             });
         });
 
@@ -241,6 +241,19 @@ async function atualizarTabela(canalSelecionado, mes, supervisor) {
                     title: 'CSAT', 
                     formatter: (value) => value ?? '',
                     sortable: true,
+                    sorter: (a, b) => {
+                        // Verificar se 'a' é um valor em branco
+                        const isAEmpty = a === null || a === undefined || a === '' || a === ' ' || a === '-' || isNaN(a);
+                        // Verificar se 'b' é um valor em branco
+                        const isBEmpty = b === null || b === undefined || b === '' || b === ' ' || b === '-' || isNaN(b);
+                
+                        // Se 'a' for um valor em branco, ele deve ser considerado maior
+                        if (isAEmpty) return 1;
+                        // Se 'b' for um valor em branco, ele deve ser considerado maior
+                        if (isBEmpty) return -1;
+                        // Caso contrário, aplicar a ordenação numérica padrão
+                        return a - b;
+                    },
                     filterControl: 'select' 
                 },
                 { 
@@ -248,6 +261,18 @@ async function atualizarTabela(canalSelecionado, mes, supervisor) {
                     title: 'TMA', 
                     formatter: (value) => value ?? '',
                     sortable: true,
+                    sorter: (a, b) => {
+                        // Verificar se 'a' é um valor em branco
+                        const isAEmpty = a === null || a === undefined || a === '' || a === ' ' || a === '-';
+                        // Verificar se 'b' é um valor em branco
+                        const isBEmpty = b === null || b === undefined || b === '' || b === ' ' || b === '-';
+                
+                        // Se 'a' for um valor em branco, ele deve ser considerado maior
+                        if (isAEmpty) return -1;
+                        // Se 'b' for um valor em branco, ele deve ser considerado maior
+                        if (isBEmpty) return 1;
+                        
+                    },
                     filterControl: 'select' 
                 },
                 { 
@@ -255,6 +280,19 @@ async function atualizarTabela(canalSelecionado, mes, supervisor) {
                     title: 'Nota Qualidade', 
                     formatter: (value) => value ?? '',
                     sortable: true,
+                    sorter: (a, b) => {
+                        // Verificar se 'a' é um valor em branco
+                        const isAEmpty = a === null || a === undefined || a === '' || a === ' ' || a === '-' || isNaN(a);
+                        // Verificar se 'b' é um valor em branco
+                        const isBEmpty = b === null || b === undefined || b === '' || b === ' ' || b === '-' || isNaN(b);
+                
+                        // Se 'a' for um valor em branco, ele deve ser considerado maior
+                        if (isAEmpty) return 1;
+                        // Se 'b' for um valor em branco, ele deve ser considerado maior
+                        if (isBEmpty) return -1;
+                        // Caso contrário, aplicar a ordenação numérica padrão
+                        return a - b;
+                    },
                     filterControl: 'select'
                 },
                 { 
@@ -262,6 +300,19 @@ async function atualizarTabela(canalSelecionado, mes, supervisor) {
                     title: 'Nota Venda', 
                     formatter: (value) => value ?? '',
                     sortable: true,
+                    sorter: (a, b) => {
+                        // Verificar se 'a' é um valor em branco
+                        const isAEmpty = a === null || a === undefined || a === '' || a === ' ' || a === '-' || isNaN(a);
+                        // Verificar se 'b' é um valor em branco
+                        const isBEmpty = b === null || b === undefined || b === '' || b === ' ' || b === '-' || isNaN(b);
+                
+                        // Se 'a' for um valor em branco, ele deve ser considerado maior
+                        if (isAEmpty) return 1;
+                        // Se 'b' for um valor em branco, ele deve ser considerado maior
+                        if (isBEmpty) return -1;
+                        // Caso contrário, aplicar a ordenação numérica padrão
+                        return a - b;
+                    },
                     filterControl: 'select'
                 },
                 { 
@@ -269,6 +320,19 @@ async function atualizarTabela(canalSelecionado, mes, supervisor) {
                     title: 'Qtd Vendas', 
                     formatter: (value) => value ?? '',
                     sortable: true,
+                    sorter: (a, b) => {
+                        // Verificar se 'a' é um valor em branco
+                        const isAEmpty = a === null || a === undefined || a === '' || a === ' ' || a === '-' || isNaN(a);
+                        // Verificar se 'b' é um valor em branco
+                        const isBEmpty = b === null || b === undefined || b === '' || b === ' ' || b === '-' || isNaN(b);
+                
+                        // Se 'a' for um valor em branco, ele deve ser considerado maior
+                        if (isAEmpty) return 1;
+                        // Se 'b' for um valor em branco, ele deve ser considerado maior
+                        if (isBEmpty) return -1;
+                        // Caso contrário, aplicar a ordenação numérica padrão
+                        return a - b;
+                    },
                     filterControl: 'select' 
                 },
                 { 
