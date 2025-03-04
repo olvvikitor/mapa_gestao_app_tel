@@ -49,7 +49,6 @@ export class CoordenadorService {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores = await this.databaseService.query(`
                     SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'`)
-                console.log(mes, supervisor, canal)
 
                 return await this.getIndicadoresGeral(operadores);
             }
@@ -57,7 +56,6 @@ export class CoordenadorService {
                 const operadores = await this.databaseService.query(`
                     SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'
                     AND supervisor = '${supervisor}'`)
-                console.log(mes, supervisor, canal)
 
                 return await this.getIndicadoresGeral(operadores);
             }
@@ -66,15 +64,12 @@ export class CoordenadorService {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores = await this.databaseService.query(`
                     SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'`)
-                console.log(mes, supervisor, canal)
                 return await this.getIndicadoresGeral(operadores);
             }
             else {
                 const operadores = await this.databaseService.query(`
                 SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'
                 AND supervisor = '${supervisor}'`)
-                console.log(mes, supervisor, canal)
-
                 return await this.getIndicadoresGeral(operadores);
             }
         }
@@ -263,10 +258,10 @@ export class CoordenadorService {
 
         if (atributo === 'qtd_vendas') {
             const obj = {
-                primeiro: await this.somaVendas(primeiro_quartil, atributo),
-                segundo: await this.somaVendas(segundo_quartil, atributo),
-                terceiro: await this.somaVendas(terceiro_quartil, atributo),
-                quarto: await this.somaVendas(quarto_quartil, atributo),
+                primeiro: {soma: await this.somaVendas(primeiro_quartil, atributo), operadores: primeiro_quartil},
+                segundo: {soma: await this.somaVendas(segundo_quartil, atributo), operadores: segundo_quartil},
+                terceiro: {soma: await this.somaVendas(terceiro_quartil, atributo), operadores: terceiro_quartil},
+                quarto: {soma: await this.somaVendas(quarto_quartil, atributo), operadores: quarto_quartil},
             };
             return obj;
         }
@@ -366,6 +361,6 @@ export class CoordenadorService {
         const soma = quartil.reduce((acc, operador) => acc + (operador[atributo] || 0), 0);
 
         // Retorna a soma do atributo no quartil
-        return { soma };
+        return soma ;
     }
 }

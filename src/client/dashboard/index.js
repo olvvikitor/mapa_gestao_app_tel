@@ -1,6 +1,7 @@
 
 const BASE_URL = 'api/indicadores';
 const AUTH_TOKEN = localStorage.getItem("auth-base-gestao");
+
 const autorizados = [
     'COORDENADOR MIS SR',
     'COORDENADOR DE QUALIDADE E PROCESSOS',
@@ -123,7 +124,7 @@ async function carregarSupervisores(canalSelecionado, supervisor, mes) {
         // Atualiza os valores dos selects
         canalSelecionado = document.querySelector('#canalSelect')?.value || canalSelecionado;
         supervisor = document.querySelector('#supervisorSelect')?.value || supervisor;
-        
+
         const token = localStorage.getItem("auth-base-gestao");
 
         const response = await fetch(`api/operadores/supervisores?canal=${canalSelecionado}&mes=${mes}`, {
@@ -184,9 +185,36 @@ async function buscarTabelaOperadorGeral(mes, canalSelecionado, supervisor) {
 
 async function atualizarTabela(canalSelecionado, mes, supervisor) {
     try {
-
+        // Buscar os dados da API
         const dados = await fetchWithAuth(`${BASE_URL}/table?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`, { method: "GET" });
 
+
+
+        // Calcular os quartis com a fórmula fornecida
+        const totalOperadores = dados.length;
+        const baseTamanho = Math.floor(totalOperadores / 4); // Tamanho base para cada quartil
+        const sobra = totalOperadores % 4; // Elementos que não se dividem igualmente
+
+        // Inicializar os quartis
+        const quartis = [];
+        let inicio = 0;
+
+        // Distribuir os operadores pelos quartis, adicionando 1 operador extra nos últimos "sobra" quartis
+        for (let i = 0; i < 4; i++) {
+            const tamanhoAtual = baseTamanho + (i >= (4 - sobra) ? 1 : 0);
+            quartis.push(dados.slice(inicio, inicio + tamanhoAtual));
+            inicio += tamanhoAtual;
+        }
+
+        // Atribuir os quartis aos dados iniciais
+        const quartisFixos = [];
+        quartis.forEach((quartil, indiceQuartil) => {
+            quartil.forEach((item) => {
+                quartisFixos.push(`Q${indiceQuartil + 1}`); // Q1, Q2, Q3, Q4
+            });
+        });
+
+        // Inicializar a tabela
         $('#tabela-geral').bootstrapTable('destroy').bootstrapTable({
             data: dados,
             pagination: true,
@@ -205,39 +233,114 @@ async function atualizarTabela(canalSelecionado, mes, supervisor) {
             formatAllRows: () => "Todos",
             paginationVAlign: 'top',
             columns: [
-                { field: 'matricula', title: 'Matrícula' },
-                { field: 'nome', title: 'Nome' },
-                { field: 'csat', title: 'CSAT', formatter: (value) => value ?? '-' },
-                { field: 'tma', title: 'TMA', formatter: (value) => value ?? '-' },
-                { field: 'nota_qualidade', title: 'Nota Qualidade', formatter: (value) => value ?? '-' },
-                { field: 'nota_venda', title: 'Nota Venda', formatter: (value) => value ?? '-' },
-                { field: 'qtd_vendas', title: 'Qtd Vendas', formatter: (value) => value ?? '-' }
-            ]
+                { field: 'matricula', title: 'Matrícula', sortable: true },
+                { field: 'nome', title: 'Nome', sortable: true },
+                { field: 'supervisor', title: 'Supervisor', sortable: true },
+                { 
+                    field: 'csat', 
+                    title: 'CSAT', 
+                    formatter: (value) => value ?? '',
+                    sortable: true,
+                    filterControl: 'select' 
+                },
+                { 
+                    field: 'tma', 
+                    title: 'TMA', 
+                    formatter: (value) => value ?? '',
+                    sortable: true,
+                    filterControl: 'select' 
+                },
+                { 
+                    field: 'nota_qualidade', 
+                    title: 'Nota Qualidade', 
+                    formatter: (value) => value ?? '',
+                    sortable: true,
+                    filterControl: 'select'
+                },
+                { 
+                    field: 'nota_venda', 
+                    title: 'Nota Venda', 
+                    formatter: (value) => value ?? '',
+                    sortable: true,
+                    filterControl: 'select'
+                },
+                { 
+                    field: 'qtd_vendas', 
+                    title: 'Qtd Vendas', 
+                    formatter: (value) => value ?? '',
+                    sortable: true,
+                    filterControl: 'select' 
+                },
+                { 
+                    field: 'quartil', 
+                    title: 'Quartil', 
+                    sortable: false, // Não permitir ordenação por quartil
+                    filterControl: 'select',
+                    formatter: (value, row, index) => quartisFixos[index] // Usar os quartis fixos
+                }
+            ],
+            filterControl: true
         });
     } catch (error) {
         console.error(error);
     }
 }
-
-async function buscarIndicadoresGeral(mes, canalSelecionado,supervisor) {
-    try {
-        mes = mes || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
-        mesSelected = document.getElementById('mesSelect')
-        canalSelecionado = document.querySelector('#canalSelect').value
-        const indicadores = await fetchWithAuth(`${BASE_URL}?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`, { method: "GET" });
-        document.getElementById('tma').innerHTML = indicadores.tma.media;
-        document.getElementById('csat').innerHTML = indicadores.csat.media;
-        document.getElementById('nota_qualidade').innerHTML = indicadores.notaQualidade.media;
-        document.getElementById('nota_vendas').innerHTML = indicadores.notaVenda.media;
-        document.getElementById('soma_vendas').innerHTML = indicadores.somaVendas.soma;
-    } catch (error) {
-        console.error(error);
+    async function buscarIndicadoresGeral(mes, canalSelecionado, supervisor) {
+        try {
+            mes = mes || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+            mesSelected = document.getElementById('mesSelect')
+            canalSelecionado = document.querySelector('#canalSelect').value
+            const indicadores = await fetchWithAuth(`${BASE_URL}?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`, { method: "GET" });
+            document.getElementById('tma').innerHTML = indicadores.tma.media;
+            document.getElementById('csat').innerHTML = indicadores.csat.media;
+            document.getElementById('nota_qualidade').innerHTML = indicadores.notaQualidade.media;
+            document.getElementById('nota_vendas').innerHTML = indicadores.notaVenda.media;
+            document.getElementById('soma_vendas').innerHTML = indicadores.somaVendas;
+        } catch (error) {
+            console.error(error);
+        }
     }
-}
 
-async function criarTabelaQuartil(mes, canalSelecionado, supervisor) {
-    try {
+    async function criarTabelaQuartil(mes, canalSelecionado, supervisor) {
+        try {
 
+
+            const mesSelect = document.querySelector("#mesSelect").value
+            mes = mesSelect || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+
+            // Atualiza os valores dos selects
+            canalSelecionado = document.querySelector('#canalSelect')?.value || canalSelecionado;
+            supervisor = document.querySelector('#supervisorSelect')?.value || supervisor;
+
+            const dados = await buscarIndicadoresPorQuartil(mes, canalSelecionado, supervisor);
+            const tabelaBody = document.getElementById("tabela-quartil").querySelector("tbody") || document.createElement("tbody");
+            tabelaBody.innerHTML = "";
+
+
+            const quartis = ['primeiro', 'segundo', 'terceiro', 'quarto'];
+            quartis.forEach((quartil, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                <td  class="quartil-numero" id="${obterClasseQuartil(index)}">${index + 1}Q</td>
+                <td  id="${obterClasseQuartil(index)}">${dados[1].csat?.[quartil]?.media ?? '-'}</td>
+                <td id="${obterClasseQuartil(index)}">${dados[0].tma?.[quartil]?.media ?? '-'}</td>
+                <td id="${obterClasseQuartil(index)}">${dados[2].notaQualidade?.[quartil]?.media ?? '-'}</td>
+                <td id="${obterClasseQuartil(index)}">${dados[3].notaQualidadeVendas?.[quartil]?.media ?? '-'}</td>
+                <td " id="${obterClasseQuartil(index)}">${dados[4].qtdVendas?.[quartil]?.soma ?? '-'}</td>
+            `;
+                tabelaBody.appendChild(row);
+            });
+        } catch (error) {
+            console.error("Erro:", error);
+        }
+    }
+
+    function obterClasseQuartil(index) {
+        const classes = ["quartil-verde", "quartil-amarelo", "quartil-laranja", "quartil-vermelho"];
+        return classes[index] || "";
+    }
+
+    async function buscarIndicadoresPorQuartil(mes, canalSelecionado, supervisor) {
 
         const mesSelect = document.querySelector("#mesSelect").value
         mes = mesSelect || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
@@ -246,94 +349,61 @@ async function criarTabelaQuartil(mes, canalSelecionado, supervisor) {
         canalSelecionado = document.querySelector('#canalSelect')?.value || canalSelecionado;
         supervisor = document.querySelector('#supervisorSelect')?.value || supervisor;
 
-        const dados = await buscarIndicadoresPorQuartil(mes, canalSelecionado, supervisor);
-        const tabelaBody = document.getElementById("tabela-quartil").querySelector("tbody") || document.createElement("tbody");
-        tabelaBody.innerHTML = "";
-
-        const quartis = ['primeiro', 'segundo', 'terceiro', 'quarto'];
-        quartis.forEach((quartil, index) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td class="quartil-numero" id="${obterClasseQuartil(index)}">${index + 1}Q</td>
-                <td id="${obterClasseQuartil(index)}">${dados[1].csat?.[quartil]?.media ?? '-'}</td>
-                <td id="${obterClasseQuartil(index)}">${dados[0].tma?.[quartil]?.media ?? '-'}</td>
-                <td id="${obterClasseQuartil(index)}">${dados[2].notaQualidade?.[quartil]?.media ?? '-'}</td>
-                <td id="${obterClasseQuartil(index)}">${dados[3].notaQualidadeVendas?.[quartil]?.media ?? '-'}</td>
-                <td id="${obterClasseQuartil(index)}">${dados[4].qtdVendas?.[quartil]?.soma ?? '-'}</td>
-            `;
-            tabelaBody.appendChild(row);
-        });
-    } catch (error) {
-        console.error("Erro:", error);
-    }
-}
-
-function obterClasseQuartil(index) {
-    const classes = ["quartil-verde", "quartil-amarelo", "quartil-laranja", "quartil-vermelho"];
-    return classes[index] || "";
-}
-
-async function buscarIndicadoresPorQuartil(mes, canalSelecionado,supervisor) {
-
-    const mesSelect = document.querySelector("#mesSelect").value
-    mes = mesSelect || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
-
-    // Atualiza os valores dos selects
-    canalSelecionado = document.querySelector('#canalSelect')?.value || canalSelecionado;
-    supervisor = document.querySelector('#supervisorSelect')?.value || supervisor;
-
-    const urls = [
-        `${BASE_URL}/quartil-tma?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`,
-        `${BASE_URL}/quartil-csat?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`,
-        `${BASE_URL}/quartil-monitoria?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`,
-        `${BASE_URL}/quartil-monitoria-vendas?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`,
-        `${BASE_URL}/quartil-vendas?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`
-    ];
-
-    try {
-        const respostas = await Promise.all(urls.map(url => fetchWithAuth(url, { method: "GET" })));
-        return [
-            { tma: respostas[0] },
-            { csat: respostas[1] },
-            { notaQualidade: respostas[2] },
-            { notaQualidadeVendas: respostas[3] },
-            { qtdVendas: respostas[4] }
+        const urls = [
+            `${BASE_URL}/quartil-tma?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`,
+            `${BASE_URL}/quartil-csat?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`,
+            `${BASE_URL}/quartil-monitoria?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`,
+            `${BASE_URL}/quartil-monitoria-vendas?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`,
+            `${BASE_URL}/quartil-vendas?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`
         ];
-    } catch (error) {
-        console.error("Erro ao buscar indicadores:", error);
-        throw error;
+
+        try {
+            const respostas = await Promise.all(urls.map(url => fetchWithAuth(url, { method: "GET" })));
+
+            return [
+                { tma: respostas[0] },
+                { csat: respostas[1] },
+                { notaQualidade: respostas[2] },
+                { notaQualidadeVendas: respostas[3] },
+                { qtdVendas: respostas[4] }
+            ];
+
+
+        } catch (error) {
+            console.error("Erro ao buscar indicadores:", error);
+            throw error;
+        }
     }
-}
 
-function logout() {
-    localStorage.removeItem("auth-base-gestao");
-    window.location.href = "/login";
-}
-
-
-// Função para adicionar os listeners
-function adicionarListeners() {
-    document.querySelectorAll("#mesSelect, #supervisorSelect, #canalSelect").forEach(element => {
-        element.addEventListener("change", async function () {
-
-            const mes = document.querySelector('#mesSelect').value.toUpperCase();
-            const canal = document.querySelector('#canalSelect').value || "";
-            const supervisor = document.querySelector("#supervisorSelect").value || "";
+    function logout() {
+        localStorage.removeItem("auth-base-gestao");
+        window.location.href = "/login";
+    }
 
 
-            await carregarSupervisores(canal, supervisor)
-            await buscarTabelaOperadorGeral(mes, canal, supervisor);
-            await buscarIndicadoresGeral(mes, canal, supervisor);
-            await criarTabelaQuartil(mes, canal, supervisor);
+    // Função para adicionar os listeners
+    function adicionarListeners() {
+        document.querySelectorAll("#mesSelect, #supervisorSelect, #canalSelect").forEach(element => {
+            element.addEventListener("change", async function () {
+
+                const mes = document.querySelector('#mesSelect').value.toUpperCase();
+                const canal = document.querySelector('#canalSelect').value || "";
+                const supervisor = document.querySelector("#supervisorSelect").value || "";
+
+
+                await carregarSupervisores(canal, supervisor)
+                await buscarTabelaOperadorGeral(mes, canal, supervisor);
+                await buscarIndicadoresGeral(mes, canal, supervisor);
+                await criarTabelaQuartil(mes, canal, supervisor);
+            });
         });
-    });
-}
+    }
 
-document.addEventListener("DOMContentLoaded", async () => {
-    await carregarDadosUserLogado();
-    await buscarTabelaOperadorGeral();
-    await criarTabelaQuartil();
-    await buscarIndicadoresGeral();
-    await buscarIndicadoresPorQuartil();
-    await carregarSupervisores()
-});
+    document.addEventListener("DOMContentLoaded", async () => {
+        await carregarDadosUserLogado();
+        await buscarTabelaOperadorGeral();
+        await criarTabelaQuartil();
+        await buscarIndicadoresGeral();
+        await buscarIndicadoresPorQuartil();
+        await carregarSupervisores()
+    });
