@@ -331,7 +331,7 @@ document.getElementById('exportar-excel').addEventListener('click', exportarPara
 
 async function buscarIndicadoresGeral(mes, canalSelecionado, supervisor) {
     try {
- 
+
         canalSelecionado = document.querySelector('#canalSelect').value
 
         const indicadores = await fetchWithAuth(`${BASE_URL}?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`, { method: "GET" });
@@ -413,10 +413,140 @@ async function buscarIndicadoresPorQuartil(mes, canalSelecionado, supervisor) {
     }
 }
 
+
+async function criarTabelaIndicadores(mes, canalSelecionado) {
+    try {
+        canalSelecionado = document.querySelector('#canalSelect')?.value || canalSelecionado;
+
+        const dados = await buscarIndicadoresPorQuartilSupervisor(mes, canalSelecionado);
+        console.log("Dados recebidos:", dados); // Para depuração
+
+        const quartis = ['1Q', '2Q', '3Q', '4Q'];
+        const indicadores = ['tma', 'csat', 'nota_qualidade', 'nota_venda', 'qtd_vendas'];
+
+        const tabelas = {
+            tma: document.getElementById("tabela-tma").querySelector("tbody"),
+            csat: document.getElementById("tabela-csat").querySelector("tbody"),
+            nota_qualidade: document.getElementById("tabela-qualidade").querySelector("tbody"),
+            nota_venda: document.getElementById("tabela-qualidade-vendas").querySelector("tbody"),
+            qtd_vendas: document.getElementById("tabela-vendas").querySelector("tbody"),
+        };
+
+        // Limpar tabelas antes de inserir novos dados
+        Object.values(tabelas).forEach(tabela => tabela.innerHTML = "");
+
+        for (let i = 0; i < 4; i++) { // Itera sobre os quartis (0 a 3)
+            indicadores.forEach((indicador, index) => {
+                const tabelaBody = tabelas[indicador];
+                if (!tabelaBody) return;
+
+                const row = document.createElement("tr");
+
+                let supervisores = [];
+                let valores = [];
+
+                // Obtém os dados do indicador correspondente (baseado no índice)
+                const conjuntoDados = dados[index];
+
+                if (conjuntoDados[i]) { // Verifica se há dados no quartil
+                    conjuntoDados[i].forEach(dado => {
+                        supervisores.push(dado.supervisor || "Desconhecido");
+
+                        let valor = dado[`media_${indicador}`];
+
+                        if (valor !== undefined) {
+                            if (indicador === 'qtd_vendas' && typeof valor === "number") {
+                                // Formatar quantidade de vendas com 0 casas decimais
+                                valores.push(valor.toFixed(0));
+                            } else {
+                                // Formatar outros valores numéricos com 2 casas decimais
+                                valores.push(typeof valor === "number" ? valor.toFixed(2) : valor);
+                            }
+                        } else {
+                            valores.push("N/A");
+                        }
+
+                    });
+                }
+
+                row.innerHTML = `
+                    <td class="quartil-numero">${quartis[i]}</td>
+                    <td>${supervisores.length > 0 ? supervisores.join('<br/>') : '-'}</td>
+                    <td>${valores.length > 0 ? valores.join('<br/>') : '-'}</td>
+                `;
+                tabelaBody.appendChild(row);
+            });
+        }
+    } catch (error) {
+        console.error("Erro ao criar tabelas de indicadores:", error);
+    }
+}
+
+
+async function buscarIndicadoresPorQuartilSupervisor(mes, canalSelecionado) {
+    // Atualiza os valores dos selects
+    canalSelecionado = document.querySelector('#canalSelect')?.value || canalSelecionado;
+
+    const urls = [
+        `${BASE_URL}/table/supervisores?mes=${mes}&canal=${canalSelecionado}&classificadoPor=${'tma'}`,
+        `${BASE_URL}/table/supervisores?mes=${mes}&canal=${canalSelecionado}&classificadoPor=${'csat'}`,
+        `${BASE_URL}/table/supervisores?mes=${mes}&canal=${canalSelecionado}&classificadoPor=${'nota_qualidade'}`,
+        `${BASE_URL}/table/supervisores?mes=${mes}&canal=${canalSelecionado}&classificadoPor=${'nota_venda'}`,
+        `${BASE_URL}/table/supervisores?mes=${mes}&canal=${canalSelecionado}&classificadoPor=${'qtd_vendas'}`,
+    ];
+
+    try {
+        const respostas = await Promise.all(urls.map(url => fetchWithAuth(url, { method: "GET" })));
+
+        return [
+            respostas[0], // TMA
+            respostas[1], // CSAT
+            respostas[2], // Nota Qualidade
+            respostas[3], // Nota Qualidade Vendas
+            respostas[4]  // Quantidade Vendas
+        ];
+    } catch (error) {
+        console.error("Erro ao buscar indicadores:", error);
+        throw error;
+    }
+}
+
+function obterClasseQuartil(index) {
+    const classes = ["quartil-verde", "quartil-amarelo", "quartil-laranja", "quartil-vermelho"];
+    return classes[index] || "";
+}
+
+
+
+
 function logout() {
     localStorage.removeItem("auth-base-gestao");
     window.location.href = "/login";
 }
+
+function toggleAllTables() {
+    const tables = document.querySelectorAll('.table-containe');
+    const button = document.querySelector('.btn-primary');
+    
+    // Verifica o estado atual da primeira tabela para alternar
+    const isAnyTableVisible = tables[0].style.display !== "none";
+    
+    tables.forEach(table => {
+        if (isAnyTableVisible) {
+            table.style.display = "none";  // Esconde todas as tabelas
+        } else {
+            table.style.display = "block"; // Mostra todas as tabelas
+        }
+    });
+    
+    // Altera o texto do botão dependendo do estado das tabelas
+    if (isAnyTableVisible) {
+        button.textContent = "Abrir Todas as Tabelas";
+    } else {
+        button.textContent = "Fechar Todas as Tabelas";
+    }
+}
+
 
 let supervisorSelecionado;
 let mesSelecionado = new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
@@ -435,6 +565,8 @@ function adicionarListeners() {
             await buscarTabelaOperadorGeral(mesSelecionado, canal, supervisor);
             await buscarIndicadoresGeral(mesSelecionado, canal, supervisor);
             await criarTabelaQuartil(mesSelecionado, canal, supervisor);
+            await criarTabelaIndicadores(mesSelecionado, canal)
+
         });
     });
 }
@@ -461,6 +593,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await carregarDadosUserLogado();
     await buscarTabelaOperadorGeral();
     await criarTabelaQuartil();
+    await criarTabelaIndicadores();
     await buscarIndicadoresGeral();
     await buscarIndicadoresPorQuartil();
     await carregarSupervisores()

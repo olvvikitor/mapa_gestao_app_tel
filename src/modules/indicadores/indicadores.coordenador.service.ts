@@ -61,7 +61,7 @@ export class CoordenadorService {
                         CAST(SUBSTRING(${classificacao}, 1, 2) AS INT) * 3600 +  -- Horas para segundos
                         CAST(SUBSTRING(${classificacao}, 4, 2) AS INT) * 60 +    -- Minutos para segundos
                         CAST(SUBSTRING(${classificacao}, 7, 2) AS INT)           -- Segundos
-                    ), 0), 108) AS media_tempo
+                    ), 0), 108) AS media_${classificacao}
                 FROM 
                     ${tabela}
                 WHERE 
@@ -70,14 +70,14 @@ export class CoordenadorService {
                 GROUP BY 
                     supervisor
                 ORDER BY 
-                    media_tempo ASC;
+                    media_${classificacao} ASC;
             `;
         } else if (classificacao === 'qtd_vendas') {
             // Consulta para quantidade de vendas (somar)
             query = `
                 SELECT 
                     supervisor, 
-                    SUM(${classificacao}) AS soma_${classificacao}
+                    SUM(${classificacao}) AS media_${classificacao}
                 FROM 
                     ${tabela}
                 WHERE 
@@ -85,7 +85,7 @@ export class CoordenadorService {
                 GROUP BY 
                     supervisor
                 ORDER BY 
-                    soma_${classificacao} DESC;
+                    media_${classificacao} DESC;
             `;
         } else {
             // Consulta para outras classificações (calcular média)
@@ -112,8 +112,25 @@ export class CoordenadorService {
     }
 
     async dividirEmQuartisTabela(operadores: any[], atributo: string): Promise<any> {
-        // Ordena os operadores com base no atributo passado, do maior para o menor
-        const operadoresOrdenados = [...operadores].sort((a, b) => b[atributo] - a[atributo]);
+        let operadoresOrdenados;
+
+        // Função para converter o formato "hh:mm:ss" para o número total de segundos
+        const tempoParaSegundos = (tempo: string) => {
+            const [horas, minutos, segundos] = tempo.split(':').map(Number);
+            return horas * 3600 + minutos * 60 + segundos;
+        };
+    
+        operadoresOrdenados = [...operadores].sort((a, b) => {
+            const valorA = typeof a[atributo] === 'string' ? tempoParaSegundos(a[atributo]) : a[atributo];
+            const valorB = typeof b[atributo] === 'string' ? tempoParaSegundos(b[atributo]) : b[atributo];
+    
+            if (atributo === 'tma') {
+                return valorA - valorB; // Ordem crescente para tma
+            } else {
+                return valorB - valorA; // Ordem decrescente para outros atributos
+            }
+        });
+    
 
         const totalOperadores = operadoresOrdenados.length;
         const baseTamanho = Math.floor(totalOperadores / 4); // Tamanho base para cada quartil
