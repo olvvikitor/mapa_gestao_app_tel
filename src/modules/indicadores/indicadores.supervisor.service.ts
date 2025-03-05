@@ -14,20 +14,23 @@ export interface Indicadores {
 export class IndicadoresSupervisorService {
     constructor(@Inject() private databaseService: DatabaseService) { }
 
-    async getTable(mes:string, canal:string, nome_supervisor:string, classificacao:string):Promise<any[]>{
-
-        if(canal==='CHAT'){
-            const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' AND supervisor = '${nome_supervisor}'`;
-            const operadores: any[] = await this.databaseService.query(query);
-            return await this.dividirEmQuartisTabela(operadores,classificacao)
-        }
-        else{
-            const query = `SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' AND supervisor = '${nome_supervisor}'`;
-            const operadores: any[] = await this.databaseService.query(query);
-            return await this.dividirEmQuartisTabela(operadores,classificacao)
-        }
+    async getTable(mes: string, canal: string, nome_supervisor: string, classificacao: string): Promise<any[]> {
+        const query = `
+            SELECT *
+            FROM dbo.MAPA_GESTAO_CHAT 
+            WHERE mes = '${mes}' AND supervisor = '${nome_supervisor}'
+    
+            UNION 
+    
+            SELECT *
+            FROM dbo.MAPA_GESTAO_VOZ 
+            WHERE mes = '${mes}' AND supervisor = '${nome_supervisor}'
+        `;
+        
+        const operadores: any[] = await this.databaseService.query(query);
+        return await this.dividirEmQuartisTabela(operadores, classificacao);
     }
-
+    
     async getIndicadoresEquipe(mes: string, canal: string, nome_supervisor: string): Promise<Indicadores> {
         if (canal === 'CHAT') {
             const query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}' AND mes = '${mes}'`
@@ -136,7 +139,7 @@ export class IndicadoresSupervisorService {
             quartis.push(operadoresOrdenados.slice(inicio, inicio + tamanhoAtual));
             inicio += tamanhoAtual;
         }
-        
+
         return quartis
     }
 
