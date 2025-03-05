@@ -17,19 +17,20 @@ export class CoordenadorService {
     constructor(@Inject() private databaseService: DatabaseService) { }
 
 
-    async getTable(mes: string, canal: string, supervisor?: string): Promise<any[]> {
+    async getTable(mes: string, canal: string, supervisor: string, classificacao:string ): Promise<any[]> {
 
         if (canal === 'CHAT') {
             let query: string;
 
             if (supervisor === '' || supervisor === `null` || supervisor === `undefined` || supervisor === `GERAL`) {
-                query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'`;
+                query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' `;
             }
+            
             else {
                 query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' AND supervisor = '${supervisor}'`;
             }
             const operadores: any[] = await this.databaseService.query(query);
-            return operadores
+            return await this.dividirEmQuartisTabela(operadores,classificacao)
         }
         else {
             let query: string
@@ -40,8 +41,28 @@ export class CoordenadorService {
                 query = `SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' AND supervisor = '${supervisor}' `;
             }
             const operadores: any[] = await this.databaseService.query(query);
-            return operadores
+            return await this.dividirEmQuartisTabela(operadores,classificacao)
         }
+    }
+    async dividirEmQuartisTabela(operadores: any[], atributo: string): Promise<any> {
+        // Ordena os operadores com base no atributo passado, do maior para o menor
+        const operadoresOrdenados = [...operadores].sort((a, b) => b[atributo] - a[atributo]);
+
+        const totalOperadores = operadoresOrdenados.length;
+        const baseTamanho = Math.floor(totalOperadores / 4); // Tamanho base para cada quartil
+        const sobra = totalOperadores % 4; // Elementos que não se dividem igualmente
+
+        // Inicializando os quartis
+        const quartis: any[][] = [];
+        let inicio = 0;
+
+        // Distribuir os operadores pelos quartis, adicionando 1 operador extra nos ultimos "sobra" quartis
+        for (let i = 0; i < 4; i++) {
+            const tamanhoAtual = baseTamanho + (i >= (4 - sobra) ? 1 : 0);
+            quartis.push(operadoresOrdenados.slice(inicio, inicio + tamanhoAtual));
+            inicio += tamanhoAtual;
+        }
+        return quartis
     }
 
     async getIndicadoresEquipe(mes: string, canal: string, supervisor: string | undefined): Promise<Indicadores> {

@@ -118,9 +118,6 @@ async function carregarDadosUserLogado() {
 async function carregarSupervisores(canalSelecionado, supervisor, mes) {
     try {
 
-        const mesSelect = document.querySelector("#mesSelect").value
-        mes = mesSelect || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
-
         // Atualiza os valores dos selects
         canalSelecionado = document.querySelector('#canalSelect')?.value || canalSelecionado;
         supervisor = document.querySelector('#supervisorSelect')?.value || supervisor;
@@ -170,53 +167,55 @@ async function carregarSupervisores(canalSelecionado, supervisor, mes) {
     }
 }
 
+
 async function buscarTabelaOperadorGeral(mes, canalSelecionado, supervisor) {
     try {
-        mes = mes || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
-        mesSelected = document.getElementById('mesSelect')
-        mesSelected.value = mes
-        canalSelecionado = document.querySelector('#canalSelect').value
 
-        await atualizarTabela(canalSelecionado, mes, supervisor);
+
+        // Obter o classificador selecionado
+        const classificador = document.querySelector('#classificadorSelect').value;
+
+
+        const mesSelect = document.getElementById("mesSelect").value
+        mes = mesSelect || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+
+        // Atualiza os valores dos selects
+        canalSelecionado = document.getElementById('canalSelect')?.value || canalSelecionado;
+        supervisor = document.getElementById('supervisorSelect')?.value || supervisor;
+
+
+        // Atualizar a tabela com os parâmetros
+        await atualizarTabela(canalSelecionado, mes, supervisor, classificador);
+
     } catch (error) {
-        console.error(error);
+        console.error("Erro ao buscar dados:", error);
     }
 }
-let quartisFixos = []; // Define quartisFixos in the global scope
 
 
-async function atualizarTabela(canalSelecionado, mes, supervisor) {
+async function atualizarTabela(canalSelecionado, mes, supervisor, classificador) {
+
+
     try {
-        // Buscar os dados da API
-        const dados = await fetchWithAuth(`${BASE_URL}/table?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`, { method: "GET" });
+        // Buscar os dados da API com o classificador
+        const dados = await fetchWithAuth(
+            `${BASE_URL}/table?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}&classificadoPor=${classificador}`,
+            { method: "GET" }
+        );
 
-        // Calcular os quartis com a fórmula fornecida
-        const totalOperadores = dados.length;
-        const baseTamanho = Math.floor(totalOperadores / 4); // Tamanho base para cada quartil
-        const sobra = totalOperadores % 4; // Elementos que não se dividem igualmente
-
-        // Inicializar os quartis
-        const quartis = [];
-        let inicio = 0;
-
-        // Distribuir os operadores pelos quartis, adicionando 1 operador extra nos últimos "sobra" quartis
-        for (let i = 0; i < 4; i++) {
-            const tamanhoAtual = baseTamanho + (i >= (4 - sobra) ? 1 : 0);
-            quartis.push(dados.slice(inicio, inicio + tamanhoAtual));
-            inicio += tamanhoAtual;
-        }
-
-        // Atribuir os quartis aos dados iniciais
-        quartisFixos = [];
-        quartis.forEach((quartil, indiceQuartil) => {
-            quartil.forEach((item) => {
-                quartisFixos.push(`${indiceQuartil + 1}Q`); // Q1, Q2, Q3, Q4
+        // Processar os dados da API
+        const dadosProcessados = [];
+        dados.forEach((quartil, indiceQuartil) => {
+            quartil.forEach((operador) => {
+                // Adicionar a classificação (quartil) ao operador
+                operador.quartil = `${indiceQuartil + 1}Q`; // 1Q, 2Q, 3Q, 4Q
+                dadosProcessados.push(operador);
             });
         });
 
         // Inicializar a tabela
         $('#tabela-geral').bootstrapTable('destroy').bootstrapTable({
-            data: dados,
+            data: dadosProcessados, // Usar os dados processados
             pagination: true,
             pageSize: 10,
             searchAlign: 'left',
@@ -241,19 +240,6 @@ async function atualizarTabela(canalSelecionado, mes, supervisor) {
                     title: 'CSAT',
                     formatter: (value) => value ?? '',
                     sortable: true,
-                    sorter: (a, b) => {
-                        // Verificar se 'a' é um valor em branco
-                        const isAEmpty = a === null || a === undefined || a === '' || a === ' ' || a === '-' || isNaN(a);
-                        // Verificar se 'b' é um valor em branco
-                        const isBEmpty = b === null || b === undefined || b === '' || b === ' ' || b === '-' || isNaN(b);
-
-                        // Se 'a' for um valor em branco, ele deve ser considerado maior
-                        if (isAEmpty) return 1;
-                        // Se 'b' for um valor em branco, ele deve ser considerado maior
-                        if (isBEmpty) return -1;
-                        // Caso contrário, aplicar a ordenação numérica padrão
-                        return a - b;
-                    },
                     filterControl: 'select'
                 },
                 {
@@ -261,18 +247,6 @@ async function atualizarTabela(canalSelecionado, mes, supervisor) {
                     title: 'TMA',
                     formatter: (value) => value ?? '',
                     sortable: true,
-                    sorter: (a, b) => {
-                        // Verificar se 'a' é um valor em branco
-                        const isAEmpty = a === null || a === undefined || a === '' || a === ' ' || a === '-';
-                        // Verificar se 'b' é um valor em branco
-                        const isBEmpty = b === null || b === undefined || b === '' || b === ' ' || b === '-';
-
-                        // Se 'a' for um valor em branco, ele deve ser considerado maior
-                        if (isAEmpty) return -1;
-                        // Se 'b' for um valor em branco, ele deve ser considerado maior
-                        if (isBEmpty) return 1;
-
-                    },
                     filterControl: 'select'
                 },
                 {
@@ -280,19 +254,6 @@ async function atualizarTabela(canalSelecionado, mes, supervisor) {
                     title: 'Nota Qualidade',
                     formatter: (value) => value ?? '',
                     sortable: true,
-                    sorter: (a, b) => {
-                        // Verificar se 'a' é um valor em branco
-                        const isAEmpty = a === null || a === undefined || a === '' || a === ' ' || a === '-' || isNaN(a);
-                        // Verificar se 'b' é um valor em branco
-                        const isBEmpty = b === null || b === undefined || b === '' || b === ' ' || b === '-' || isNaN(b);
-
-                        // Se 'a' for um valor em branco, ele deve ser considerado maior
-                        if (isAEmpty) return 1;
-                        // Se 'b' for um valor em branco, ele deve ser considerado maior
-                        if (isBEmpty) return -1;
-                        // Caso contrário, aplicar a ordenação numérica padrão
-                        return a - b;
-                    },
                     filterControl: 'select'
                 },
                 {
@@ -300,19 +261,6 @@ async function atualizarTabela(canalSelecionado, mes, supervisor) {
                     title: 'Nota Venda',
                     formatter: (value) => value ?? '',
                     sortable: true,
-                    sorter: (a, b) => {
-                        // Verificar se 'a' é um valor em branco
-                        const isAEmpty = a === null || a === undefined || a === '' || a === ' ' || a === '-' || isNaN(a);
-                        // Verificar se 'b' é um valor em branco
-                        const isBEmpty = b === null || b === undefined || b === '' || b === ' ' || b === '-' || isNaN(b);
-
-                        // Se 'a' for um valor em branco, ele deve ser considerado maior
-                        if (isAEmpty) return 1;
-                        // Se 'b' for um valor em branco, ele deve ser considerado maior
-                        if (isBEmpty) return -1;
-                        // Caso contrário, aplicar a ordenação numérica padrão
-                        return a - b;
-                    },
                     filterControl: 'select'
                 },
                 {
@@ -320,37 +268,23 @@ async function atualizarTabela(canalSelecionado, mes, supervisor) {
                     title: 'Qtd Vendas',
                     formatter: (value) => value ?? '',
                     sortable: true,
-                    sorter: (a, b) => {
-                        // Verificar se 'a' é um valor em branco
-                        const isAEmpty = a === null || a === undefined || a === '' || a === ' ' || a === '-' || isNaN(a);
-                        // Verificar se 'b' é um valor em branco
-                        const isBEmpty = b === null || b === undefined || b === '' || b === ' ' || b === '-' || isNaN(b);
-
-                        // Se 'a' for um valor em branco, ele deve ser considerado maior
-                        if (isAEmpty) return 1;
-                        // Se 'b' for um valor em branco, ele deve ser considerado maior
-                        if (isBEmpty) return -1;
-                        // Caso contrário, aplicar a ordenação numérica padrão
-                        return a - b;
-                    },
                     filterControl: 'select'
                 },
                 {
                     field: 'quartil',
                     title: 'Quartil',
-                    sortable: false, // Não permitir ordenação por quartil
+                    sortable: true,
                     filterControl: 'select',
-                    formatter: (value, row, index) => quartisFixos[index] // Usar os quartis fixos
+                    formatter: (value) => value
                 }
             ],
             filterControl: true
         });
 
     } catch (error) {
-        console.error(error);
+        console.error("Erro ao atualizar a tabela:", error);
     }
 }
-
 
 function exportarParaExcel() {
     // Obter os dados da tabela renderizada (com filtros e ordenações aplicadas)
@@ -359,16 +293,10 @@ function exportarParaExcel() {
     // Obter as colunas da tabela
     const colunas = $('#tabela-geral').bootstrapTable('getOptions').columns[0];
 
-    // Adicionar a coluna "quartil" aos dados da tabela
-    const dadosComQuartil = dadosTabela.map((item, index) => {
-        return {
-            ...item, // Mantém todas as colunas originais
-            quartil: quartisFixos[index] // Adiciona a coluna "quartil"
-        };
-    });
+
 
     // Mapear os dados para incluir apenas as colunas visíveis
-    const dadosFormatados = dadosComQuartil.map((item) => {
+    const dadosFormatados = dadosTabela.map((item) => {
         const novoItem = {};
         colunas.forEach((coluna) => {
             if (coluna.visible) { // Verificar se a coluna está visível
@@ -403,9 +331,9 @@ document.getElementById('exportar-excel').addEventListener('click', exportarPara
 
 async function buscarIndicadoresGeral(mes, canalSelecionado, supervisor) {
     try {
-        mes = mes || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
-        mesSelected = document.getElementById('mesSelect')
+ 
         canalSelecionado = document.querySelector('#canalSelect').value
+
         const indicadores = await fetchWithAuth(`${BASE_URL}?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`, { method: "GET" });
         document.getElementById('tma').innerHTML = indicadores.tma.media;
         document.getElementById('csat').innerHTML = indicadores.csat.media;
@@ -419,10 +347,6 @@ async function buscarIndicadoresGeral(mes, canalSelecionado, supervisor) {
 
 async function criarTabelaQuartil(mes, canalSelecionado, supervisor) {
     try {
-
-
-        const mesSelect = document.querySelector("#mesSelect").value
-        mes = mesSelect || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
 
         // Atualiza os valores dos selects
         canalSelecionado = document.querySelector('#canalSelect')?.value || canalSelecionado;
@@ -458,8 +382,6 @@ function obterClasseQuartil(index) {
 
 async function buscarIndicadoresPorQuartil(mes, canalSelecionado, supervisor) {
 
-    const mesSelect = document.querySelector("#mesSelect").value
-    mes = mesSelect || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
 
     // Atualiza os valores dos selects
     canalSelecionado = document.querySelector('#canalSelect')?.value || canalSelecionado;
@@ -496,26 +418,46 @@ function logout() {
     window.location.href = "/login";
 }
 
+let supervisorSelecionado;
+let mesSelecionado = new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+
 
 // Função para adicionar os listeners
 function adicionarListeners() {
     document.querySelectorAll("#mesSelect, #supervisorSelect, #canalSelect").forEach(element => {
         element.addEventListener("change", async function () {
-
             const mes = document.querySelector('#mesSelect').value.toUpperCase();
             const canal = document.querySelector('#canalSelect').value || "";
             const supervisor = document.querySelector("#supervisorSelect").value || "";
-
-
-            await carregarSupervisores(canal, supervisor)
-            await buscarTabelaOperadorGeral(mes, canal, supervisor);
-            await buscarIndicadoresGeral(mes, canal, supervisor);
-            await criarTabelaQuartil(mes, canal, supervisor);
+            supervisorSelecionado = supervisor
+            mesSelecionado = mes
+            await carregarSupervisores(canal, supervisor, mesSelecionado)
+            await buscarTabelaOperadorGeral(mesSelecionado, canal, supervisor);
+            await buscarIndicadoresGeral(mesSelecionado, canal, supervisor);
+            await criarTabelaQuartil(mesSelecionado, canal, supervisor);
         });
     });
 }
+document.querySelector("#classificadorSelect").addEventListener("change", async function () {
+    const canal = document.querySelector('#canalSelect').value || "";
+    await buscarTabelaOperadorGeral(mesSelecionado, canal, supervisorSelecionado);
+
+});
+
+
 
 document.addEventListener("DOMContentLoaded", async () => {
+    const mesSelecionado = new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+    const selectMes = document.getElementById('mesSelect');
+
+    // Percorre as opções e seleciona a que corresponde ao mês atual
+    for (const option of selectMes.options) {
+        if (option.text.toUpperCase() === mesSelecionado) {
+            option.selected = true;
+            break;
+        }
+    }
+
     await carregarDadosUserLogado();
     await buscarTabelaOperadorGeral();
     await criarTabelaQuartil();

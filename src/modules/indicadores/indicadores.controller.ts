@@ -36,17 +36,17 @@ export class IndicadoresController {
   async getTable(
    @Query('mes') mes: string,
    @Query('canal') canal: string,
-   @Query('supervisor') supervisor:string , @Req() req: any) {
+   @Query('supervisor') supervisor:string,@Query('classificadoPor') classificacao :string , @Req() req: any) {
     const cargo = req.user.dados.FUNCAO
     const nome_logado = req.user.dados.NOME
 
     // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
-      return await this.indicadoresSupervisorService.getTable(mes, canal, supervisor)
+      return await this.indicadoresSupervisorService.getTable(mes, canal, supervisor,classificacao)
     }
     else {
-      return await this.coordenadorService.getTable(mes, canal,supervisor)
+      return await this.coordenadorService.getTable(mes, canal,supervisor,classificacao)
     }
   }
 
