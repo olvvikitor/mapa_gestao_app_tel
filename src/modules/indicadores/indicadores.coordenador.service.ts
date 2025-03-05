@@ -17,7 +17,7 @@ export class CoordenadorService {
     constructor(@Inject() private databaseService: DatabaseService) { }
 
 
-    async getTable(mes: string, canal: string, supervisor: string, classificacao:string ): Promise<any[]> {
+    async getTable(mes: string, canal: string, supervisor: string, classificacao: string): Promise<any[]> {
 
         if (canal === 'CHAT') {
             let query: string;
@@ -25,12 +25,12 @@ export class CoordenadorService {
             if (supervisor === '' || supervisor === `null` || supervisor === `undefined` || supervisor === `GERAL`) {
                 query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' `;
             }
-            
+
             else {
                 query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' AND supervisor = '${supervisor}'`;
             }
             const operadores: any[] = await this.databaseService.query(query);
-            return await this.dividirEmQuartisTabela(operadores,classificacao)
+            return await this.dividirEmQuartisTabela(operadores, classificacao)
         }
         else {
             let query: string
@@ -41,9 +41,76 @@ export class CoordenadorService {
                 query = `SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' AND supervisor = '${supervisor}' `;
             }
             const operadores: any[] = await this.databaseService.query(query);
-            return await this.dividirEmQuartisTabela(operadores,classificacao)
+            return await this.dividirEmQuartisTabela(operadores, classificacao)
         }
     }
+
+    async getTableSupervisoresQuartil(mes: string, canal: string, classificacao: string) {
+        let query: string;
+    
+        // Definir a tabela correta com base no canal
+        const tabela = canal === 'CHAT' ? 'dbo.MAPA_GESTAO_CHAT' : 'dbo.MAPA_GESTAO_VOZ';
+    
+        if (classificacao === 'tma') {
+            // Consulta para TMA (converter HH:MM:SS para segundos e calcular a média)
+            query = `
+                SELECT 
+                    supervisor, 
+                    -- Converter a média de segundos para HH:MM:SS
+                    CONVERT(VARCHAR, DATEADD(SECOND, AVG(
+                        CAST(SUBSTRING(${classificacao}, 1, 2) AS INT) * 3600 +  -- Horas para segundos
+                        CAST(SUBSTRING(${classificacao}, 4, 2) AS INT) * 60 +    -- Minutos para segundos
+                        CAST(SUBSTRING(${classificacao}, 7, 2) AS INT)           -- Segundos
+                    ), 0), 108) AS media_tempo
+                FROM 
+                    ${tabela}
+                WHERE 
+                    mes = '${mes}'
+                    AND ${classificacao} IS NOT NULL  -- Ignorar valores NULL
+                GROUP BY 
+                    supervisor
+                ORDER BY 
+                    media_tempo ASC;
+            `;
+        } else if (classificacao === 'qtd_vendas') {
+            // Consulta para quantidade de vendas (somar)
+            query = `
+                SELECT 
+                    supervisor, 
+                    SUM(${classificacao}) AS soma_${classificacao}
+                FROM 
+                    ${tabela}
+                WHERE 
+                    mes = '${mes}'
+                GROUP BY 
+                    supervisor
+                ORDER BY 
+                    soma_${classificacao} DESC;
+            `;
+        } else {
+            // Consulta para outras classificações (calcular média)
+            query = `
+                SELECT 
+                    supervisor, 
+                    AVG(${classificacao}) AS media_${classificacao}
+                FROM 
+                    ${tabela}
+                WHERE 
+                    mes = '${mes}'
+                GROUP BY 
+                    supervisor
+                ORDER BY 
+                    media_${classificacao} DESC;
+            `;
+        }
+    
+        // Executar a consulta
+        const operadores: any[] = await this.databaseService.query(query);
+    
+        // Dividir os operadores em quartis
+        return await this.dividirEmQuartisTabela(operadores, classificacao);
+    }
+
     async dividirEmQuartisTabela(operadores: any[], atributo: string): Promise<any> {
         // Ordena os operadores com base no atributo passado, do maior para o menor
         const operadoresOrdenados = [...operadores].sort((a, b) => b[atributo] - a[atributo]);
@@ -279,10 +346,10 @@ export class CoordenadorService {
 
         if (atributo === 'qtd_vendas') {
             const obj = {
-                primeiro: {soma: await this.somaVendas(primeiro_quartil, atributo), operadores: primeiro_quartil},
-                segundo: {soma: await this.somaVendas(segundo_quartil, atributo), operadores: segundo_quartil},
-                terceiro: {soma: await this.somaVendas(terceiro_quartil, atributo), operadores: terceiro_quartil},
-                quarto: {soma: await this.somaVendas(quarto_quartil, atributo), operadores: quarto_quartil},
+                primeiro: { soma: await this.somaVendas(primeiro_quartil, atributo), operadores: primeiro_quartil },
+                segundo: { soma: await this.somaVendas(segundo_quartil, atributo), operadores: segundo_quartil },
+                terceiro: { soma: await this.somaVendas(terceiro_quartil, atributo), operadores: terceiro_quartil },
+                quarto: { soma: await this.somaVendas(quarto_quartil, atributo), operadores: quarto_quartil },
             };
             return obj;
         }
@@ -382,6 +449,6 @@ export class CoordenadorService {
         const soma = quartil.reduce((acc, operador) => acc + (operador[atributo] || 0), 0);
 
         // Retorna a soma do atributo no quartil
-        return soma ;
+        return soma;
     }
 }

@@ -49,6 +49,18 @@ export class IndicadoresController {
       return await this.coordenadorService.getTable(mes, canal,supervisor,classificacao)
     }
   }
+  @Get('table/supervisores')
+  async getTableSupervisores(
+   @Query('mes') mes: string,
+   @Query('canal') canal: string
+   ,@Query('classificadoPor') classificacao :string , @Req() req: any) {
+    const cargo = req.user.dados.FUNCAO
+    const nome_logado = req.user.dados.NOME
+
+    // const nome_logado = 'LUIS CAVALCANTE COSTA'
+    return await this.coordenadorService.getTableSupervisoresQuartil(mes, canal,classificacao)
+  
+  }
 
   @Get('/')
   async getIndicadoresEquipe(
