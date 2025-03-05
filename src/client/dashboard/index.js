@@ -7,7 +7,7 @@ const autorizados = [
     'COORDENADOR DE QUALIDADE E PROCESSOS',
     'COORDENADOR DE QUALIDADE',
     'COORDENADOR DE QUALIDADE SR',
-    'ANALISTA DE MIS I',
+    // 'ANALISTA DE MIS I',
     'ANALISTA DE MIS SR',
     'COORDENADOR DE OPERACOES',
     'SUPERVISOR(A) DE QUALIDADE - INTERINO',
@@ -105,7 +105,7 @@ async function carregarDadosUserLogado() {
                 </div>
             `);
             }
-            adicionarListeners();
+            adicionarListenersSupervisor()
 
         }
 
@@ -113,6 +113,7 @@ async function carregarDadosUserLogado() {
         console.error("Erro ao buscar os dados:", erro);
     }
 }
+
 
 
 async function carregarSupervisores(canalSelecionado, supervisor, mes) {
@@ -166,6 +167,7 @@ async function carregarSupervisores(canalSelecionado, supervisor, mes) {
         console.error('Erro ao carregar operadores:', error);
     }
 }
+
 
 
 async function buscarTabelaOperadorGeral(mes, canalSelecionado, supervisor) {
@@ -360,16 +362,22 @@ async function criarTabelaQuartil(mes, canalSelecionado, supervisor) {
         const quartis = ['primeiro', 'segundo', 'terceiro', 'quarto'];
         quartis.forEach((quartil, index) => {
             const row = document.createElement("tr");
+        
+            // Função para verificar e substituir valores null por ' '
+            const verificarValor = (valor) => (valor === null ? ' ' : valor);
+        
             row.innerHTML = `
-                <td  class="quartil-numero" id="${obterClasseQuartil(index)}">${index + 1}Q</td>
-                <td  id="${obterClasseQuartil(index)}">${dados[1].csat?.[quartil]?.media ?? '-'}</td>
-                <td id="${obterClasseQuartil(index)}">${dados[0].tma?.[quartil]?.media ?? '-'}</td>
-                <td id="${obterClasseQuartil(index)}">${dados[2].notaQualidade?.[quartil]?.media ?? '-'}</td>
-                <td id="${obterClasseQuartil(index)}">${dados[3].notaQualidadeVendas?.[quartil]?.media ?? '-'}</td>
-                <td " id="${obterClasseQuartil(index)}">${dados[4].qtdVendas?.[quartil]?.soma ?? '-'}</td>
+                <td class="quartil-numero" id="${obterClasseQuartil(index)}">${index + 1}Q</td>
+                <td id="${obterClasseQuartil(index)}">${verificarValor(dados[1].csat?.[quartil]?.media)}</td>
+                <td id="${obterClasseQuartil(index)}">${verificarValor(dados[0].tma?.[quartil]?.media)}</td>
+                <td id="${obterClasseQuartil(index)}">${verificarValor(dados[2].notaQualidade?.[quartil]?.media)}</td>
+                <td id="${obterClasseQuartil(index)}">${verificarValor(dados[3].notaQualidadeVendas?.[quartil]?.media)}</td>
+                <td id="${obterClasseQuartil(index)}">${verificarValor(dados[4].qtdVendas?.[quartil]?.soma)}</td>
             `;
+        
             tabelaBody.appendChild(row);
         });
+        
     } catch (error) {
         console.error("Erro:", error);
     }
@@ -419,7 +427,6 @@ async function criarTabelaIndicadores(mes, canalSelecionado) {
         canalSelecionado = document.querySelector('#canalSelect')?.value || canalSelecionado;
 
         const dados = await buscarIndicadoresPorQuartilSupervisor(mes, canalSelecionado);
-        console.log("Dados recebidos:", dados); // Para depuração
 
         const quartis = ['1Q', '2Q', '3Q', '4Q'];
         const indicadores = ['tma', 'csat', 'nota_qualidade', 'nota_venda', 'qtd_vendas'];
@@ -570,6 +577,19 @@ function adicionarListeners() {
         });
     });
 }
+function adicionarListenersSupervisor() {
+    document.querySelectorAll("#mesSelect, #supervisorSelect, #canalSelect").forEach(element => {
+        element.addEventListener("change", async function () {
+            const mes = document.querySelector('#mesSelect').value.toUpperCase();
+            const canal = document.querySelector('#canalSelect').value || "";
+            await buscarTabelaOperadorGeral(mesSelecionado, canal);
+            await buscarIndicadoresGeral(mesSelecionado, canal);
+            await criarTabelaQuartil(mesSelecionado, canal);
+            await criarTabelaIndicadores(mesSelecionado, canal)
+
+        });
+    });
+}
 document.querySelector("#classificadorSelect").addEventListener("change", async function () {
     const canal = document.querySelector('#canalSelect').value || "";
     await buscarTabelaOperadorGeral(mesSelecionado, canal, supervisorSelecionado);
@@ -596,5 +616,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     await criarTabelaIndicadores();
     await buscarIndicadoresGeral();
     await buscarIndicadoresPorQuartil();
-    await carregarSupervisores()
 });

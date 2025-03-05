@@ -175,3 +175,6 @@
     font-size: 28px;
     cursor: pointer;
 }
+.table-containe {
+    display: none; /* Esconde as tabelas por padrão */
+}
