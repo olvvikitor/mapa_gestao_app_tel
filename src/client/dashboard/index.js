@@ -178,12 +178,10 @@ async function buscarTabelaOperadorGeral(mes, canalSelecionado, supervisor) {
         const classificador = document.querySelector('#classificadorSelect').value;
 
 
-        const mesSelect = document.getElementById("mesSelect").value
-        mes = mesSelect || new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
-
         // Atualiza os valores dos selects
         canalSelecionado = document.getElementById('canalSelect')?.value || canalSelecionado;
         supervisor = document.getElementById('supervisorSelect')?.value || supervisor;
+        console.log(canalSelecionado)
 
 
         // Atualizar a tabela com os parâmetros
@@ -197,7 +195,7 @@ async function buscarTabelaOperadorGeral(mes, canalSelecionado, supervisor) {
 
 async function atualizarTabela(canalSelecionado, mes, supervisor, classificador) {
 
-
+console.log(canalSelecionado)
     try {
         // Buscar os dados da API com o classificador
         const dados = await fetchWithAuth(
@@ -332,6 +330,9 @@ document.getElementById('exportar-excel').addEventListener('click', exportarPara
 
 
 async function buscarIndicadoresGeral(mes, canalSelecionado, supervisor) {
+
+
+
     try {
 
         canalSelecionado = document.querySelector('#canalSelect').value
@@ -389,6 +390,7 @@ function obterClasseQuartil(index) {
 }
 
 async function buscarIndicadoresPorQuartil(mes, canalSelecionado, supervisor) {
+    
 
 
     // Atualiza os valores dos selects
@@ -558,6 +560,10 @@ function toggleAllTables() {
 let supervisorSelecionado;
 let mesSelecionado = new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
 
+if(mesSelecionado === 'MARÇO'){
+    mesSelecionado = 'MARCO'
+}
+
 
 // Função para adicionar os listeners
 function adicionarListeners() {
@@ -580,8 +586,11 @@ function adicionarListeners() {
 function adicionarListenersSupervisor() {
     document.querySelectorAll("#mesSelect, #supervisorSelect, #canalSelect").forEach(element => {
         element.addEventListener("change", async function () {
+            
             const mes = document.querySelector('#mesSelect').value.toUpperCase();
+            mesSelecionado = mes
             const canal = document.querySelector('#canalSelect').value || "";
+
             await buscarTabelaOperadorGeral(mesSelecionado, canal);
             await buscarIndicadoresGeral(mesSelecionado, canal);
             await criarTabelaQuartil(mesSelecionado, canal);
@@ -599,7 +608,6 @@ document.querySelector("#classificadorSelect").addEventListener("change", async 
 
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const mesSelecionado = new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
     const selectMes = document.getElementById('mesSelect');
 
     // Percorre as opções e seleciona a que corresponde ao mês atual
@@ -611,9 +619,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     await carregarDadosUserLogado();
-    await buscarTabelaOperadorGeral();
+    await buscarTabelaOperadorGeral(mesSelecionado);
     await criarTabelaQuartil();
     await criarTabelaIndicadores();
     await buscarIndicadoresGeral();
     await buscarIndicadoresPorQuartil();
 });
+console.log(mesSelecionado)

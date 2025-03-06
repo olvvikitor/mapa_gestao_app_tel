@@ -44,8 +44,6 @@ export class IndicadoresController {
     const nome_logado = 'LUIS CAVALCANTE COSTA'
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
-      console.log(mes, canal, supervisor,classificacao)
-      if(canal === 'equipe') canal = ''
       return await this.indicadoresSupervisorService.getTable(mes, canal, nome_logado, classificacao)
     }
     else {
@@ -59,8 +57,16 @@ export class IndicadoresController {
    ,@Query('classificadoPor') classificacao :string , @Req() req: any) {
     const cargo = req.user.dados.FUNCAO
     // const nome_logado = req.user.dados.NOME
+    const nome_logado = 'LUIS CAVALCANTE COSTA'
 
-    return await this.coordenadorService.getTableSupervisoresQuartil(mes, canal,classificacao)
+
+    if (!this.isCoordenador(cargo, this.autorizados)) {
+      return await this.indicadoresSupervisorService.getTableSupervisoresQuartil(mes, canal,classificacao,nome_logado)
+    }
+    else{
+      return await this.coordenadorService.getTableSupervisoresQuartil(mes, canal,classificacao)
+
+    }
   
   }
 
@@ -71,8 +77,8 @@ export class IndicadoresController {
     @Req() req: any) {
 
     const cargo = req.user.dados.FUNCAO
-    const nome_logado = req.user.dados.NOME
-    // const nome_logado = 'LUIS CAVALCANTE COSTA
+    // const nome_logado = req.user.dados.NOME
+    const nome_logado = 'LUIS CAVALCANTE COSTA'
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
       return await this.indicadoresSupervisorService.getIndicadoresEquipe(mes, canal, nome_logado)
