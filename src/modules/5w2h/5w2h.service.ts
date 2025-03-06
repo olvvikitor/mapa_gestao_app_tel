@@ -55,7 +55,6 @@ export class AcaoService {
       WHERE id = '${id}'
     `;
       await this.databaseService.query(query);
-      console.log('Ação atualizada com sucesso');
     } catch (error) {
       console.error('Erro ao atualizar ação:', error);
       throw error;
@@ -69,7 +68,6 @@ export class AcaoService {
     `;
 
       await this.databaseService.query(query);
-      console.log('Deletado com sucesso');
     } catch (error) {
       console.error('Erro ao deletar ação:', error);
       throw error;

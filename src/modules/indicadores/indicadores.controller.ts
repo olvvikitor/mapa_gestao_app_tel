@@ -20,7 +20,7 @@ export class IndicadoresController {
     'COORDENADOR DE QUALIDADE E PROCESSOS',
     'COORDENADOR DE QUALIDADE',
     'COORDENADOR DE QUALIDADE SR',
-    // 'ANALISTA DE MIS I',
+    'ANALISTA DE MIS I',
     'ANALISTA DE MIS SR',
     'COORDENADOR DE OPERACOES',
     'SUPERVISOR(A) DE QUALIDADE - INTERINO',
@@ -39,9 +39,9 @@ export class IndicadoresController {
    @Query('canal') canal: string,
    @Query('supervisor') supervisor:string,@Query('classificadoPor') classificacao :string , @Req() req: any) {
     const cargo = req.user.dados.FUNCAO
-    // const nome_logado = req.user.dados.NOME
+    const nome_logado = req.user.dados.NOME
 
-    const nome_logado = 'LUIS CAVALCANTE COSTA'
+    // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
       return await this.indicadoresSupervisorService.getTable(mes, canal, nome_logado, classificacao)
@@ -56,8 +56,8 @@ export class IndicadoresController {
    @Query('canal') canal: string
    ,@Query('classificadoPor') classificacao :string , @Req() req: any) {
     const cargo = req.user.dados.FUNCAO
-    // const nome_logado = req.user.dados.NOME
-    const nome_logado = 'LUIS CAVALCANTE COSTA'
+    const nome_logado = req.user.dados.NOME
+    // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
@@ -77,8 +77,8 @@ export class IndicadoresController {
     @Req() req: any) {
 
     const cargo = req.user.dados.FUNCAO
-    // const nome_logado = req.user.dados.NOME
-    const nome_logado = 'LUIS CAVALCANTE COSTA'
+    const nome_logado = req.user.dados.NOME
+    // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
       return await this.indicadoresSupervisorService.getIndicadoresEquipe(mes, canal, nome_logado)
@@ -92,9 +92,9 @@ export class IndicadoresController {
   @Get('/quartil-tma/')
   async getQuartilTma(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor:string | undefined, @Req() req: any) {
 
-    // const nome_logado = req.user.dados.NOME
+    const nome_logado = req.user.dados.NOME
     const cargo = req.user.dados.FUNCAO;
-    const nome_logado = 'LUIS CAVALCANTE COSTA'
+    // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
@@ -107,9 +107,9 @@ export class IndicadoresController {
 
   @Get('/quartil-csat/')
   async getQuartilCsat(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor:string | undefined, @Req() req: any) {
-    // const nome_logado = req.user.dados.NOME
+    const nome_logado = req.user.dados.NOME
     const cargo = req.user.dados.FUNCAO;
-    const nome_logado = 'LUIS CAVALCANTE COSTA'
+    // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
@@ -123,9 +123,9 @@ export class IndicadoresController {
 
   @Get('/quartil-monitoria/')
   async quartilNotaQualidade(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor:string | undefined, @Req() req: any) {
-    // const nome_logado = req.user.dados.NOME
+    const nome_logado = req.user.dados.NOME
     const cargo = req.user.dados.FUNCAO;
-    const nome_logado = 'LUIS CAVALCANTE COSTA'
+    // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
@@ -139,9 +139,9 @@ export class IndicadoresController {
 
   @Get('/quartil-monitoria-vendas/')
   async quartilMoitoriaVendas(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor:string | undefined, @Req() req: any) {
-    // const nome_logado = req.user.dados.NOME
+    const nome_logado = req.user.dados.NOME
     const cargo = req.user.dados.FUNCAO;
-    const nome_logado = 'LUIS CAVALCANTE COSTA'
+    // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
@@ -156,8 +156,8 @@ export class IndicadoresController {
 
   @Get('/quartil-vendas/')
   async quartilVendas(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor:string | undefined, @Req() req: any) {
-    // const nome_logado = req.user.dados.NOME
-    const nome_logado = 'LUIS CAVALCANTE COSTA'
+    const nome_logado = req.user.dados.NOME
+    // const nome_logado = 'LUIS CAVALCANTE COSTA'
     const cargo = req.user.dados.FUNCAO;
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
