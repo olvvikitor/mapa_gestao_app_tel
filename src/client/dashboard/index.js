@@ -81,14 +81,12 @@ async function carregarDadosUserLogado() {
                         <label for="supervisorSelect" class="me-2 card-title">Supervisor:</label>
                         <select id= supervisorSelect class="form-select" aria-label="Default select example">
                         <option  selected></option>
-                        
                         </select>
                     </div>
 
             `);
             }
             adicionarListeners();
-
 
         }
         else {
@@ -116,7 +114,7 @@ async function carregarDadosUserLogado() {
 
 
 
-async function carregarSupervisores(canalSelecionado, supervisor, mes) {
+async function carregarSupervisores(canalSelecionado,supervisor, mes) {
     try {
 
         // Atualiza os valores dos selects
@@ -578,7 +576,7 @@ function adicionarListeners() {
             supervisorSelecionado = supervisor
             mesSelecionado = mes
             canal = canalSelect
-            await carregarSupervisores(canal, supervisor, mesSelecionado)
+            await carregarSupervisores(canal,supervisor, mesSelecionado)
             await buscarTabelaOperadorGeral(mesSelecionado, canal, supervisor);
             await buscarIndicadoresGeral(mesSelecionado, canal, supervisor);
             await criarTabelaQuartil(mesSelecionado, canal, supervisor);
@@ -590,11 +588,9 @@ function adicionarListeners() {
 function adicionarListenersSupervisor() {
     document.querySelectorAll("#mesSelect, #supervisorSelect, #canalSelect").forEach(element => {
         element.addEventListener("change", async function () {
-            
             const mes = document.querySelector('#mesSelect').value.toUpperCase();
             mesSelecionado = mes
             canal = document.querySelector('#canalSelect').value || "";
-
             await buscarTabelaOperadorGeral(mesSelecionado, canal);
             await buscarIndicadoresGeral(mesSelecionado, canal);
             await criarTabelaQuartil(mesSelecionado, canal);
@@ -610,7 +606,8 @@ document.querySelector("#classificadorSelect").addEventListener("change", async 
 
 document.addEventListener("DOMContentLoaded", async () => {
     await carregarDadosUserLogado();
-    await buscarTabelaOperadorGeral(mesSelecionado, canal );
+    await buscarTabelaOperadorGeral(mesSelecionado,canal);
+    await carregarSupervisores(canal,undefined, mesSelecionado)
     await criarTabelaQuartil(mesSelecionado,canal);
     await criarTabelaIndicadores(mesSelecionado,canal);
     await buscarIndicadoresGeral(mesSelecionado,canal);
