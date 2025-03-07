@@ -181,7 +181,6 @@ async function buscarTabelaOperadorGeral(mes, canalSelecionado, supervisor) {
         // Atualiza os valores dos selects
         canalSelecionado = document.getElementById('canalSelect')?.value || canalSelecionado;
         supervisor = document.getElementById('supervisorSelect')?.value || supervisor;
-        console.log(canalSelecionado)
 
 
         // Atualizar a tabela com os parâmetros
@@ -195,7 +194,6 @@ async function buscarTabelaOperadorGeral(mes, canalSelecionado, supervisor) {
 
 async function atualizarTabela(canalSelecionado, mes, supervisor, classificador) {
 
-console.log(canalSelecionado)
     try {
         // Buscar os dados da API com o classificador
         const dados = await fetchWithAuth(
@@ -563,6 +561,7 @@ async function toggleAllTables() {
 
 let supervisorSelecionado;
 let mesSelecionado = new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+let canal = "CHAT"
 
 if(mesSelecionado === 'MARÇO'){
     mesSelecionado = 'MARCO'
@@ -574,10 +573,11 @@ function adicionarListeners() {
     document.querySelectorAll("#mesSelect, #supervisorSelect, #canalSelect").forEach(element => {
         element.addEventListener("change", async function () {
             const mes = document.querySelector('#mesSelect').value.toUpperCase();
-            const canal = document.querySelector('#canalSelect').value || "";
+            const canalSelect = document.querySelector('#canalSelect').value || "";
             const supervisor = document.querySelector("#supervisorSelect").value || "";
             supervisorSelecionado = supervisor
             mesSelecionado = mes
+            canal = canalSelect
             await carregarSupervisores(canal, supervisor, mesSelecionado)
             await buscarTabelaOperadorGeral(mesSelecionado, canal, supervisor);
             await buscarIndicadoresGeral(mesSelecionado, canal, supervisor);
@@ -593,40 +593,26 @@ function adicionarListenersSupervisor() {
             
             const mes = document.querySelector('#mesSelect').value.toUpperCase();
             mesSelecionado = mes
-            const canal = document.querySelector('#canalSelect').value || "";
+            canal = document.querySelector('#canalSelect').value || "";
 
             await buscarTabelaOperadorGeral(mesSelecionado, canal);
             await buscarIndicadoresGeral(mesSelecionado, canal);
             await criarTabelaQuartil(mesSelecionado, canal);
             await criarTabelaIndicadores(mesSelecionado, canal)
-
         });
     });
 }
 document.querySelector("#classificadorSelect").addEventListener("change", async function () {
-    const canal = document.querySelector('#canalSelect').value || "";
     await buscarTabelaOperadorGeral(mesSelecionado, canal, supervisorSelecionado);
-
 });
 
 
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const selectMes = document.getElementById('mesSelect');
-
-    // Percorre as opções e seleciona a que corresponde ao mês atual
-    for (const option of selectMes.options) {
-        if (option.text.toUpperCase() === mesSelecionado) {
-            option.selected = true;
-            break;
-        }
-    }
-
     await carregarDadosUserLogado();
-    await buscarTabelaOperadorGeral(mesSelecionado);
-    await criarTabelaQuartil();
-    await criarTabelaIndicadores();
-    await buscarIndicadoresGeral();
-    await buscarIndicadoresPorQuartil();
+    await buscarTabelaOperadorGeral(mesSelecionado, canal );
+    await criarTabelaQuartil(mesSelecionado,canal);
+    await criarTabelaIndicadores(mesSelecionado,canal);
+    await buscarIndicadoresGeral(mesSelecionado,canal);
+    await buscarIndicadoresPorQuartil(mesSelecionado,canal);
 });
-console.log(mesSelecionado)
