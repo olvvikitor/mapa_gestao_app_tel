@@ -605,6 +605,17 @@ document.querySelector("#classificadorSelect").addEventListener("change", async 
 
 
 document.addEventListener("DOMContentLoaded", async () => {
+
+    const selectMes = document.getElementById('mesSelect');
+
+    // Percorre as opções e seleciona a que corresponde ao mês atual
+    for (const option of selectMes.options) {
+        if (option.text.toUpperCase() === mesSelecionado) {
+            option.selected = true;
+            break;
+        }
+    }
+    
     await carregarDadosUserLogado();
     await buscarTabelaOperadorGeral(mesSelecionado,canal);
     await carregarSupervisores(canal,undefined, mesSelecionado)
