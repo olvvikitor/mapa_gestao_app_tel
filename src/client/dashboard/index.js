@@ -532,15 +532,15 @@ function logout() {
     localStorage.removeItem("auth-base-gestao");
     window.location.href = "/login";
 }
+var isAnyTableVisible = false
 
-function toggleAllTables() {
-    const tables = document.querySelectorAll('.table-containe');
+async function toggleAllTables() {
+    const tables = document.querySelectorAll('.table-container');
     const button = document.querySelector('.btn-primary');
+
     
-    // Verifica o estado atual da primeira tabela para alternar
-    const isAnyTableVisible = tables[0].style.display !== "none";
-    
-    tables.forEach(table => {
+    // Verifica o estado atual da primeira tabela para alternar   
+     tables.forEach(table => {
         if (isAnyTableVisible) {
             table.style.display = "none";  // Esconde todas as tabelas
         } else {
@@ -551,8 +551,12 @@ function toggleAllTables() {
     // Altera o texto do botão dependendo do estado das tabelas
     if (isAnyTableVisible) {
         button.textContent = "Abrir Todas as Tabelas";
+         isAnyTableVisible = false
+
     } else {
         button.textContent = "Fechar Todas as Tabelas";
+         isAnyTableVisible = true
+
     }
 }
 
