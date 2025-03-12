@@ -36,8 +36,8 @@ export default class AuthController{
     async getToken(@Req() request: any){
         const nome_logado = request.user.dados.NOME
         const cargo = request.user.dados.FUNCAO
-        const pagina_acessada = request.originalUrl; // Captura a URL acessada
-
+        const pagina_acessada = request.headers.referer; // Captura a URL acessada
+gir ad
         const query = `INSERT INTO MERCANTIL.dbo.ACESSOS (
           nome_logado, cargo, pagina_acessada) VALUES('${nome_logado}', '${cargo}','${pagina_acessada}')`
 

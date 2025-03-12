@@ -28,6 +28,7 @@ import {
         }
         // Armazena o payload no objeto da requisição
         request['user'] = payload;
+        
       } catch (err) {
         throw new UnauthorizedException('Erro ao processar o token.');
       }
