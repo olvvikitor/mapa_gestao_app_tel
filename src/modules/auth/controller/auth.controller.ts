@@ -37,7 +37,6 @@ export default class AuthController{
         const nome_logado = request.user.dados.NOME
         const cargo = request.user.dados.FUNCAO
         const pagina_acessada = request.headers.referer; // Captura a URL acessada
-gir ad
         const query = `INSERT INTO MERCANTIL.dbo.ACESSOS (
           nome_logado, cargo, pagina_acessada) VALUES('${nome_logado}', '${cargo}','${pagina_acessada}')`
 

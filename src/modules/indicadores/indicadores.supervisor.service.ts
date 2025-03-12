@@ -263,16 +263,24 @@ export class IndicadoresSupervisorService {
         };
     
         operadoresOrdenados = [...operadores].sort((a, b) => {
-            const valorA = typeof a[atributo] === 'string' ? tempoParaSegundos(a[atributo]) : a[atributo];
-            const valorB = typeof b[atributo] === 'string' ? tempoParaSegundos(b[atributo]) : b[atributo];
-    
+            const valorA = a[atributo] === null || a[atributo] === undefined 
+                ? Number.MAX_SAFE_INTEGER // Garante que null fique no final
+                : (typeof a[atributo] === 'string' ? tempoParaSegundos(a[atributo]) : a[atributo]);
+        
+            const valorB = b[atributo] === null || b[atributo] === undefined 
+                ? Number.MAX_SAFE_INTEGER 
+                : (typeof b[atributo] === 'string' ? tempoParaSegundos(b[atributo]) : b[atributo]);
+        
+            // Se um deles for null, garante que ele fique no final
+            if (a[atributo] === null && b[atributo] !== null) return 1;
+            if (a[atributo] !== null && b[atributo] === null) return -1;
+        
             if (atributo === 'tma') {
                 return valorA - valorB; // Ordem crescente para tma
             } else {
                 return valorB - valorA; // Ordem decrescente para outros atributos
             }
         });
-    
 
         const totalOperadores = operadoresOrdenados.length;
         const baseTamanho = Math.floor(totalOperadores / 4); // Tamanho base para cada quartil
