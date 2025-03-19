@@ -188,6 +188,10 @@ if (data_inicial && data_final && data_final < data_inicial) {
 
   
 
+function logout() {
+  localStorage.removeItem("auth-base-gestao");
+  window.location.href = "/login";
+}
 
 // Reorganizando o carregamento do conteúdo
 document.addEventListener("DOMContentLoaded", () => {

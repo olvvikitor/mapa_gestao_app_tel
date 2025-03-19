@@ -296,3 +296,8 @@ document.addEventListener("DOMContentLoaded", () => {
   carregarDadosUserLogado();
   getForms();
 });
+
+function logout() {
+  localStorage.removeItem("auth-base-gestao");
+  window.location.href = "/login";
+}
