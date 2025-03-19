@@ -41,7 +41,7 @@ export class IndicadoresController {
     const cargo = req.user.dados.FUNCAO
     const nome_logado = req.user.dados.NOME
 
-    // const nome_logado = 'LUIS CAVALCANTE COSTA'
+    // const nome_logado = 'BRUNA DE FRANCA FERREIRA'
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
       return await this.indicadoresSupervisorService.getTable(mes, canal, nome_logado, classificacao)
