@@ -6,10 +6,11 @@ export class OperadorService {
   constructor(@Inject() private databaseService: DatabaseService) { }
 
   async getNameOperadorBySupervisor(nome_supervisor: string) {
+    const nomeAjustado = nome_supervisor.split(' ')
     const query = `
-            SELECT DISTINCT nome FROM dbo.MAPA_GESTAO_CHAT WHERE supervisor = '${nome_supervisor}'
+            SELECT DISTINCT nome FROM dbo.MAPA_GESTAO_CHAT WHERE supervisor LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[1]}%'
             UNION
-            SELECT DISTINCT nome FROM dbo.MAPA_GESTAO_VOZ WHERE supervisor = '${nome_supervisor}'
+            SELECT DISTINCT nome FROM dbo.MAPA_GESTAO_VOZ WHERE supervisor LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[1]}%'
           `;
     const operadores = await this.databaseService.query(query);
     return operadores; // Retorna os operadores encontrados nas duas tabelas para o supervisor
