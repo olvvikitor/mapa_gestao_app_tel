@@ -17,30 +17,18 @@ export class IndicadoresSupervisorService {
     async getTable(mes: string, canal: string, nome_supervisor: string, classificacao: string): Promise<any[]> {
         const nomeAjustado = nome_supervisor.split(' ')
         const produto = await this.getProduto(nomeAjustado, mes)
-        console.log(nomeAjustado)
         const tabela = produto === 'CHAT' ? 'dbo.MAPA_GESTAO_CHAT' : 'dbo.MAPA_GESTAO_VOZ';
+        console.log(tabela)
         let query: string;
         if (canal === 'equipe') {
             query = `
             SELECT *
-            FROM dbo.MAPA_GESTAO_CHAT 
+            FROM ${tabela} 
             WHERE mes = '${mes}' AND supervisor 
                         LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[1]}%'  AND mes = '${mes}'
                         OR 
                         supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[nomeAjustado.length - 1]}%'  AND mes = '${mes}'
-    
-            UNION 
-    
-            SELECT *
-            FROM dbo.MAPA_GESTAO_VOZ 
-            WHERE mes = '${mes}' AND supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[1]}%'  AND mes = '${mes}'
-                        OR 
-                        supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[nomeAjustado.length - 1]}%'  AND mes = '${mes}'
-            
-        `;
+                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[nomeAjustado.length - 1]}%'  AND mes = '${mes}'`;
         }
         else {
             query = `
@@ -128,16 +116,8 @@ export class IndicadoresSupervisorService {
         let query: string;
         if (canal === 'equipe') {
             query = `
-            SELECT * FROM dbo.MAPA_GESTAO_CHAT
+            SELECT * FROM ${tabela}
            WHERE supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[1]}%'  AND mes = '${mes}'
-                        OR 
-                        supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[nomeAjustado.length - 1]}%' AND mes = '${mes}'
-            
-            UNION 
-                
-            SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE supervisor 
                         LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[1]}%'  AND mes = '${mes}'
                         OR 
                         supervisor 
@@ -161,18 +141,12 @@ export class IndicadoresSupervisorService {
         const tabela = produto === 'CHAT' ? 'dbo.MAPA_GESTAO_CHAT' : 'dbo.MAPA_GESTAO_VOZ';
         if (canal === 'equipe') {
             const query = `
-            SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE supervisor 
+            SELECT * FROM ${tabela} WHERE supervisor 
                         LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[1]}%'  AND mes = '${mes}'
                         OR 
                         supervisor 
                         LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[nomeAjustado.length - 1]}%' AND mes = '${mes}' 
-            UNION
-            SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[1]}%'  AND mes = '${mes}'
-                        OR 
-                        supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[nomeAjustado.length - 1]}%'
-            AND mes = '${mes}'
+            
             ORDER BY tma ASC`;
 
             const operadores = await this.databaseService.query(query)
@@ -194,19 +168,13 @@ export class IndicadoresSupervisorService {
         const tabela = produto === 'CHAT' ? 'dbo.MAPA_GESTAO_CHAT' : 'dbo.MAPA_GESTAO_VOZ';
         if (canal === 'equipe') {
             const operadores =
-                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT
+                await this.databaseService.query(`SELECT * FROM ${tabela}
                      WHERE supervisor 
                         LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[1]}%'  AND mes = '${mes}'
                         OR 
                         supervisor 
                         LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[nomeAjustado.length - 1]}%' AND mes = '${mes}'  
-                    UNION
-                    SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[1]}%'  AND mes = '${mes}'
-                        OR 
-                        supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[nomeAjustado.length - 1]}%'
-                         AND mes = '${mes}'  ORDER BY csat ASC`)
+                   ORDER BY csat ASC`)
 
             return await this.dividirEmQuartis(operadores, 'csat')
         }
@@ -224,19 +192,12 @@ export class IndicadoresSupervisorService {
         const tabela = produto === 'CHAT' ? 'dbo.MAPA_GESTAO_CHAT' : 'dbo.MAPA_GESTAO_VOZ';
         if (canal === 'equipe') {
             const operadores =
-                await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT
+                await this.databaseService.query(`SELECT * FROM ${tabela}
                      WHERE supervisor 
                         LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[1]}%'  AND mes = '${mes}'
                         OR 
                         supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[nomeAjustado.length - 1]}%' AND mes = '${mes}'
-                          
-                          UNION 
-                          SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[1]}%' 
-                        OR 
-                        supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[nomeAjustado.length - 1]}%' AND mes = '${mes}' 
+                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[nomeAjustado.length - 1]}%' AND mes = '${mes}'  
                           ORDER BY nota_qualidade ASC`)
             return await this.dividirEmQuartis(operadores, 'nota_qualidade')
         }
@@ -253,18 +214,13 @@ export class IndicadoresSupervisorService {
         if (canal === 'equipe') {
             const operadores =
                 await this.databaseService.query(`
-                        SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE supervisor 
+                      SELECT * FROM ${tabela}
+                     WHERE supervisor 
                         LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[1]}%'  AND mes = '${mes}'
                         OR 
                         supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[nomeAjustado.length - 1]}%' AND mes = '${mes}'
-                          
-                          UNION 
-                          SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[1]}%'  AND mes = '${mes}'
-                        OR 
-                        supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[nomeAjustado.length - 1]}%' AND mes = '${mes}' ORDER BY nota_venda ASC
+                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[nomeAjustado.length - 1]}%' AND mes = '${mes}'  
+                         ORDER BY nota_venda ASC
                          `)
             return await this.dividirEmQuartis(operadores, 'nota_venda')
         }
@@ -286,19 +242,13 @@ export class IndicadoresSupervisorService {
         if (canal === 'equipe') {
             const operadores =
                 await this.databaseService.query(`
-                SELECT * FROM dbo.MAPA_GESTAO_CHAT 
-              WHERE supervisor 
+                SELECT * FROM ${tabela}
+                     WHERE supervisor 
                         LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[1]}%'  AND mes = '${mes}'
                         OR 
                         supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[nomeAjustado.length - 1]}%' AND mes = '${mes}'
-                          
-                          UNION 
-                          SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[1]}%'  AND mes = '${mes}'
-                        OR 
-                        supervisor 
-                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[nomeAjustado.length - 1]}%' AND mes = '${mes}'  ORDER BY qtd_vendas ASC`)
+                        LIKE '${nomeAjustado[0] + ' ' + nomeAjustado[nomeAjustado.length - 1]}%' AND mes = '${mes}'  
+                          ORDER BY qtd_vendas ASC`)
             return await this.dividirEmQuartis(operadores, 'qtd_vendas')
 
         }
@@ -511,9 +461,14 @@ FROM (
     SELECT produto FROM dbo.MAPA_GESTAO_CHAT WHERE supervisor 
     LIKE '${nome_logado[0] + ' ' + nome_logado[nome_logado.length - 1]}%'
         AND mes = '${mes}'
+    OR 
+    supervisor LIKE '${nome_logado[0] + ' ' + nome_logado[1]}%' AND mes = '${mes}'
     UNION 
     SELECT produto FROM dbo.MAPA_GESTAO_VOZ WHERE supervisor
      LIKE '${nome_logado[0] + ' ' + nome_logado[nome_logado.length - 1]}%' AND mes = '${mes}'
+     OR
+    supervisor LIKE '${nome_logado[0] + ' ' + nome_logado[1]}%' AND mes = '${mes}'
+
 ) AS uniao
 `)
         const novo = produtos.map((prod: { produto: string }) => {
