@@ -13,21 +13,17 @@ export interface Indicadores {
 
 
 @Injectable()
-export class CoordenadorService {
+export class GeralService {
     constructor(@Inject() private databaseService: DatabaseService) { }
 
 
-    async getTable(mes: string, canal: string, supervisor: string, classificacao: string, coordenador:string): Promise<any[]> {
-        const nomeAjustado = coordenador.split(' ')
-        console.log(nomeAjustado[0]+' '+ nomeAjustado[1])
+    async getTable(mes: string, canal: string, supervisor: string, classificacao: string): Promise<any[]> {
+
         if (canal === 'CHAT') {
             let query: string;
 
             if (supervisor === '' || supervisor === `null` || supervisor === `undefined` || supervisor === `GERAL`) {
-                query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'
-                `;
+                query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' `;
             }
 
             else {
@@ -39,9 +35,7 @@ export class CoordenadorService {
         else {
             let query: string
             if (supervisor === '' || supervisor === `null` || supervisor === `undefined` || supervisor === `GERAL`) {
-                query = `SELECT * FROM dbo.MAPA_GESTAO_VOZ  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'`;
+                query = `SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'`;
             }
             else {
                 query = `SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' AND supervisor = '${supervisor}' `;
@@ -51,9 +45,7 @@ export class CoordenadorService {
         }
     }
 
-    async getTableSupervisoresQuartil(mes: string, canal: string, classificacao: string,coordenador:string) {
-        const nomeAjustado = coordenador.split(' ')
-
+    async getTableSupervisoresQuartil(mes: string, canal: string, classificacao: string) {
         let query: string;
     
         // Definir a tabela correta com base no canal
@@ -72,11 +64,9 @@ export class CoordenadorService {
                     ), 0), 108) AS media_${classificacao}
                 FROM 
                     ${tabela}
-                 WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'
+                WHERE 
+                    mes = '${mes}'
                     AND ${classificacao} IS NOT NULL  -- Ignorar valores NULL
-
                 GROUP BY 
                     supervisor
                 ORDER BY 
@@ -90,9 +80,8 @@ export class CoordenadorService {
                     SUM(${classificacao}) AS media_${classificacao}
                 FROM 
                     ${tabela}
-                WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'
+                WHERE 
+                    mes = '${mes}'
                 GROUP BY 
                     supervisor
                 ORDER BY 
@@ -106,9 +95,8 @@ export class CoordenadorService {
                     AVG(${classificacao}) AS media_${classificacao}
                 FROM 
                     ${tabela}
-                 WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'
+                WHERE 
+                    mes = '${mes}'
                 GROUP BY 
                     supervisor
                 ORDER BY 
@@ -172,15 +160,11 @@ export class CoordenadorService {
         return quartis
     }
 
-    async getIndicadoresEquipe(mes: string, canal: string, supervisor: string | undefined,coordenador:string): Promise<Indicadores> {
-        const nomeAjustado = coordenador.split(' ')
-
+    async getIndicadoresEquipe(mes: string, canal: string, supervisor: string | undefined): Promise<Indicadores> {
         if (canal === 'CHAT') {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores = await this.databaseService.query(`
-                    SELECT * FROM dbo.MAPA_GESTAO_CHAT  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'`)
+                    SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'`)
 
                 return await this.getIndicadoresGeral(operadores);
             }
@@ -195,9 +179,7 @@ export class CoordenadorService {
         else {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores = await this.databaseService.query(`
-                    SELECT * FROM dbo.MAPA_GESTAO_VOZ  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'`)
+                    SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'`)
                 return await this.getIndicadoresGeral(operadores);
             }
             else {
@@ -208,18 +190,14 @@ export class CoordenadorService {
             }
         }
     }
-    async getQuartilTma(mes: string, canal: string, supervisor: string | undefined,coordenador:string): Promise<any> {
-        const nomeAjustado = coordenador.split(' ')
-
+    async getQuartilTma(mes: string, canal: string, supervisor: string | undefined): Promise<any> {
         //Se ele for do segmento chat
         if (canal === 'CHAT') {
 
             //se ele quiser ver o resultado geral
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
-                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}' ORDER BY tma ASC`)
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' ORDER BY tma ASC`)
                 const quartil = await this.dividirEmQuartis(operadores, 'tma')
                 return quartil
             }
@@ -239,9 +217,7 @@ export class CoordenadorService {
             //se ele quiser ver o resultado geral
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
-                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}' ORDER BY tma ASC`)
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' ORDER BY tma ASC`)
                 return await this.dividirEmQuartis(operadores, 'tma')
             }
 
@@ -253,15 +229,11 @@ export class CoordenadorService {
             }
         }
     }
-    async getQuartilCsat(mes: string, canal: string, supervisor: string | undefined,coordenador:string): Promise<any> {
-        const nomeAjustado = coordenador.split(' ')
-
+    async getQuartilCsat(mes: string, canal: string, supervisor: string | undefined): Promise<any> {
         if (canal === 'CHAT') {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
-                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}' ORDER BY csat ASC`)
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'  ORDER BY csat ASC`)
                 return await this.dividirEmQuartis(operadores, 'csat')
             }
             else {
@@ -274,9 +246,7 @@ export class CoordenadorService {
         else {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
-                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}' ORDER BY csat ASC`)
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY csat ASC`)
                 return await this.dividirEmQuartis(operadores, 'csat')
             }
             const operadores =
@@ -284,15 +254,11 @@ export class CoordenadorService {
             return await this.dividirEmQuartis(operadores, 'csat')
         }
     }
-    async getQuartilNotaQualide(mes: string, canal: string, supervisor: string | undefined,coordenador:string): Promise<any> {
-        const nomeAjustado = coordenador.split(' ')
-
+    async getQuartilNotaQualide(mes: string, canal: string, supervisor: string | undefined): Promise<any> {
         if (canal === 'CHAT') {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
-                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'  ORDER BY nota_qualidade ASC`)
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'  ORDER BY nota_qualidade ASC`)
                 return await this.dividirEmQuartis(operadores, 'nota_qualidade')
             }
             else {
@@ -305,9 +271,7 @@ export class CoordenadorService {
         else {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
-                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'  ORDER BY nota_qualidade ASC`)
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY nota_qualidade ASC`)
                 return await this.dividirEmQuartis(operadores, 'nota_qualidade')
             }
             const operadores =
@@ -315,15 +279,11 @@ export class CoordenadorService {
             return await this.dividirEmQuartis(operadores, 'nota_qualidade')
         }
     }
-    async getQuartilNotaVenda(mes: string, canal: string, supervisor: string | undefined,coordenador:string): Promise<any> {
-        const nomeAjustado = coordenador.split(' ')
-
+    async getQuartilNotaVenda(mes: string, canal: string, supervisor: string | undefined): Promise<any> {
         if (canal === 'CHAT') {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
-                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'  ORDER BY nota_venda ASC`)
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'  ORDER BY nota_venda ASC`)
                 return await this.dividirEmQuartis(operadores, 'nota_venda')
             }
             else {
@@ -336,9 +296,7 @@ export class CoordenadorService {
         else {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
-                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'  ORDER BY nota_venda ASC`)
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY nota_venda ASC`)
                 return await this.dividirEmQuartis(operadores, 'nota_venda')
             }
             const operadores =
@@ -346,14 +304,11 @@ export class CoordenadorService {
             return await this.dividirEmQuartis(operadores, 'nota_venda')
         }
     }
-    async getQuartilVenda(mes: string, canal: string, supervisor: string | undefined,coordenador:string): Promise<any> {
-              const nomeAjustado = coordenador.split(' ')
+    async getQuartilVenda(mes: string, canal: string, supervisor: string | undefined): Promise<any> {
         if (canal === 'CHAT') {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
-                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}' ORDER BY qtd_vendas ASC`)
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}'  ORDER BY qtd_vendas ASC`)
                 return await this.dividirEmQuartis(operadores, 'qtd_vendas')
             }
             else {
@@ -366,9 +321,7 @@ export class CoordenadorService {
         else {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
-                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'  ORDER BY qtd_vendas ASC`)
+                    await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}'  ORDER BY qtd_vendas ASC`)
                 return await this.dividirEmQuartis(operadores, 'qtd_vendas')
             }
             const operadores =
