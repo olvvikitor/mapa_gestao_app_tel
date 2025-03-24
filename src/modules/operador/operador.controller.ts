@@ -1,6 +1,7 @@
 import { Controller, Get, Inject, Param, Query, Req, UseGuards } from "@nestjs/common";
 import { OperadorService } from "./operador.service";
 import { AuthGuard } from "../auth/services/auth.guard";
+import { query } from "express";
 
 @UseGuards(AuthGuard)
 @Controller('api/operadores')
@@ -39,7 +40,7 @@ export class OperadorController {
         
     }
     @Get('supervisores/')
-    async getNameSupervisor(@Req() req: any, @Query('canal') canal:string, @Query('mes') mes:string) {
+    async getNameSupervisor(@Req() req: any, @Query('canal') canal:string, @Query('mes') mes:string, @Query('equipe') equipe:string) {
         return await this.operadorService.getAllNameSupervisor(canal, mes)
     }
 

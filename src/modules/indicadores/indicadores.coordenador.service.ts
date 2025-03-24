@@ -19,7 +19,7 @@ export class CoordenadorService {
 
     async getTable(mes: string, canal: string, supervisor: string, classificacao: string, coordenador:string): Promise<any[]> {
         const nomeAjustado = coordenador.split(' ')
-        console.log(nomeAjustado[0]+' '+ nomeAjustado[1])
+
         if (canal === 'CHAT') {
             let query: string;
 

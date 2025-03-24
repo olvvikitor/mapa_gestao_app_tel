@@ -11,10 +11,10 @@ import { GeralService } from "./indicadores.geral.service";
 @UseGuards(AuthGuard)
 @Controller('api/indicadores')
 export class IndicadoresController {
-  constructor(@Inject() private databaseService: DatabaseService, 
-  @Inject() private indicadoresSupervisorService: IndicadoresSupervisorService,
-  @Inject() private coordenadorService:CoordenadorService,
-  @Inject() private geralService:GeralService
+  constructor(@Inject() private databaseService: DatabaseService,
+    @Inject() private indicadoresSupervisorService: IndicadoresSupervisorService,
+    @Inject() private coordenadorService: CoordenadorService,
+    @Inject() private geralService: GeralService
   ) { }
 
   private autorizados = [
@@ -37,11 +37,14 @@ export class IndicadoresController {
 
   @Get('table/')
   async getTable(
-   @Query('mes') mes: string,
-   @Query('canal') canal: string,
-   @Query('supervisor') supervisor:string,@Query('classificadoPor') classificacao :string , @Req() req: any) {
+    @Query('mes') mes: string,
+    @Query('canal') canal: string,
+    @Query('supervisor') supervisor: string,
+    @Query('classificadoPor') classificacao: string,
+    @Query('equipe') equipe: string,
+    @Req() req: any) {
 
-    const cargo:string = 'COORDENADOR DE OPERACOES - INTERINO'
+    const cargo: string = 'COORDENADOR DE OPERACOES - INTERINO'
     const nome_logado = 'PAULO JOSE SOUZA AGUIAR BARBOSA OLIVEIRA'
 
 
@@ -49,53 +52,73 @@ export class IndicadoresController {
       return await this.indicadoresSupervisorService.getTable(mes, canal, nome_logado, classificacao)
     }
     else {
-      if(cargo === 'COORDENADOR DE OPERACOES' || cargo ==='COORDENADOR DE OPERACOES - INTERINO'){
-        return await this.coordenadorService.getTable(mes, canal,supervisor,classificacao,nome_logado)
+      if (cargo === 'COORDENADOR DE OPERACOES' || cargo === 'COORDENADOR DE OPERACOES - INTERINO') {
+        if (equipe === 'equipe') {
+          return await this.coordenadorService.getTable(mes, canal, supervisor, classificacao, nome_logado)
+        }
+        else {
+          return await this.geralService.getTable(mes, canal, supervisor, classificacao)
+
+        }
       }
-      return await this.geralService.getTable(mes, canal,supervisor,classificacao)
+      return await this.geralService.getTable(mes, canal, supervisor, classificacao)
     }
   }
   @Get('table/supervisores')
   async getTableSupervisores(
-   @Query('mes') mes: string,
-   @Query('canal') canal: string
-   ,@Query('classificadoPor') classificacao :string , @Req() req: any) {
-    const cargo:string = 'COORDENADOR DE OPERACOES - INTERINO'
+    @Query('mes') mes: string,
+    @Query('canal') canal: string,
+    @Query('classificadoPor') classificacao: string,
+    @Query('equipe') equipe: string,
+    @Req() req: any) {
+    const cargo: string = 'COORDENADOR DE OPERACOES - INTERINO'
     const nome_logado = 'PAULO JOSE SOUZA AGUIAR BARBOSA OLIVEIRA'
     // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
-      return await this.indicadoresSupervisorService.getTableSupervisoresQuartil(mes, canal,classificacao,nome_logado)
+      return await this.indicadoresSupervisorService.getTableSupervisoresQuartil(mes, canal, classificacao, nome_logado)
     }
-    else{
-      if(cargo === 'COORDENADOR DE OPERACOES' || cargo==='COORDENADOR DE OPERACOES - INTERINO'){
+    else {
+      if (cargo === 'COORDENADOR DE OPERACOES' || cargo === 'COORDENADOR DE OPERACOES - INTERINO') {
 
-      return await this.coordenadorService.getTableSupervisoresQuartil(mes, canal,classificacao,nome_logado)
+        if (equipe === 'equipe') {
+          return await this.coordenadorService.getTableSupervisoresQuartil(mes, canal, classificacao, nome_logado)
+        }
+        else {
+          return await this.geralService.getTableSupervisoresQuartil(mes, canal, classificacao)
+
+        }
+      }
+
+      return await this.geralService.getTableSupervisoresQuartil(mes, canal, classificacao)
+
     }
 
-    return await this.geralService.getTableSupervisoresQuartil(mes, canal,classificacao)
-      
-    }
-  
   }
 
   @Get('/')
   async getIndicadoresEquipe(
     @Query('mes') mes: string, @Query('canal') canal: string,
-    @Query('supervisor') supervisor:string|undefined,
+    @Query('supervisor') supervisor: string | undefined,
+    @Query('equipe') equipe: string,
     @Req() req: any) {
 
-      const cargo:string = 'COORDENADOR DE OPERACOES - INTERINO'
-      const nome_logado = 'PAULO JOSE SOUZA AGUIAR BARBOSA OLIVEIRA'
+    const cargo: string = 'COORDENADOR DE OPERACOES - INTERINO'
+    const nome_logado = 'PAULO JOSE SOUZA AGUIAR BARBOSA OLIVEIRA'
     // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
       return await this.indicadoresSupervisorService.getIndicadoresEquipe(mes, canal, nome_logado)
     }
     else {
-      if(cargo === 'COORDENADOR DE OPERACOES' || cargo==='COORDENADOR DE OPERACOES - INTERINO'){
-        return await this.coordenadorService.getIndicadoresEquipe(mes, canal, supervisor, nome_logado)
+      if (cargo === 'COORDENADOR DE OPERACOES' || cargo === 'COORDENADOR DE OPERACOES - INTERINO') {
+        if(equipe === 'equipe'){
+          return await this.coordenadorService.getIndicadoresEquipe(mes, canal, supervisor, nome_logado)
+        }
+        else{
+       return await this.geralService.getIndicadoresEquipe(mes, canal, supervisor)
+        }
       }
       return await this.geralService.getIndicadoresEquipe(mes, canal, supervisor)
     }
@@ -103,38 +126,47 @@ export class IndicadoresController {
   }
 
   @Get('/quartil-tma/')
-  async getQuartilTma(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor:string | undefined, @Req() req: any) {
+  async getQuartilTma(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor: string | undefined,@Query('equipe') equipe:string, @Req() req: any) {
 
     const nome_logado = 'PAULO JOSE SOUZA AGUIAR BARBOSA OLIVEIRA'
-    const cargo:string = 'COORDENADOR DE OPERACOES - INTERINO'
+    const cargo: string = 'COORDENADOR DE OPERACOES - INTERINO'
     // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
       return await this.indicadoresSupervisorService.getQuartilTma(mes, canal, nome_logado);
     }
-    else{
-      if(cargo === 'COORDENADOR DE OPERACOES' || cargo==='COORDENADOR DE OPERACOES - INTERINO'){
-        return await this.coordenadorService.getQuartilTma(mes, canal, supervisor,nome_logado); 
+    else {
+      if (cargo === 'COORDENADOR DE OPERACOES' || cargo === 'COORDENADOR DE OPERACOES - INTERINO') {
+        if(equipe  === 'equipe'){
+
+          return await this.coordenadorService.getQuartilTma(mes, canal, supervisor, nome_logado);
+        }
+        return await this.geralService.getQuartilTma(mes, canal, supervisor);
+        
       }
-      return await this.geralService.getQuartilTma(mes, canal, supervisor); 
+      return await this.geralService.getQuartilTma(mes, canal, supervisor);
 
     }
   }
 
   @Get('/quartil-csat/')
-  async getQuartilCsat(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor:string | undefined, @Req() req: any) {
+  async getQuartilCsat(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor: string | undefined, @Query('equipe') equipe: string, @Req() req: any) {
     const nome_logado = 'PAULO JOSE SOUZA AGUIAR BARBOSA OLIVEIRA'
-    const cargo:string = 'COORDENADOR DE OPERACOES - INTERINO'
+    const cargo: string = 'COORDENADOR DE OPERACOES - INTERINO'
     // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
       return await this.indicadoresSupervisorService.getQuartilCsat(mes, canal, nome_logado);
     }
-    else{
-      if(cargo === 'COORDENADOR DE OPERACOES' || cargo==='COORDENADOR DE OPERACOES - INTERINO'){
-        return await this.coordenadorService.getQuartilCsat(mes, canal, supervisor, nome_logado);
+    else {
+      if (cargo === 'COORDENADOR DE OPERACOES' || cargo === 'COORDENADOR DE OPERACOES - INTERINO') {
+        if(equipe === 'equipe'){
+
+          return await this.coordenadorService.getQuartilCsat(mes, canal, supervisor, nome_logado);
+        }
+        return await this.geralService.getQuartilCsat(mes, canal, supervisor);
       }
       return await this.geralService.getQuartilCsat(mes, canal, supervisor);
 
@@ -142,60 +174,72 @@ export class IndicadoresController {
   }
 
   @Get('/quartil-monitoria/')
-  async quartilNotaQualidade(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor:string | undefined, @Req() req: any) {
+  async quartilNotaQualidade(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor: string | undefined,@Query('equipe') equipe: string, @Req() req: any) {
     const nome_logado = 'PAULO JOSE SOUZA AGUIAR BARBOSA OLIVEIRA'
-    const cargo:string = 'COORDENADOR DE OPERACOES - INTERINO'
+    const cargo: string = 'COORDENADOR DE OPERACOES - INTERINO'
     // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
       return await this.indicadoresSupervisorService.getQuartilNotaQualide(mes, canal, nome_logado);
     }
-    else{
-      if(cargo === 'COORDENADOR DE OPERACOES' || cargo==='COORDENADOR DE OPERACOES - INTERINO'){
-        return await this.coordenadorService.getQuartilNotaQualide(mes, canal,supervisor,nome_logado);
+    else {
+      if (cargo === 'COORDENADOR DE OPERACOES' || cargo === 'COORDENADOR DE OPERACOES - INTERINO') {
+        if(equipe === 'equipe'){
+
+          return await this.coordenadorService.getQuartilNotaQualide(mes, canal, supervisor, nome_logado);
+        }
+        return await this.geralService.getQuartilNotaQualide(mes, canal, supervisor);
       }
-      return await this.geralService.getQuartilNotaQualide(mes, canal,supervisor);
+      return await this.geralService.getQuartilNotaQualide(mes, canal, supervisor);
 
     }
 
   }
 
   @Get('/quartil-monitoria-vendas/')
-  async quartilMoitoriaVendas(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor:string | undefined, @Req() req: any) {
+  async quartilMoitoriaVendas(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor: string | undefined,@Query('equipe') equipe: string, @Req() req: any) {
     const nome_logado = 'PAULO JOSE SOUZA AGUIAR BARBOSA OLIVEIRA'
-    const cargo:string = 'COORDENADOR DE OPERACOES - INTERINO'
+    const cargo: string = 'COORDENADOR DE OPERACOES - INTERINO'
     // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
       return await this.indicadoresSupervisorService.getQuartilNotaVenda(mes, canal, nome_logado);
     }
-    else{
-      if(cargo === 'COORDENADOR DE OPERACOES' || cargo==='COORDENADOR DE OPERACOES - INTERINO'){
-        return await this.coordenadorService.getQuartilNotaVenda(mes, canal,supervisor,nome_logado);
+    else {
+      if (cargo === 'COORDENADOR DE OPERACOES' || cargo === 'COORDENADOR DE OPERACOES - INTERINO') {
+        if(equipe === 'equipe'){
+          return await this.coordenadorService.getQuartilNotaVenda(mes, canal, supervisor, nome_logado);
+        }
+        
+        return await this.geralService.getQuartilNotaVenda(mes, canal, supervisor);
       }
-      return await this.geralService.getQuartilNotaVenda(mes, canal,supervisor);
+      return await this.geralService.getQuartilNotaVenda(mes, canal, supervisor);
 
     }
 
   }
 
   @Get('/quartil-vendas/')
-  async quartilVendas(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor:string | undefined, @Req() req: any) {
+  async quartilVendas(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor: string | undefined,@Query('equipe') equipe: string, @Req() req: any) {
     const nome_logado = 'PAULO JOSE SOUZA AGUIAR BARBOSA OLIVEIRA'
     // const nome_logado = 'LUIS CAVALCANTE COSTA'
-    const cargo:string = 'COORDENADOR DE OPERACOES - INTERINO'
+    const cargo: string = 'COORDENADOR DE OPERACOES - INTERINO'
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
       return await this.indicadoresSupervisorService.getQuartilVenda(mes, canal, nome_logado);
     }
 
-    else{
-      if(cargo === 'COORDENADOR DE OPERACOES' || cargo==='COORDENADOR DE OPERACOES - INTERINO'){
-        return await this.coordenadorService.getQuartilVenda(mes, canal,supervisor,nome_logado);
+    else {
+      if (cargo === 'COORDENADOR DE OPERACOES' || cargo === 'COORDENADOR DE OPERACOES - INTERINO') {
+        if(equipe === 'equipe'){
+
+          return await this.coordenadorService.getQuartilVenda(mes, canal, supervisor, nome_logado);
+        }
+        return await this.geralService.getQuartilVenda(mes, canal, supervisor);
       }
-      return await this.geralService.getQuartilVenda(mes, canal,supervisor);
+      return await this.geralService.getQuartilVenda(mes, canal, supervisor);
 
     }
 

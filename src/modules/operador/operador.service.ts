@@ -26,7 +26,6 @@ export class OperadorService {
     return operadores; // Retorna os operadores encontrados nas duas tabelas para o supervisor
   }
   async getAllNameSupervisor(canal: string, mes: string) {
-    
 
     if (canal === 'CHAT') {
      const query = `

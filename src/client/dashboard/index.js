@@ -72,6 +72,20 @@ async function carregarDadosUserLogado() {
             `);
             }
             adicionarListeners();
+            const container3 = document.getElementById("filtroEquipe"); // Elemento onde você quer adicionar os filtros
+
+            if (container3) {
+                container3.insertAdjacentHTML("beforeend", `
+                <div">
+                    <h6 class="card-title">Resultado</h6>
+                    <select class="form-select" name="canal" id="equipeSelect">
+                        <option value="equipe" selected>EQUIPE</option>
+                        <option value="geral">GERAL</option>
+                    </select>
+                </div>
+            `);
+            }
+            adicionarListeners()
 
             const container2 = document.getElementById("filtroSupervisor"); // Elemento onde você quer adicionar os filtros
 
@@ -114,7 +128,7 @@ async function carregarDadosUserLogado() {
 
 
 
-async function carregarSupervisores(canalSelecionado,supervisor, mes) {
+async function carregarSupervisores(canalSelecionado,supervisor, mes, equipe) {
     try {
 
         // Atualiza os valores dos selects
@@ -123,7 +137,7 @@ async function carregarSupervisores(canalSelecionado,supervisor, mes) {
 
         const token = localStorage.getItem("auth-base-gestao");
 
-        const response = await fetch(`api/operadores/supervisores?canal=${canalSelecionado}&mes=${mes}`, {
+        const response = await fetch(`api/operadores/supervisores?canal=${canalSelecionado}&mes=${mes}&equipe=${equipe}`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer: ${token}`,
@@ -168,7 +182,7 @@ async function carregarSupervisores(canalSelecionado,supervisor, mes) {
 
 
 
-async function buscarTabelaOperadorGeral(mes, canalSelecionado, supervisor) {
+async function buscarTabelaOperadorGeral(mes, canalSelecionado, supervisor, equipe) {
     try {
 
 
@@ -182,7 +196,7 @@ async function buscarTabelaOperadorGeral(mes, canalSelecionado, supervisor) {
 
 
         // Atualizar a tabela com os parâmetros
-        await atualizarTabela(canalSelecionado, mes, supervisor, classificador);
+        await atualizarTabela(canalSelecionado, mes, supervisor, classificador, equipe);
 
     } catch (error) {
         console.error("Erro ao buscar dados:", error);
@@ -190,12 +204,12 @@ async function buscarTabelaOperadorGeral(mes, canalSelecionado, supervisor) {
 }
 
 
-async function atualizarTabela(canalSelecionado, mes, supervisor, classificador) {
+async function atualizarTabela(canalSelecionado, mes, supervisor, classificador, equipe) {
 
     try {
         // Buscar os dados da API com o classificador
         const dados = await fetchWithAuth(
-            `${BASE_URL}/table?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}&classificadoPor=${classificador}`,
+            `${BASE_URL}/table?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}&classificadoPor=${classificador}&equipe=${equipe}`,
             { method: "GET" }
         );
 
@@ -325,7 +339,7 @@ document.getElementById('exportar-excel').addEventListener('click', exportarPara
 
 
 
-async function buscarIndicadoresGeral(mes, canalSelecionado, supervisor) {
+async function buscarIndicadoresGeral(mes, canalSelecionado, supervisor, equipe) {
 
 
 
@@ -333,7 +347,7 @@ async function buscarIndicadoresGeral(mes, canalSelecionado, supervisor) {
 
         canalSelecionado = document.querySelector('#canalSelect').value
 
-        const indicadores = await fetchWithAuth(`${BASE_URL}?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`, { method: "GET" });
+        const indicadores = await fetchWithAuth(`${BASE_URL}?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}&equipe=${equipe}`, { method: "GET" });
         document.getElementById('tma').innerHTML = indicadores.tma.media;
         document.getElementById('csat').innerHTML = indicadores.csat.media;
         document.getElementById('nota_qualidade').innerHTML = indicadores.notaQualidade.media;
@@ -344,14 +358,14 @@ async function buscarIndicadoresGeral(mes, canalSelecionado, supervisor) {
     }
 }
 
-async function criarTabelaQuartil(mes, canalSelecionado, supervisor) {
+async function criarTabelaQuartil(mes, canalSelecionado, supervisor, equipe) {
     try {
 
         // Atualiza os valores dos selects
         canalSelecionado = document.querySelector('#canalSelect')?.value || canalSelecionado;
         supervisor = document.querySelector('#supervisorSelect')?.value || supervisor;
 
-        const dados = await buscarIndicadoresPorQuartil(mes, canalSelecionado, supervisor);
+        const dados = await buscarIndicadoresPorQuartil(mes, canalSelecionado, supervisor,equipe);
         const tabelaBody = document.getElementById("tabela-quartil").querySelector("tbody") || document.createElement("tbody");
         tabelaBody.innerHTML = "";
 
@@ -385,7 +399,7 @@ function obterClasseQuartil(index) {
     return classes[index] || "";
 }
 
-async function buscarIndicadoresPorQuartil(mes, canalSelecionado, supervisor) {
+async function buscarIndicadoresPorQuartil(mes, canalSelecionado, supervisor,equipe) {
     
 
 
@@ -394,11 +408,11 @@ async function buscarIndicadoresPorQuartil(mes, canalSelecionado, supervisor) {
     supervisor = document.querySelector('#supervisorSelect')?.value || supervisor;
 
     const urls = [
-        `${BASE_URL}/quartil-tma?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`,
-        `${BASE_URL}/quartil-csat?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`,
-        `${BASE_URL}/quartil-monitoria?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`,
-        `${BASE_URL}/quartil-monitoria-vendas?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`,
-        `${BASE_URL}/quartil-vendas?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}`
+        `${BASE_URL}/quartil-tma?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}&equipe=${equipe}`,
+        `${BASE_URL}/quartil-csat?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}&equipe=${equipe}`,
+        `${BASE_URL}/quartil-monitoria?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}&equipe=${equipe}`,
+        `${BASE_URL}/quartil-monitoria-vendas?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}&equipe=${equipe}`,
+        `${BASE_URL}/quartil-vendas?mes=${mes}&canal=${canalSelecionado}&supervisor=${supervisor}&equipe=${equipe}`
     ];
 
     try {
@@ -420,11 +434,11 @@ async function buscarIndicadoresPorQuartil(mes, canalSelecionado, supervisor) {
 }
 
 
-async function criarTabelaIndicadores(mes, canalSelecionado) {
+async function criarTabelaIndicadores(mes, canalSelecionado, equipe) {
     try {
         canalSelecionado = document.querySelector('#canalSelect')?.value || canalSelecionado;
 
-        const dados = await buscarIndicadoresPorQuartilSupervisor(mes, canalSelecionado);
+        const dados = await buscarIndicadoresPorQuartilSupervisor(mes, canalSelecionado, equipe);
 
         const quartis = ['1Q', '2Q', '3Q', '4Q'];
         const indicadores = ['tma', 'csat', 'nota_qualidade', 'nota_venda', 'qtd_vendas'];
@@ -488,16 +502,16 @@ async function criarTabelaIndicadores(mes, canalSelecionado) {
 }
 
 
-async function buscarIndicadoresPorQuartilSupervisor(mes, canalSelecionado) {
+async function buscarIndicadoresPorQuartilSupervisor(mes, canalSelecionado, equipe) {
     // Atualiza os valores dos selects
     canalSelecionado = document.querySelector('#canalSelect')?.value || canalSelecionado;
 
     const urls = [
-        `${BASE_URL}/table/supervisores?mes=${mes}&canal=${canalSelecionado}&classificadoPor=${'tma'}`,
-        `${BASE_URL}/table/supervisores?mes=${mes}&canal=${canalSelecionado}&classificadoPor=${'csat'}`,
-        `${BASE_URL}/table/supervisores?mes=${mes}&canal=${canalSelecionado}&classificadoPor=${'nota_qualidade'}`,
-        `${BASE_URL}/table/supervisores?mes=${mes}&canal=${canalSelecionado}&classificadoPor=${'nota_venda'}`,
-        `${BASE_URL}/table/supervisores?mes=${mes}&canal=${canalSelecionado}&classificadoPor=${'qtd_vendas'}`,
+        `${BASE_URL}/table/supervisores?mes=${mes}&canal=${canalSelecionado}&classificadoPor=${'tma'}&equipe=${equipe}`,
+        `${BASE_URL}/table/supervisores?mes=${mes}&canal=${canalSelecionado}&classificadoPor=${'csat'}&equipe=${equipe}`,
+        `${BASE_URL}/table/supervisores?mes=${mes}&canal=${canalSelecionado}&classificadoPor=${'nota_qualidade'}&equipe=${equipe}`,
+        `${BASE_URL}/table/supervisores?mes=${mes}&canal=${canalSelecionado}&classificadoPor=${'nota_venda'}&equipe=${equipe}`,
+        `${BASE_URL}/table/supervisores?mes=${mes}&canal=${canalSelecionado}&classificadoPor=${'qtd_vendas'}&equipe=${equipe}`,
     ];
 
     try {
@@ -560,6 +574,7 @@ async function toggleAllTables() {
 let supervisorSelecionado;
 let mesSelecionado = new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
 let canal = "CHAT"
+let equipeSelect = 'equipe';
 
 if(mesSelecionado === 'MARÇO'){
     mesSelecionado = 'MARCO'
@@ -568,20 +583,21 @@ if(mesSelecionado === 'MARÇO'){
 
 // Função para adicionar os listeners
 function adicionarListeners() {
-    document.querySelectorAll("#mesSelect, #supervisorSelect, #canalSelect").forEach(element => {
+    document.querySelectorAll("#mesSelect, #supervisorSelect, #canalSelect, #equipeSelect").forEach(element => {
         element.addEventListener("change", async function () {
             const mes = document.querySelector('#mesSelect').value.toUpperCase();
             const canalSelect = document.querySelector('#canalSelect').value || "";
             const supervisor = document.querySelector("#supervisorSelect").value || "";
+            const equipe = document.querySelector("#equipeSelect").value || "";
+            equipeSelect = equipe
             supervisorSelecionado = supervisor
             mesSelecionado = mes
             canal = canalSelect
-            await carregarSupervisores(canal,supervisor, mesSelecionado)
-            await buscarTabelaOperadorGeral(mesSelecionado, canal, supervisor);
-            await buscarIndicadoresGeral(mesSelecionado, canal, supervisor);
-            await criarTabelaQuartil(mesSelecionado, canal, supervisor);
-            await criarTabelaIndicadores(mesSelecionado, canal)
-
+            await carregarSupervisores(canal,supervisor, mesSelecionado, equipe)
+            await buscarTabelaOperadorGeral(mesSelecionado, canal, supervisor,equipe);
+            await buscarIndicadoresGeral(mesSelecionado, canal, supervisor,equipe);
+            await criarTabelaQuartil(mesSelecionado, canal, supervisor,equipe);
+            await criarTabelaIndicadores(mesSelecionado, canal,equipe)
         });
     });
 }
