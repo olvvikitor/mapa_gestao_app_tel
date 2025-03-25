@@ -25,8 +25,8 @@ export class CoordenadorService {
 
             if (supervisor === '' || supervisor === `null` || supervisor === `undefined` || supervisor === `GERAL`) {
                 query = `SELECT * FROM dbo.MAPA_GESTAO_CHAT WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'
+                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}%'
+                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}%'
                 `;
             }
 
@@ -40,8 +40,8 @@ export class CoordenadorService {
             let query: string
             if (supervisor === '' || supervisor === `null` || supervisor === `undefined` || supervisor === `GERAL`) {
                 query = `SELECT * FROM dbo.MAPA_GESTAO_VOZ  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'`;
+                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}%'
+                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}%'`;
             }
             else {
                 query = `SELECT * FROM dbo.MAPA_GESTAO_VOZ WHERE mes = '${mes}' AND supervisor = '${supervisor}' `;
@@ -73,8 +73,8 @@ export class CoordenadorService {
                 FROM 
                     ${tabela}
                  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'
+                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}%'
+                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}%'
                     AND ${classificacao} IS NOT NULL  -- Ignorar valores NULL
 
                 GROUP BY 
@@ -91,8 +91,8 @@ export class CoordenadorService {
                 FROM 
                     ${tabela}
                 WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'
+                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}%'
+                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}%'
                 GROUP BY 
                     supervisor
                 ORDER BY 
@@ -107,8 +107,8 @@ export class CoordenadorService {
                 FROM 
                     ${tabela}
                  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'
+                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}%'
+                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}%'
                 GROUP BY 
                     supervisor
                 ORDER BY 
@@ -179,8 +179,8 @@ export class CoordenadorService {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores = await this.databaseService.query(`
                     SELECT * FROM dbo.MAPA_GESTAO_CHAT  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'`)
+                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}%'
+                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}%'`)
 
                 return await this.getIndicadoresGeral(operadores);
             }
@@ -196,8 +196,8 @@ export class CoordenadorService {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores = await this.databaseService.query(`
                     SELECT * FROM dbo.MAPA_GESTAO_VOZ  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'`)
+                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}%'
+                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}%'`)
                 return await this.getIndicadoresGeral(operadores);
             }
             else {
@@ -218,8 +218,8 @@ export class CoordenadorService {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
                     await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}' ORDER BY tma ASC`)
+                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}%'
+                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}%' ORDER BY tma ASC`)
                 const quartil = await this.dividirEmQuartis(operadores, 'tma')
                 return quartil
             }
@@ -240,8 +240,8 @@ export class CoordenadorService {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
                     await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}' ORDER BY tma ASC`)
+                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}%'
+                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}%' ORDER BY tma ASC`)
                 return await this.dividirEmQuartis(operadores, 'tma')
             }
 
@@ -260,8 +260,8 @@ export class CoordenadorService {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
                     await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}' ORDER BY csat ASC`)
+                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}%'
+                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}%' ORDER BY csat ASC`)
                 return await this.dividirEmQuartis(operadores, 'csat')
             }
             else {
@@ -275,8 +275,8 @@ export class CoordenadorService {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
                     await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}' ORDER BY csat ASC`)
+                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}%'
+                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}%' ORDER BY csat ASC`)
                 return await this.dividirEmQuartis(operadores, 'csat')
             }
             const operadores =
@@ -291,8 +291,8 @@ export class CoordenadorService {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
                     await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'  ORDER BY nota_qualidade ASC`)
+                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}%'
+                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}%'  ORDER BY nota_qualidade ASC`)
                 return await this.dividirEmQuartis(operadores, 'nota_qualidade')
             }
             else {
@@ -306,8 +306,8 @@ export class CoordenadorService {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
                     await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'  ORDER BY nota_qualidade ASC`)
+                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}%'
+                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}%'  ORDER BY nota_qualidade ASC`)
                 return await this.dividirEmQuartis(operadores, 'nota_qualidade')
             }
             const operadores =
@@ -322,8 +322,8 @@ export class CoordenadorService {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
                     await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'  ORDER BY nota_venda ASC`)
+                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}%'
+                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}%'  ORDER BY nota_venda ASC`)
                 return await this.dividirEmQuartis(operadores, 'nota_venda')
             }
             else {
@@ -337,8 +337,8 @@ export class CoordenadorService {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
                     await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'  ORDER BY nota_venda ASC`)
+                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}%'
+                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}%'  ORDER BY nota_venda ASC`)
                 return await this.dividirEmQuartis(operadores, 'nota_venda')
             }
             const operadores =
@@ -352,8 +352,8 @@ export class CoordenadorService {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
                     await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_CHAT  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}' ORDER BY qtd_vendas ASC`)
+                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}%'
+                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}%' ORDER BY qtd_vendas ASC`)
                 return await this.dividirEmQuartis(operadores, 'qtd_vendas')
             }
             else {
@@ -367,8 +367,8 @@ export class CoordenadorService {
             if (supervisor === 'GERAL' || supervisor === 'undefined' || supervisor === undefined || supervisor === '') {
                 const operadores =
                     await this.databaseService.query(`SELECT * FROM dbo.MAPA_GESTAO_VOZ  WHERE mes = '${mes}' 
-                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}'
-                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}'  ORDER BY qtd_vendas ASC`)
+                AND coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[1]}%'
+                OR coordenador LIKE '${nomeAjustado[0]+' '+ nomeAjustado[nomeAjustado.length - 1]}%'  ORDER BY qtd_vendas ASC`)
                 return await this.dividirEmQuartis(operadores, 'qtd_vendas')
             }
             const operadores =

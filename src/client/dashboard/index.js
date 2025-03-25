@@ -576,10 +576,6 @@ let mesSelecionado = new Date().toLocaleString('pt-BR', { month: 'long' }).toUpp
 let canal = "CHAT"
 let equipeSelect = 'equipe';
 
-if(mesSelecionado === 'MARÇO'){
-    mesSelecionado = 'MARCO'
-}
-
 
 // Função para adicionar os listeners
 function adicionarListeners() {

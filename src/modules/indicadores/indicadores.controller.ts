@@ -44,8 +44,8 @@ export class IndicadoresController {
     @Query('equipe') equipe: string,
     @Req() req: any) {
 
-    const cargo: string = 'COORDENADOR DE OPERACOES - INTERINO'
-    const nome_logado = 'PAULO JOSE SOUZA AGUIAR BARBOSA OLIVEIRA'
+const cargo = req.user.dados.FUNCAO
+    const nome_logado = req.user.dados.NOME
 
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
@@ -71,9 +71,8 @@ export class IndicadoresController {
     @Query('classificadoPor') classificacao: string,
     @Query('equipe') equipe: string,
     @Req() req: any) {
-    const cargo: string = 'COORDENADOR DE OPERACOES - INTERINO'
-    const nome_logado = 'PAULO JOSE SOUZA AGUIAR BARBOSA OLIVEIRA'
-    // const nome_logado = 'LUIS CAVALCANTE COSTA'
+const cargo = req.user.dados.FUNCAO
+    const nome_logado = req.user.dados.NOME
 
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
@@ -104,9 +103,8 @@ export class IndicadoresController {
     @Query('equipe') equipe: string,
     @Req() req: any) {
 
-    const cargo: string = 'COORDENADOR DE OPERACOES - INTERINO'
-    const nome_logado = 'PAULO JOSE SOUZA AGUIAR BARBOSA OLIVEIRA'
-    // const nome_logado = 'LUIS CAVALCANTE COSTA'
+const cargo = req.user.dados.FUNCAO
+    const nome_logado = req.user.dados.NOME
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
       return await this.indicadoresSupervisorService.getIndicadoresEquipe(mes, canal, nome_logado)
@@ -128,8 +126,8 @@ export class IndicadoresController {
   @Get('/quartil-tma/')
   async getQuartilTma(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor: string | undefined,@Query('equipe') equipe:string, @Req() req: any) {
 
-    const nome_logado = 'PAULO JOSE SOUZA AGUIAR BARBOSA OLIVEIRA'
-    const cargo: string = 'COORDENADOR DE OPERACOES - INTERINO'
+    const nome_logado = req.user.dados.NOME
+const cargo = req.user.dados.FUNCAO
     // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
 
@@ -152,8 +150,8 @@ export class IndicadoresController {
 
   @Get('/quartil-csat/')
   async getQuartilCsat(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor: string | undefined, @Query('equipe') equipe: string, @Req() req: any) {
-    const nome_logado = 'PAULO JOSE SOUZA AGUIAR BARBOSA OLIVEIRA'
-    const cargo: string = 'COORDENADOR DE OPERACOES - INTERINO'
+    const nome_logado = req.user.dados.NOME
+const cargo = req.user.dados.FUNCAO
     // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
 
@@ -175,8 +173,8 @@ export class IndicadoresController {
 
   @Get('/quartil-monitoria/')
   async quartilNotaQualidade(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor: string | undefined,@Query('equipe') equipe: string, @Req() req: any) {
-    const nome_logado = 'PAULO JOSE SOUZA AGUIAR BARBOSA OLIVEIRA'
-    const cargo: string = 'COORDENADOR DE OPERACOES - INTERINO'
+    const nome_logado = req.user.dados.NOME
+const cargo = req.user.dados.FUNCAO
     // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
 
@@ -199,8 +197,8 @@ export class IndicadoresController {
 
   @Get('/quartil-monitoria-vendas/')
   async quartilMoitoriaVendas(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor: string | undefined,@Query('equipe') equipe: string, @Req() req: any) {
-    const nome_logado = 'PAULO JOSE SOUZA AGUIAR BARBOSA OLIVEIRA'
-    const cargo: string = 'COORDENADOR DE OPERACOES - INTERINO'
+    const nome_logado = req.user.dados.NOME
+const cargo = req.user.dados.FUNCAO
     // const nome_logado = 'LUIS CAVALCANTE COSTA'
 
 
@@ -223,9 +221,9 @@ export class IndicadoresController {
 
   @Get('/quartil-vendas/')
   async quartilVendas(@Query('mes') mes: string, @Query('canal') canal: string, @Query('supervisor') supervisor: string | undefined,@Query('equipe') equipe: string, @Req() req: any) {
-    const nome_logado = 'PAULO JOSE SOUZA AGUIAR BARBOSA OLIVEIRA'
+    const nome_logado = req.user.dados.NOME
     // const nome_logado = 'LUIS CAVALCANTE COSTA'
-    const cargo: string = 'COORDENADOR DE OPERACOES - INTERINO'
+const cargo = req.user.dados.FUNCAO
 
     if (!this.isCoordenador(cargo, this.autorizados)) {
       return await this.indicadoresSupervisorService.getQuartilVenda(mes, canal, nome_logado);
