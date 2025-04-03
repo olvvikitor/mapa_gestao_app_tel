@@ -570,6 +570,11 @@ async function toggleAllTables() {
     }
 }
 
+document.getElementById("vizualizarPlanoMensal").addEventListener("click", function () {
+    var modal = new bootstrap.Modal(document.getElementById("imagemModal"));
+    modal.show();
+  });
+
 
 let supervisorSelecionado;
 let mesSelecionado = new Date().toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
